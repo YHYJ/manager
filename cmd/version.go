@@ -13,6 +13,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/yhyj/manager/function"
 )
 
 // versionCmd represents the version command
@@ -21,10 +22,12 @@ var versionCmd = &cobra.Command{
 	Short: "Print program version",
 	Long:  `Print program version and exit.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("version called")
+		programInfo := function.ProgramInfo()
+		fmt.Printf(programInfo)
 	},
 }
 
 func init() {
+	versionCmd.Flags().BoolP("help", "h", false, "help for version")
 	rootCmd.AddCommand(versionCmd)
 }
