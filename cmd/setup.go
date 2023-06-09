@@ -10,21 +10,60 @@ Description: 程序子命令'setup'时执行
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+	"github.com/yhyj/manager/function"
 )
 
 // setupCmd represents the setup command
 var setupCmd = &cobra.Command{
 	Use:   "setup",
-	Short: "Configure installed programs/scripts",
-	Long:  `Configure installed self-developed programs/scripts.`,
+	Short: "Set up installed programs/scripts",
+	Long:  `Set up installed self-developed programs/scripts.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("setup called")
+		// 解析参数
+		allFlag, _ := cmd.Flags().GetBool("all")
+		pipFlag, _ := cmd.Flags().GetBool("pip")
+		npmFlag, _ := cmd.Flags().GetBool("npm")
+		dockerFlag, _ := cmd.Flags().GetBool("docker")
+		gitFlag, _ := cmd.Flags().GetBool("git")
+
+		// 根据参数执行操作
+		if allFlag {
+			// 配置pip
+			function.WriteFile(function.PipConfigFile, function.PipConfig)
+			// 配置npm
+			function.WriteFile(function.NpmConfigFile, function.NpmConfig)
+			// 配置docker
+			function.WriteFile(function.DockerConfigFile, function.DockerConfig)
+			// 配置git
+			function.WriteFile(function.GitConfigFile, function.GitConfig)
+		}
+		if pipFlag {
+			// 配置pip
+			function.WriteFile(function.PipConfigFile, function.PipConfig)
+		}
+		if npmFlag {
+			// 配置npm
+			function.WriteFile(function.NpmConfigFile, function.NpmConfig)
+		}
+		if dockerFlag {
+			// 配置docker
+			function.WriteFile(function.DockerConfigFile, function.DockerConfig)
+		}
+		if gitFlag {
+			// 配置git
+			function.WriteFile(function.GitConfigFile, function.GitConfig)
+		}
 	},
 }
 
 func init() {
+	setupCmd.Flags().BoolP("all", "", false, "Set up all programs/scripts")
+	setupCmd.Flags().BoolP("pip", "", false, "Set up the mirror source used by pip")
+	setupCmd.Flags().BoolP("npm", "", false, "Set up the mirror source used by npm")
+	setupCmd.Flags().BoolP("docker", "", false, "Set up Docker Root Directory")
+	setupCmd.Flags().BoolP("git", "", false, "Set up git and generate SSH keys")
+
+	setupCmd.Flags().BoolP("help", "h", false, "help for setup")
 	rootCmd.AddCommand(setupCmd)
 }
