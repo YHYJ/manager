@@ -39,9 +39,10 @@
     该子命令用于配置安装的程序/脚本，有以下参数：
 
     - 'all'：配置以下所有程序/脚本
-    - 'git'：配置git（配置用户信息等并生成SSH密钥）
-    - 'docker'：配置docker（配置Docker Root Directory）
-    - 'pip'：配置pip（配置pip使用的镜像源）
+    - 'pip'：配置pip使用的镜像源
+    - 'npm'：配置npm使用的镜像源
+    - 'docker'：配置Docker Root Directory
+    - 'git'：配置git用户信息等并生成SSH密钥
 
 - `config`子命令
 
