@@ -34,7 +34,17 @@ var platformChart = map[string]map[string]string{
 
 var platform = runtime.GOOS
 
+// 获取环境变量
 func GetVariable(key string) string {
 	varKey := platformChart[platform][key]
 	return os.Getenv(varKey)
+}
+
+// 获取不再环境变量中的HOSTNAME
+func GetHostname() string {
+	hostname, err := os.Hostname()
+	if err != nil {
+		return ""
+	}
+	return hostname
 }
