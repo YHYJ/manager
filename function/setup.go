@@ -26,13 +26,13 @@ var NpmConfig = `registry=https://registry.npm.taobao.org`
 var DockerConfigFile = "/etc/systemd/system/docker.service.d/override.conf"
 var DockerConfig = `[Service]
 ExecStart=
-ExecStart=/usr/bin/dockerd --data-root=/home/yj/Documents/Docker/Root -H fd://
+ExecStart=/usr/bin/dockerd --data-root=` + varHome + `/Documents/Docker/Root -H fd://
 `
 
 // git配置文件内容
 var GitConfigFile = varHome + "/.gitconfig"
 var GitConfig = `[user]
-	name = YJ-ArchLinux
+	name = ` + GetHostname() + `
 	email = yj1516268@outlook.com
 [core]
 	editor = /usr/bin/nvim
