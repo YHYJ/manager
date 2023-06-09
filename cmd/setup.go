@@ -10,6 +10,8 @@ Description: 程序子命令'setup'时执行
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/yhyj/manager/function"
 )
@@ -27,32 +29,38 @@ var setupCmd = &cobra.Command{
 		dockerFlag, _ := cmd.Flags().GetBool("docker")
 		gitFlag, _ := cmd.Flags().GetBool("git")
 
+		var err error
+
 		// 根据参数执行操作
 		if allFlag {
 			// 配置pip
-			function.WriteFile(function.PipConfigFile, function.PipConfig)
+			err = function.WriteFile(function.PipConfigFile, function.PipConfig)
 			// 配置npm
-			function.WriteFile(function.NpmConfigFile, function.NpmConfig)
+			err = function.WriteFile(function.NpmConfigFile, function.NpmConfig)
 			// 配置docker
-			function.WriteFile(function.DockerConfigFile, function.DockerConfig)
+			err = function.WriteFile(function.DockerConfigFile, function.DockerConfig)
 			// 配置git
-			function.WriteFile(function.GitConfigFile, function.GitConfig)
+			err = function.WriteFile(function.GitConfigFile, function.GitConfig)
 		}
 		if pipFlag {
 			// 配置pip
-			function.WriteFile(function.PipConfigFile, function.PipConfig)
+			err = function.WriteFile(function.PipConfigFile, function.PipConfig)
 		}
 		if npmFlag {
 			// 配置npm
-			function.WriteFile(function.NpmConfigFile, function.NpmConfig)
+			err = function.WriteFile(function.NpmConfigFile, function.NpmConfig)
 		}
 		if dockerFlag {
 			// 配置docker
-			function.WriteFile(function.DockerConfigFile, function.DockerConfig)
+			err = function.WriteFile(function.DockerConfigFile, function.DockerConfig)
 		}
 		if gitFlag {
 			// 配置git
-			function.WriteFile(function.GitConfigFile, function.GitConfig)
+			err = function.WriteFile(function.GitConfigFile, function.GitConfig)
+		}
+
+		if err != nil {
+			fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
 		}
 	},
 }
