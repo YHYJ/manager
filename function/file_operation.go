@@ -10,6 +10,7 @@ Description: 文件操作
 package function
 
 import (
+	"fmt"
 	"os"
 	"strings"
 )
@@ -26,6 +27,20 @@ func FileExist(filePath string) bool {
 	return true
 }
 
+// 判断文件是否为空
+func FileEmpty(filePath string) bool {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return true
+	}
+	defer file.Close()
+	fi, err := file.Stat()
+	if err != nil {
+		return true
+	}
+	return fi.Size() == 0
+}
+
 // 创建文件，如果其父目录不存在则创建父目录
 func CreateFile(filePath string) error {
 	if FileExist(filePath) {
@@ -38,6 +53,46 @@ func CreateFile(filePath string) error {
 	}
 	_, err := os.Create(filePath)
 	return err
+}
+
+// 写入内容到文件
+func WriteFile(filePath string, content string) error {
+	// 文件存在
+	if FileExist(filePath) {
+		// 文件内容为空
+		if FileEmpty(filePath) {
+			// 打开文件并写入内容
+			file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0666)
+			if err != nil {
+				return err
+			} else {
+				_, err := file.WriteString(content)
+				if err != nil {
+					return err
+				}
+			}
+		} else {
+			// 文件内容不为空
+			return fmt.Errorf("file %s is not empty", filePath)
+		}
+	} else {
+		// 文件不存在
+		// 创建文件
+		if err := CreateFile(filePath); err != nil {
+			return err
+		}
+		// 打开文件并写入内容
+		file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0666)
+		if err != nil {
+			return err
+		} else {
+			_, err := file.WriteString(content)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 // 删除文件
