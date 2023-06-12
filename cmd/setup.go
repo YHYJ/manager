@@ -29,38 +29,49 @@ var setupCmd = &cobra.Command{
 		dockerFlag, _ := cmd.Flags().GetBool("docker")
 		gitFlag, _ := cmd.Flags().GetBool("git")
 
-		var err error
+		var errSubject string
+		var errInfo error
+		var errReport string
 
 		// 根据参数执行操作
 		if allFlag {
-			// 配置pip
-			err = function.WriteFile(function.PipConfigFile, function.PipConfig)
-			// 配置npm
-			err = function.WriteFile(function.NpmConfigFile, function.NpmConfig)
-			// 配置docker
-			err = function.WriteFile(function.DockerConfigFile, function.DockerConfig)
-			// 配置git
-			err = function.WriteFile(function.GitConfigFile, function.GitConfig)
+			pipFlag, npmFlag, dockerFlag, gitFlag = true, true, true, true
 		}
 		if pipFlag {
 			// 配置pip
-			err = function.WriteFile(function.PipConfigFile, function.PipConfig)
+			errSubject = "pip"
+			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
+			if errInfo != nil {
+				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
+			}
 		}
 		if npmFlag {
 			// 配置npm
-			err = function.WriteFile(function.NpmConfigFile, function.NpmConfig)
+			errSubject = "npm"
+			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
+			if errInfo != nil {
+				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
+			}
 		}
 		if dockerFlag {
 			// 配置docker
-			err = function.WriteFile(function.DockerConfigFile, function.DockerConfig)
+			errSubject = "docker"
+			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
+			if errInfo != nil {
+				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
+			}
 		}
 		if gitFlag {
 			// 配置git
-			err = function.WriteFile(function.GitConfigFile, function.GitConfig)
+			errSubject = "git"
+			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
+			if errInfo != nil {
+				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
+			}
 		}
 
-		if err != nil {
-			fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
+		if errReport != "" {
+			fmt.Printf("\x1b[36;1m%s\x1b[0m\n", errReport)
 		}
 	},
 }
