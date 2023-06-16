@@ -53,7 +53,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"temp": "/tmp/manager-build",
 			"go": map[string]interface{}{
 				"source": "https://github.com/YHYJ",
-				"names":  []string{"checker", "clone-repos", "eniac", "rolling", "scleaner", "skynet"},
+				"names":  []string{"checker", "clone-repos", "eniac", "manager", "rolling", "scleaner", "skynet"},
 			},
 			"shell": map[string]interface{}{
 				"source": "https://github.com/YHYJ/Program",
