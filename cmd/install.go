@@ -158,9 +158,10 @@ var installCmd = &cobra.Command{
 						// 检测目标文件是否存在
 						if !function.FileExist(installPath + name.(string)) { // 不存在，安装
 							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m installation complete\n", name.(string))
+							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
 							// TODO: Install
 						} else { // 存在，更新
-							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m update complete\n", name.(string))
+							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
 							// TODO: Update
 							// TODO: 已安装，判断已安装的程序和要安装的文件是否一样 <15-06-23, YJ>
 							// TODO: 一样，则输出“<ProgramName>已是最新版，无需更新” <15-06-23, YJ>
