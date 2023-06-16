@@ -31,14 +31,15 @@ var installCmd = &cobra.Command{
 		shellFlag, _ := cmd.Flags().GetBool("shell")
 
 		var (
-			installPath string
-			installTemp string
-			goSource    string
-			goNames     []interface{}
-			shellSource string
-			shellNames  []interface{}
-			httpProxy string
-			httpsProxy string
+			installPath     string
+			installTemp     string
+			goSource        string
+			goNames         []interface{}
+			goCompletionDir string
+			shellSource     string
+			shellNames      []interface{}
+			httpProxy       string
+			httpsProxy      string
 		)
 		// 检查配置文件是否存在
 		configTree, err := function.GetTomlConfig(cfgFile)
@@ -57,6 +58,9 @@ var installCmd = &cobra.Command{
 			}
 			if configTree.Has("install.go.names") {
 				goNames = configTree.Get("install.go.names").([]interface{})
+			}
+			if configTree.Has("install.go.completion_dir") {
+				goCompletionDir = configTree.Get("install.go.completion_dir").(string)
 			}
 			if configTree.Has("install.shell.source") {
 				shellSource = configTree.Get("install.shell.source").(string)
@@ -89,7 +93,7 @@ var installCmd = &cobra.Command{
 						// 设置代理
 						function.SetVariable("http_proxy", httpProxy)
 						function.SetVariable("https_proxy", httpsProxy)
-						// 下载源文件（如果Temp中已有源文件则删除）
+						// 下载源文件（如果Temp中已有源文件则删除重新下载）
 						if function.FileExist(installTemp + "/" + name.(string)) {
 							if err := os.RemoveAll(installTemp + "/" + name.(string)); err != nil {
 								fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
@@ -108,7 +112,7 @@ var installCmd = &cobra.Command{
 							if err != nil {
 								fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
 							} else {
-								fmt.Printf("Install %s...\n\n", name)
+								fmt.Printf("Install %s...\n", name)
 							}
 						} else {
 							// 判断已安装的程序和要安装的文件是否一样
@@ -119,10 +123,10 @@ var installCmd = &cobra.Command{
 							}
 							if equal {
 								// 一样，则输出无需更新信息
-								fmt.Printf("%s is already the newest version, no need to update\n\n", name)
+								fmt.Printf("%s is already the newest version, no need to update\n", name)
 							} else {
 								// 不一样，则更新程序，并输出已更新信息
-								fmt.Printf("Update %s...\n\n", name)
+								fmt.Printf("Update %s...\n", name)
 								if err := os.Remove(pathAreaFile); err != nil {
 									fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
 									return
@@ -132,6 +136,14 @@ var installCmd = &cobra.Command{
 									fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
 								}
 							}
+						}
+						// 生成/更新自动补全脚本
+						generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", pathAreaFile, goCompletionDir+"/"+"_"+name.(string))}
+						flag := function.RunCommandGetFlag("bash", generateArgs)
+						if flag {
+							fmt.Printf("%s autocompletion script installation complete\n\n", name.(string))
+						} else {
+							fmt.Printf("%s autocompletion script installation failed\n\n", name.(string))
 						}
 					}
 				}

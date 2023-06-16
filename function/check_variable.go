@@ -11,7 +11,9 @@ package function
 
 import (
 	"os"
+	"os/user"
 	"runtime"
+	"strconv"
 )
 
 var platformChart = map[string]map[string]string{
@@ -52,4 +54,13 @@ func GetHostname() string {
 // 设置环境变量
 func SetVariable(key, value string) error {
 	return os.Setenv(key, value)
+}
+
+// 根据ID获取用户信息
+func GetUserInfo(uid int) (*user.User, error) {
+	userInfo, err := user.LookupId(strconv.Itoa(uid))
+	if err != nil {
+		return nil, err
+	}
+	return userInfo, nil
 }
