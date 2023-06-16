@@ -22,7 +22,6 @@ func CloneRepoViaHTTP(path string, url string, repo string) {
 	_, err := git.PlainClone(path+"/"+repo, false, &git.CloneOptions{
 		URL:               url + "/" + repo,
 		RecurseSubmodules: 1,
-		Progress:          os.Stdout,
 	})
 	if err != nil {
 		fmt.Printf("%s\x1b[36;1m%s\x1b[0m%s%s\n", "Clone ", repo, " error: ", err)
