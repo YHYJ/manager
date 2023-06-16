@@ -44,7 +44,7 @@ var installCmd = &cobra.Command{
 		// 检查配置文件是否存在
 		configTree, err := function.GetTomlConfig(cfgFile)
 		if err != nil {
-			fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
+			fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 		} else {
 			// 获取配置项
 			if configTree.Has("install.path") {
@@ -81,11 +81,12 @@ var installCmd = &cobra.Command{
 			}
 			// 安装/更新基于go开发的程序
 			if goFlag {
+				fmt.Printf("\x1b[36;3m%s\x1b[0m\n", "Installing go-based programs...")
 				for _, name := range goNames {
 					// 创建临时目录
 					err := function.CreateDir(installTemp)
 					if err != nil {
-						fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 					} else {
 						// 组装文件名变量
 						tempAreaFile := installTemp + "/" + name.(string) + "/" + name.(string)
@@ -96,7 +97,7 @@ var installCmd = &cobra.Command{
 						// 下载源文件（如果Temp中已有源文件则删除重新下载）
 						if function.FileExist(installTemp + "/" + name.(string)) {
 							if err := os.RemoveAll(installTemp + "/" + name.(string)); err != nil {
-								fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 								return
 							}
 						}
@@ -110,30 +111,30 @@ var installCmd = &cobra.Command{
 						if !function.FileExist(pathAreaFile) { // 不存在，安装
 							err := function.InstallFile(tempAreaFile, pathAreaFile)
 							if err != nil {
-								fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 							} else {
-								fmt.Printf("Install %s...\n", name)
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m installation complete\n", name.(string))
 							}
 						} else {
 							// 判断已安装的程序和要安装的文件是否一样
 							equal, err := function.CompareFile(tempAreaFile, pathAreaFile)
 							if err != nil {
-								fmt.Println("Compare file error: ", err)
+								fmt.Printf("\x1b[31mCompare file error: %s\x1b[0m\n", err)
 								return
 							}
 							if equal {
 								// 一样，则输出无需更新信息
-								fmt.Printf("%s is already the newest version, no need to update\n", name)
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
 							} else {
 								// 不一样，则更新程序，并输出已更新信息
-								fmt.Printf("Update %s...\n", name)
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m update complete\n", name.(string))
 								if err := os.Remove(pathAreaFile); err != nil {
-									fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									return
 								}
 								err := function.InstallFile(tempAreaFile, pathAreaFile)
 								if err != nil {
-									fmt.Printf("\x1b[36;1m%s\x1b[0m\n", err)
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 								}
 							}
 						}
@@ -141,34 +142,31 @@ var installCmd = &cobra.Command{
 						generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", pathAreaFile, goCompletionDir+"/"+"_"+name.(string))}
 						flag := function.RunCommandGetFlag("bash", generateArgs)
 						if flag {
-							fmt.Printf("%s autocompletion script installation complete\n\n", name.(string))
+							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n\n", name.(string))
 						} else {
-							fmt.Printf("%s autocompletion script installation failed\n\n", name.(string))
+							fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n\n", name.(string))
 						}
 					}
 				}
 			}
 			// 安装/更新shell脚本
 			if shellFlag {
-				if function.FileExist(shellSource) {
-					for _, name := range shellNames {
-						// 检测源文件是否存在
-						if function.FileExist(shellSource + name.(string)) {
-							// 检测目标文件是否存在
-							if !function.FileExist(installPath + name.(string)) { // 不存在，安装
-								fmt.Printf("Install %s...\n\n", name.(string))
-								// TODO: Install
-							} else {
-								fmt.Printf("Update %s...\n\n", name.(string)) // 存在，更新
-								// TODO: Update
-								// TODO: 已安装，判断已安装的程序和要安装的文件是否一样 <15-06-23, YJ>
-								// TODO: 一样，则输出“<ProgramName>已是最新版，无需更新” <15-06-23, YJ>
-								// TODO: 不一样，则更新程序，并输出“<ProgramName>已更新到最新版” <15-06-23, YJ>
-							}
+				fmt.Printf("\x1b[36;3m%s\x1b[0m\n", "Installing shell-based programs...")
+				for _, name := range shellNames {
+					// 检测源文件是否存在
+					if function.FileExist(shellSource + name.(string)) {
+						// 检测目标文件是否存在
+						if !function.FileExist(installPath + name.(string)) { // 不存在，安装
+							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m installation complete\n", name.(string))
+							// TODO: Install
+						} else { // 存在，更新
+							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m update complete\n", name.(string))
+							// TODO: Update
+							// TODO: 已安装，判断已安装的程序和要安装的文件是否一样 <15-06-23, YJ>
+							// TODO: 一样，则输出“<ProgramName>已是最新版，无需更新” <15-06-23, YJ>
+							// TODO: 不一样，则更新程序，并输出“<ProgramName>已更新到最新版” <15-06-23, YJ>
 						}
 					}
-				} else {
-					fmt.Printf("\x1b[36;1m%s\x1b[0m\n", "Shell scripts source directory not exist")
 				}
 			}
 		}

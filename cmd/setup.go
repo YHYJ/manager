@@ -73,7 +73,7 @@ var setupCmd = &cobra.Command{
 
 		// 输出错误信息
 		if errReport != "" {
-			fmt.Printf("\x1b[36;1m%s\x1b[0m\n", errReport)
+			fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 		}
 	},
 }
