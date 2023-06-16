@@ -29,6 +29,7 @@ var setupCmd = &cobra.Command{
 		dockerFlag, _ := cmd.Flags().GetBool("docker")
 		gitFlag, _ := cmd.Flags().GetBool("git")
 
+		// 接收错误信息的变量
 		var errSubject string
 		var errInfo error
 		var errReport string
@@ -37,32 +38,32 @@ var setupCmd = &cobra.Command{
 		if allFlag {
 			pipFlag, npmFlag, dockerFlag, gitFlag = true, true, true, true
 		}
+		// 配置pip
 		if pipFlag {
-			// 配置pip
 			errSubject = "pip"
 			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
 			if errInfo != nil {
 				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
 			}
 		}
+		// 配置npm
 		if npmFlag {
-			// 配置npm
 			errSubject = "npm"
 			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
 			if errInfo != nil {
 				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
 			}
 		}
+		// 配置docker
 		if dockerFlag {
-			// 配置docker
 			errSubject = "docker"
 			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
 			if errInfo != nil {
 				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
 			}
 		}
+		// 配置git
 		if gitFlag {
-			// 配置git
 			errSubject = "git"
 			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
 			if errInfo != nil {
@@ -70,6 +71,7 @@ var setupCmd = &cobra.Command{
 			}
 		}
 
+		// 输出错误信息
 		if errReport != "" {
 			fmt.Printf("\x1b[36;1m%s\x1b[0m\n", errReport)
 		}
