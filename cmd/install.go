@@ -103,7 +103,11 @@ var installCmd = &cobra.Command{
 						}
 						function.CloneRepoViaHTTP(installTemp, goSource, name.(string))
 						// 进到源文件目录
-						function.GoToDir(installTemp + "/" + name.(string))
+						err := function.GoToDir(installTemp + "/" + name.(string))
+						if err != nil {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							return
+						}
 						// 编译生成二进制文件
 						buildArgs := []string{"build", "-o", name.(string)}
 						function.RunCommandGetFlag("go", buildArgs)
