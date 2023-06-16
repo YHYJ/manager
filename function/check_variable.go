@@ -48,3 +48,8 @@ func GetHostname() string {
 	}
 	return hostname
 }
+
+// 设置环境变量
+func SetVariable(key, value string) error {
+	return os.Setenv(key, value)
+}
