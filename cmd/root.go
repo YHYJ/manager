@@ -13,7 +13,6 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/yhyj/manager/function"
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -33,8 +32,7 @@ func Execute() {
 	}
 }
 
-var varHome = function.GetVariable("HOME")
-var cfgFile = varHome + "/.config/manager/config.toml"
+var cfgFile = "/etc/manager/config.toml"
 
 func init() {
 	rootCmd.Flags().BoolP("help", "h", false, "help for Manager")
