@@ -44,10 +44,21 @@ func GetTomlConfig(filePath string) (*toml.Tree, error) {
 func WriteTomlConfig(filePath string) (int64, error) {
 	// 定义一个map[string]interface{}类型的变量并赋值
 	exampleConf := map[string]interface{}{
+		"variable": map[string]interface{}{
+			"http_proxy": "http://127.0.0.1:1080",
+			"https_proxy": "http://127.0.0.1:1080",
+		},
 		"install": map[string]interface{}{
 			"path": "/usr/local/bin",
-			"program": map[string]interface{}{
+			"temp": "/tmp/manager-build",
+			"go": map[string]interface{}{
 				"source": "https://github.com/YHYJ",
+				"names":  []string{"checker", "clone-repos", "eniac", "rolling", "scleaner", "skynet"},
+			},
+			"shell": map[string]interface{}{
+				"source": "https://github.com/YHYJ/Program",
+				"dir":    "/tree/ArchLinux/System-Script/app",
+				"names":  []string{"collect-system", "configure-dtags", "py-virtualenv-tool", "save-docker-images", "sfm", "spacevim-update", "spider", "system-checkupdates", "trash-manager", "usb-manager"},
 			},
 		},
 	}
