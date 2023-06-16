@@ -17,8 +17,8 @@ import (
 	"github.com/go-git/go-git/v5"
 )
 
-// 克隆仓库
-func CloneRepo(path string, url string, repo string) {
+// 通过HTTP协议克隆仓库
+func CloneRepoViaHTTP(path string, url string, repo string) {
 	_, err := git.PlainClone(path+"/"+repo, false, &git.CloneOptions{
 		URL:               url + "/" + repo,
 		RecurseSubmodules: 1,

@@ -96,7 +96,7 @@ var installCmd = &cobra.Command{
 								return
 							}
 						}
-						function.CloneRepo(installTemp, goSource, name.(string))
+						function.CloneRepoViaHTTP(installTemp, goSource, name.(string))
 						// 进到源文件目录
 						function.GoToDir(installTemp + "/" + name.(string))
 						// 编译生成二进制文件
