@@ -113,7 +113,7 @@ var installCmd = &cobra.Command{
 							if err != nil {
 								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 							} else {
-								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m installation complete\n", name.(string))
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
 							}
 						} else {
 							// 判断已安装的程序和要安装的文件是否一样
@@ -127,7 +127,7 @@ var installCmd = &cobra.Command{
 								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
 							} else {
 								// 不一样，则更新程序，并输出已更新信息
-								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m update complete\n", name.(string))
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
 								if err := os.Remove(pathAreaFile); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									return
