@@ -62,8 +62,9 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"completion_dir": userInfo.HomeDir + "/.cache/oh-my-zsh/completions",
 			},
 			"shell": map[string]interface{}{
-				"source": "https://github.com/YHYJ/Program",
-				"dir":    "/tree/ArchLinux/System-Script/app",
+				"source": "https://github.com/YHYJ",
+				"repo": "Program",
+				"dir":    "/System-Script/app",
 				"names":  []string{"collect-system", "configure-dtags", "py-virtualenv-tool", "save-docker-images", "sfm", "spacevim-update", "spider", "system-checkupdates", "trash-manager", "usb-manager"},
 			},
 		},
