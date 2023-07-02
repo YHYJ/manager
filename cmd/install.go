@@ -87,6 +87,74 @@ var installCmd = &cobra.Command{
 			if allFlag {
 				goFlag, shellFlag = true, true
 			}
+			// 安装/更新shell脚本
+			if shellFlag {
+				// 设置代理
+				function.SetVariable("http_proxy", httpProxy)
+				function.SetVariable("https_proxy", httpsProxy)
+				// 创建临时目录
+				err := function.CreateDir(installTemp)
+				if err != nil {
+					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					return
+				}
+				fmt.Printf("\x1b[36;3m%s\x1b[0m\n", "Installing shell-based programs...")
+				// 下载源文件（如果Temp中已有源文件则删除重新下载）
+				if function.FileExist(installTemp + "/" + shellRepo) {
+					if err := os.RemoveAll(installTemp + "/" + shellRepo); err != nil {
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						return
+					}
+				}
+				function.CloneRepoViaHTTP(installTemp, shellSource, shellRepo)
+				// 进到源文件目录
+				err = function.GoToDir(installTemp + "/" + shellRepo)
+				if err != nil {
+					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					return
+				}
+				for _, name := range shellNames {
+					// 组装文件名变量
+					tempAreaFile := installTemp + "/" + shellRepo + shellDir + "/" + name.(string)
+					pathAreaFile := installPath + "/" + name.(string)
+					// 检测源文件是否存在
+					if function.FileExist(tempAreaFile) {
+						// 检测目标文件是否存在
+						if !function.FileExist(pathAreaFile) { // 不存在，安装
+							err := function.InstallFile(tempAreaFile, pathAreaFile)
+							if err != nil {
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							} else {
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+							}
+						} else {
+							// 判断已安装的程序和要安装的文件是否一样
+							equal, err := function.CompareFile(tempAreaFile, pathAreaFile)
+							if err != nil {
+								fmt.Printf("\x1b[31mCompare file error: %s\x1b[0m\n", err)
+								return
+							}
+							if equal {
+								// 一样，则输出无需更新信息
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
+							} else {
+								// 不一样，则更新程序，并输出已更新信息
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+								if err := os.Remove(pathAreaFile); err != nil {
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									return
+								}
+								err := function.InstallFile(tempAreaFile, pathAreaFile)
+								if err != nil {
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								}
+							}
+						}
+					} else {
+						fmt.Printf("\x1b[31mThe source file %s does not exist\x1b[0m\n", tempAreaFile)
+					}
+				}
+			}
 			// 安装/更新基于go开发的程序
 			if goFlag {
 				// 设置代理
@@ -163,74 +231,6 @@ var installCmd = &cobra.Command{
 						fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n\n", name.(string))
 					} else {
 						fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n\n", name.(string))
-					}
-				}
-			}
-			// 安装/更新shell脚本
-			if shellFlag {
-				// 设置代理
-				function.SetVariable("http_proxy", httpProxy)
-				function.SetVariable("https_proxy", httpsProxy)
-				// 创建临时目录
-				err := function.CreateDir(installTemp)
-				if err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-					return
-				}
-				fmt.Printf("\x1b[36;3m%s\x1b[0m\n", "Installing shell-based programs...")
-				// 下载源文件（如果Temp中已有源文件则删除重新下载）
-				if function.FileExist(installTemp + "/" + shellRepo) {
-					if err := os.RemoveAll(installTemp + "/" + shellRepo); err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						return
-					}
-				}
-				function.CloneRepoViaHTTP(installTemp, shellSource, shellRepo)
-				// 进到源文件目录
-				err = function.GoToDir(installTemp + "/" + shellRepo)
-				if err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-					return
-				}
-				for _, name := range shellNames {
-					// 组装文件名变量
-					tempAreaFile := installTemp + "/" + shellRepo + shellDir + "/" + name.(string)
-					pathAreaFile := installPath + "/" + name.(string)
-					// 检测源文件是否存在
-					if function.FileExist(tempAreaFile) {
-						// 检测目标文件是否存在
-						if !function.FileExist(pathAreaFile) { // 不存在，安装
-							err := function.InstallFile(tempAreaFile, pathAreaFile)
-							if err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							} else {
-								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
-							}
-						} else {
-							// 判断已安装的程序和要安装的文件是否一样
-							equal, err := function.CompareFile(tempAreaFile, pathAreaFile)
-							if err != nil {
-								fmt.Printf("\x1b[31mCompare file error: %s\x1b[0m\n", err)
-								return
-							}
-							if equal {
-								// 一样，则输出无需更新信息
-								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
-							} else {
-								// 不一样，则更新程序，并输出已更新信息
-								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
-								if err := os.Remove(pathAreaFile); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-									return
-								}
-								err := function.InstallFile(tempAreaFile, pathAreaFile)
-								if err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								}
-							}
-						}
-					} else {
-						fmt.Printf("\x1b[31mThe source file %s does not exist\x1b[0m\n", tempAreaFile)
 					}
 				}
 			}
