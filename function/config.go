@@ -58,11 +58,13 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"temp": "/tmp/manager-build",
 			"go": map[string]interface{}{
 				"source": "https://github.com/YHYJ",
+				"fallback_source": "https://git.yj1516.top/YJ",
 				"names":  []string{"checker", "clone-repos", "eniac", "manager", "rolling", "scleaner", "skynet"},
 				"completion_dir": userInfo.HomeDir + "/.cache/oh-my-zsh/completions",
 			},
 			"shell": map[string]interface{}{
 				"source": "https://github.com/YHYJ",
+				"fallback_source": "https://git.yj1516.top/YJ",
 				"repo": "Program",
 				"dir":    "/System-Script/app",
 				"names":  []string{"collect-system", "configure-dtags", "py-virtualenv-tool", "save-docker-images", "sfm", "spacevim-update", "spider", "system-checkupdates", "trash-manager", "usb-manager"},
