@@ -127,7 +127,7 @@ var installCmd = &cobra.Command{
 							} else {
 								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
 							}
-						} else {
+						} else { // 存在，更新
 							// 判断已安装的程序和要安装的文件是否一样
 							equal, err := function.CompareFile(tempAreaFile, pathAreaFile)
 							if err != nil {
@@ -198,7 +198,7 @@ var installCmd = &cobra.Command{
 							} else {
 								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
 							}
-						} else {
+						} else { // 存在，更新
 							// 判断已安装的程序和要安装的文件是否一样
 							equal, err := function.CompareFile(tempAreaFile, pathAreaFile)
 							if err != nil {
