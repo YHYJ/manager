@@ -186,7 +186,7 @@ var installCmd = &cobra.Command{
 						return
 					}
 					// 编译生成二进制文件
-					buildArgs := []string{"build", "-o", name.(string)}
+					buildArgs := []string{"build", "-trimpath", "-o", name.(string)}
 					function.RunCommandGetFlag("go", buildArgs)
 					// 检测源文件是否存在
 					if function.FileExist(tempAreaFile) {
