@@ -11,7 +11,7 @@ package function
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -40,7 +40,7 @@ func getLatestVersion(url string) (error, string) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(resp.Status), ""
+		return fmt.Errorf("Request failed with status: %s", resp.Status), ""
 	}
 
 	var datas []Data
