@@ -31,17 +31,19 @@ var installCmd = &cobra.Command{
 		shellFlag, _ := cmd.Flags().GetBool("shell")
 
 		var (
-			installPath     string
-			installTemp     string
-			goSource        string
-			goNames         []interface{}
-			goCompletionDir string
-			shellSource     string
-			shellRepo       string
-			shellDir        string
-			shellNames      []interface{}
-			httpProxy       string
-			httpsProxy      string
+			installPath         string
+			installTemp         string
+			goSourceURL         string
+			goSourceUsername    string
+			goNames             []interface{}
+			goCompletionDir     string
+			shellSourceURL      string
+			shellSourceUsername string
+			shellRepo           string
+			shellDir            string
+			shellNames          []interface{}
+			httpProxy           string
+			httpsProxy          string
 		)
 		// 检查配置文件是否存在
 		configTree, err := function.GetTomlConfig(cfgFile)
@@ -55,8 +57,11 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.temp") {
 				installTemp = configTree.Get("install.temp").(string)
 			}
-			if configTree.Has("install.go.source") {
-				goSource = configTree.Get("install.go.source").(string)
+			if configTree.Has("install.go.source_url") {
+				goSourceURL = configTree.Get("install.go.source_url").(string)
+			}
+			if configTree.Has("install.go.source_username") {
+				goSourceUsername = configTree.Get("install.go.source_username").(string)
 			}
 			if configTree.Has("install.go.names") {
 				goNames = configTree.Get("install.go.names").([]interface{})
@@ -64,8 +69,11 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.go.completion_dir") {
 				goCompletionDir = configTree.Get("install.go.completion_dir").(string)
 			}
-			if configTree.Has("install.shell.source") {
-				shellSource = configTree.Get("install.shell.source").(string)
+			if configTree.Has("install.shell.source_url") {
+				shellSourceURL = configTree.Get("install.shell.source_url").(string)
+			}
+			if configTree.Has("install.shell.source_username") {
+				shellSourceUsername = configTree.Get("install.shell.source_username").(string)
 			}
 			if configTree.Has("install.shell.repo") {
 				shellRepo = configTree.Get("install.shell.repo").(string)
@@ -106,6 +114,7 @@ var installCmd = &cobra.Command{
 						return
 					}
 				}
+				shellSource := shellSourceURL + "/" + shellSourceUsername
 				function.CloneRepoViaHTTP(installTemp, shellSource, shellRepo)
 				// 进到源文件目录
 				err = function.GoToDir(installTemp + "/" + shellRepo)
@@ -180,6 +189,7 @@ var installCmd = &cobra.Command{
 							return
 						}
 					}
+					goSource := goSourceURL + "/" + goSourceUsername
 					function.CloneRepoViaHTTP(installTemp, goSource, name.(string))
 					// 进到源文件目录
 					err := function.GoToDir(installTemp + "/" + name.(string))
