@@ -113,10 +113,11 @@ var installCmd = &cobra.Command{
 					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 					return
 				}
+				// 遍历所有脚本名
 				for _, name := range shellNames {
 					// 组装文件名变量
-					tempAreaFile := installTemp + "/" + shellRepo + shellDir + "/" + name.(string)
-					pathAreaFile := installPath + "/" + name.(string)
+					tempAreaFile := installTemp + "/" + shellRepo + shellDir + "/" + name.(string) // 最新文件
+					pathAreaFile := installPath + "/" + name.(string)                              // 已安装文件
 					// 检测源文件是否存在
 					if function.FileExist(tempAreaFile) {
 						// 检测目标文件是否存在
@@ -167,10 +168,11 @@ var installCmd = &cobra.Command{
 					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 					return
 				}
+				// 遍历所有程序名
 				for _, name := range goNames {
 					// 组装文件名变量
-					tempAreaFile := installTemp + "/" + name.(string) + "/" + name.(string)
-					pathAreaFile := installPath + "/" + name.(string)
+					tempAreaFile := installTemp + "/" + name.(string) + "/" + name.(string) // 最新文件
+					pathAreaFile := installPath + "/" + name.(string)                       // 已安装文件
 					// 下载源文件（如果Temp中已有源文件则删除重新下载）
 					if function.FileExist(installTemp + "/" + name.(string)) {
 						if err := os.RemoveAll(installTemp + "/" + name.(string)); err != nil {
