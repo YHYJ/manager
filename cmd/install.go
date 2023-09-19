@@ -89,6 +89,7 @@ var installCmd = &cobra.Command{
 			}
 			// 安装/更新shell脚本
 			if shellFlag {
+				fmt.Printf("\x1b[36;3m%s\x1b[0m\n", "Installing shell-based programs...")
 				// 设置代理
 				function.SetVariable("http_proxy", httpProxy)
 				function.SetVariable("https_proxy", httpsProxy)
@@ -98,7 +99,6 @@ var installCmd = &cobra.Command{
 					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 					return
 				}
-				fmt.Printf("\x1b[36;3m%s\x1b[0m\n", "Installing shell-based programs...")
 				// 下载源文件（如果Temp中已有源文件则删除重新下载）
 				if function.FileExist(installTemp + "/" + shellRepo) {
 					if err := os.RemoveAll(installTemp + "/" + shellRepo); err != nil {
@@ -157,6 +157,7 @@ var installCmd = &cobra.Command{
 			}
 			// 安装/更新基于go开发的程序
 			if goFlag {
+				fmt.Printf("\x1b[36;3m%s\x1b[0m\n", "Installing go-based programs...")
 				// 设置代理
 				function.SetVariable("http_proxy", httpProxy)
 				function.SetVariable("https_proxy", httpsProxy)
@@ -166,7 +167,6 @@ var installCmd = &cobra.Command{
 					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 					return
 				}
-				fmt.Printf("\x1b[36;3m%s\x1b[0m\n", "Installing go-based programs...")
 				for _, name := range goNames {
 					// 组装文件名变量
 					tempAreaFile := installTemp + "/" + name.(string) + "/" + name.(string)
