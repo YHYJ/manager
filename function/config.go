@@ -59,10 +59,10 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"go": map[string]interface{}{
 				"source_url": "https://git.yj1516.top",
 				"source_username": "YJ",
-				"source_api_url": "https://git.yj1516.top/api/v1",
+				"source_api": "https://git.yj1516.top/api/v1",
 				"fallback_source_url": "https://github.com",
 				"fallback_source_username": "YHYJ",
-				"fallback_source_api_url": "https://api.github.com",
+				"fallback_source_api": "https://api.github.com",
 				"names":  []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"},
 				"completion_dir": userInfo.HomeDir + "/.cache/oh-my-zsh/completions",
 			},
