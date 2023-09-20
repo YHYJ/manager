@@ -179,9 +179,6 @@ var installCmd = &cobra.Command{
 				}
 				// 遍历所有程序名
 				for _, name := range goNames {
-					// 组装文件名变量
-					tempAreaFile := installTemp + "/" + name.(string) + "/" + name.(string) // 最新文件
-					pathAreaFile := installPath + "/" + name.(string)                       // 已安装文件
 					// 下载源文件（如果Temp中已有源文件则删除重新下载）
 					if function.FileExist(installTemp + "/" + name.(string)) {
 						if err := os.RemoveAll(installTemp + "/" + name.(string)); err != nil {
@@ -200,6 +197,9 @@ var installCmd = &cobra.Command{
 					// 编译生成二进制文件
 					buildArgs := []string{"build", "-trimpath", "-o", name.(string)}
 					function.RunCommandGetFlag("go", buildArgs)
+					// 组装文件名变量
+					tempAreaFile := installTemp + "/" + name.(string) + "/" + name.(string) // 最新文件
+					pathAreaFile := installPath + "/" + name.(string)                       // 已安装文件
 					// 检测源文件是否存在
 					if function.FileExist(tempAreaFile) {
 						// 检测目标文件是否存在
