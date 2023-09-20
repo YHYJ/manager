@@ -33,11 +33,11 @@ var installCmd = &cobra.Command{
 		var (
 			installPath         string
 			installTemp         string
-			goSourceURL         string
+			goSourceUrl         string
 			goSourceUsername    string
 			goNames             []interface{}
 			goCompletionDir     string
-			shellSourceURL      string
+			shellSourceUrl      string
 			shellSourceUsername string
 			shellRepo           string
 			shellDir            string
@@ -58,7 +58,7 @@ var installCmd = &cobra.Command{
 				installTemp = configTree.Get("install.temp").(string)
 			}
 			if configTree.Has("install.go.source_url") {
-				goSourceURL = configTree.Get("install.go.source_url").(string)
+				goSourceUrl = configTree.Get("install.go.source_url").(string)
 			}
 			if configTree.Has("install.go.source_username") {
 				goSourceUsername = configTree.Get("install.go.source_username").(string)
@@ -70,7 +70,7 @@ var installCmd = &cobra.Command{
 				goCompletionDir = configTree.Get("install.go.completion_dir").(string)
 			}
 			if configTree.Has("install.shell.source_url") {
-				shellSourceURL = configTree.Get("install.shell.source_url").(string)
+				shellSourceUrl = configTree.Get("install.shell.source_url").(string)
 			}
 			if configTree.Has("install.shell.source_username") {
 				shellSourceUsername = configTree.Get("install.shell.source_username").(string)
@@ -114,7 +114,7 @@ var installCmd = &cobra.Command{
 						return
 					}
 				}
-				shellSource := shellSourceURL + "/" + shellSourceUsername
+				shellSource := shellSourceUrl + "/" + shellSourceUsername
 				function.CloneRepoViaHTTP(installTemp, shellSource, shellRepo)
 				// 进到源文件目录
 				err = function.GoToDir(installTemp + "/" + shellRepo)
@@ -186,7 +186,7 @@ var installCmd = &cobra.Command{
 							return
 						}
 					}
-					goSource := goSourceURL + "/" + goSourceUsername
+					goSource := goSourceUrl + "/" + goSourceUsername
 					function.CloneRepoViaHTTP(installTemp, goSource, name.(string))
 					// 进到源文件目录
 					err := function.GoToDir(installTemp + "/" + name.(string))
