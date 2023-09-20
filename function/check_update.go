@@ -20,7 +20,7 @@ type Data struct {
 	Name string `json:"name"`
 }
 
-func getLatestVersion(url string) (error, string) {
+func GetLatestVersion(url string) (error, string) {
 	client := http.Client{
 		Timeout: 5 * time.Second,
 	}
