@@ -235,15 +235,15 @@ var installCmd = &cobra.Command{
 						} else {
 							fmt.Printf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
 						}
-					}
-					// 生成/更新自动补全脚本
-					copmleteFile := fmt.Sprintf("%s/_%s", goCompletionDir, name.(string))
-					generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
-					flag := function.RunCommandGetFlag("bash", generateArgs)
-					if flag {
-						fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n\n", name.(string))
-					} else {
-						fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n\n", name.(string))
+						// 生成/更新自动补全脚本
+						copmleteFile := fmt.Sprintf("%s/_%s", goCompletionDir, name.(string))
+						generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
+						flag := function.RunCommandGetFlag("bash", generateArgs)
+						if flag {
+							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n\n", name.(string))
+						} else {
+							fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n\n", name.(string))
+						}
 					}
 				}
 			}
