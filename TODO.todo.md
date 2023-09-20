@@ -1,4 +1,5 @@
 - [ ] 'fallback*'系列参数已定义但还未使用 (2023-09-19 15:43)
+- [ ] 将shell更新分支更改为使用`git hash-object`结果和`curl https://api.github.com/repos/<用户名>/<仓库名>/contents/<文件路径>`结果中的'sha'值进行比较来判断脚本是否需要更新 (2023-09-20 15:35) (2023-09-20 15:36)
 - [X] 优化输出信息 (2023-06-16 13:40)
 - [X] 完成install --script部分 (2023-06-16 16:36)
 - [X] 默认配置项增加'go.fallbacksource'和'shell.fallbacksource' (2023-07-12 16:18)
