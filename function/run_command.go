@@ -24,7 +24,7 @@ var (
 )
 
 // 运行指定命令并获取命令输出
-func RunCommandGetResult(command string, args []string) string {
+func RunCommandGetResult(command string, args []string) (error, string) {
 	_, err = exec.LookPath(command)
 	if err == nil {
 		// 定义命令
@@ -33,11 +33,10 @@ func RunCommandGetResult(command string, args []string) string {
 		output, _ := cmd.Output()
 		// 类型转换
 		result = strings.TrimRight(string(output), "\n")
+		return nil, result
 	} else {
-		result = fmt.Sprintf("%v: %v\n", "Command not found", command)
+		return fmt.Errorf("Command not found: %v", command), ""
 	}
-
-	return result
 }
 
 // 运行指定命令并获取标志位
