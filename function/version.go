@@ -18,6 +18,6 @@ var (
 )
 
 func ProgramInfo() string {
-	programInfo := fmt.Sprintf("\033[1m%s\033[0m %s \033[1m%s\033[0m\n", name, "version", version)
+	programInfo := fmt.Sprintf("%s version %s\n", name, version)
 	return programInfo
 }
