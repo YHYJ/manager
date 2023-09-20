@@ -17,7 +17,10 @@ var (
 	version string = "v0.2.5"
 )
 
-func ProgramInfo() string {
-	programInfo := fmt.Sprintf("%s version %s\n", name, version)
+func ProgramInfo(only bool) string {
+	programInfo := fmt.Sprintf("%s\n", version)
+	if !only {
+		programInfo = fmt.Sprintf("%s version %s\n", name, version)
+	}
 	return programInfo
 }
