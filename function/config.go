@@ -72,7 +72,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"fallback_source_url": "https://github.com",
 				"fallback_source_username": "YHYJ",
 				"repo": "Program",
-				"dir":    "/System-Script/app",
+				"dir":    "System-Script/app",
 				"names":  []string{"collect-system", "configure-dtags", "py-virtualenv-tool", "save-docker-images", "sfm", "spacevim-update", "spider", "system-checkupdates", "trash-manager", "usb-manager"},
 			},
 		},
