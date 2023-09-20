@@ -24,6 +24,7 @@ var versionCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// 解析参数
 		onlyFlag, _ := cmd.Flags().GetBool("only")
+
 		programInfo := function.ProgramInfo(onlyFlag)
 		fmt.Printf(programInfo)
 	},
