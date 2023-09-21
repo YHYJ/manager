@@ -186,8 +186,18 @@ var installCmd = &cobra.Command{
 					goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string)) // API URL
 					localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                   // 本地程序路径
 					nameArgs := []string{"version", "--only"}                                                          // 本地程序参数
+					// 请求API
+					body, err := function.RequestApi(goSourceApiUrl)
+					if err != nil {
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						return
+					}
 					// 获取远端版本
-					err, remoteVersion := function.GetLatestVersion(goSourceApiUrl)
+					remoteVersion, err := function.ParseApiResponse(body)
+					if err != nil {
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						return
+					}
 					// 获取本地版本
 					commandNotFound, localVersion := function.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
