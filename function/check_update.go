@@ -79,7 +79,7 @@ func ParseApiResponse(body []byte) (string, error) {
 		if length == 0 {
 			return "", fmt.Errorf("Response body is empty")
 		}
-		// 获取其中的Hash信息
+		// 获取文件哈希值，适用于不带外部版本信息的
 		fileHash := datas.(map[string]interface{})["sha"].(string)
 		return fileHash, nil
 	} else {
