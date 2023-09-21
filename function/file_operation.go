@@ -93,7 +93,7 @@ func WriteFile(filePath string, content string) error {
 			}
 		} else {
 			// 文件内容不为空
-			return fmt.Errorf("file %s is not empty", filePath)
+			return fmt.Errorf("File %s is not empty", filePath)
 		}
 	} else {
 		// 文件不存在
