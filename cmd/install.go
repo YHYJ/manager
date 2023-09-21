@@ -255,6 +255,7 @@ var installCmd = &cobra.Command{
 							fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n", name.(string))
 						}
 					}
+					fmt.Println()
 				}
 			}
 		}
