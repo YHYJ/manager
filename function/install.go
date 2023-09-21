@@ -12,7 +12,9 @@ package function
 import (
 	"fmt"
 	"io"
+	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
 )
@@ -28,6 +30,48 @@ func CloneRepoViaHTTP(path string, url string, repo string) {
 	} else {
 		fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[32m%s\x1b[0m success\n", repo)
 	}
+}
+
+// 通过HTTP协议下载文件
+func DownloadFile(url string, urlFile string, outputFile string) (string, error) {
+	fileDownloadUrl := fmt.Sprintf("%s/%s", url, urlFile)
+
+	// 发送GET请求并获取响应
+	resp, err := http.Get(fileDownloadUrl)
+	if err != nil {
+		return "", fmt.Errorf("Error sending download request: %s", err)
+	}
+	defer resp.Body.Close()
+
+	// 检查返回值状态码
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("Error downloading file: %s", resp.Status)
+	}
+
+	// 创建下载文件夹
+	dir, filename := filepath.Split(outputFile)
+	if dir != "" {
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			return "", fmt.Errorf("Error creating download folder: %s", err)
+		}
+	}
+
+	// 创建本地文件
+	outputFileFullname := filepath.Join(dir, filename)
+	file, err := os.Create(outputFileFullname)
+	if err != nil {
+		return "", fmt.Errorf("Error creating download file: %s", err)
+	}
+	defer file.Close()
+
+	// 将响应主体复制到文件
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("Error writing download file: %s", err)
+	}
+
+	return outputFileFullname, nil
 }
 
 // 复制文件，如果文件存在则覆盖
