@@ -174,8 +174,7 @@ var installCmd = &cobra.Command{
 				function.SetVariable("http_proxy", httpProxy)
 				function.SetVariable("https_proxy", httpsProxy)
 				// 创建临时目录
-				err := function.CreateDir(installTemp)
-				if err != nil {
+				if err := function.CreateDir(installTemp); err != nil {
 					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 					return
 				}
