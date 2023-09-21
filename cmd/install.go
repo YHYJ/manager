@@ -250,9 +250,9 @@ var installCmd = &cobra.Command{
 						generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
 						flag := function.RunCommandGetFlag("bash", generateArgs)
 						if flag {
-							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n\n", name.(string))
+							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n", name.(string))
 						} else {
-							fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n\n", name.(string))
+							fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n", name.(string))
 						}
 					}
 				}
