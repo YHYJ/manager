@@ -69,8 +69,10 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"shell": map[string]interface{}{
 				"source_url": "https://git.yj1516.top",
 				"source_username": "YJ",
+				"source_api": "https://git.yj1516.top/api/v1",
 				"fallback_source_url": "https://github.com",
 				"fallback_source_username": "YHYJ",
+				"fallback_source_api": "https://api.github.com",
 				"repo": "Program",
 				"dir":    "System-Script/app",
 				"names":  []string{"collect-system", "configure-dtags", "py-virtualenv-tool", "save-docker-images", "sfm", "spacevim-update", "spider", "system-checkupdates", "trash-manager", "usb-manager"},
