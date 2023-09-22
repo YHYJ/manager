@@ -143,6 +143,7 @@ var installCmd = &cobra.Command{
 					if remoteHash == localHash { // Hash值一致，则输出无需更新信息
 						fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
 					} else { // Hash值不一致，则更新脚本，并输出已更新信息
+						fmt.Println() // 美化输出
 						// 下载远端脚本
 						shellSourceTempDir := fmt.Sprintf("%s/%s", installTemp, shellRepo)
 						shellSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellSourceUrl, shellSourceUsername, shellRepo, shellSourceBranch)
@@ -176,11 +177,11 @@ var installCmd = &cobra.Command{
 									fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
 								}
 							}
+							fmt.Println() // 美化输出
 						} else {
 							fmt.Printf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
 						}
 					}
-					fmt.Println()
 				}
 			}
 			// 安装/更新基于go开发的程序
@@ -217,6 +218,7 @@ var installCmd = &cobra.Command{
 					if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
 						fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
 					} else { // 版本不一致，则更新程序，并输出已更新信息
+						fmt.Println() // 美化输出
 						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
 						goSourceTempDir := fmt.Sprintf("%s/%s", installTemp, name.(string))
 						if function.FileExist(goSourceTempDir) {
@@ -252,20 +254,20 @@ var installCmd = &cobra.Command{
 									fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
 								}
 							}
+							// 生成/更新自动补全脚本
+							copmleteFile := fmt.Sprintf("%s/_%s", goCompletionDir, name.(string))
+							generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
+							flag := function.RunCommandGetFlag("bash", generateArgs)
+							if flag {
+								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n", name.(string))
+							} else {
+								fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n", name.(string))
+							}
+							fmt.Println() // 美化输出
 						} else {
 							fmt.Printf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
 						}
-						// 生成/更新自动补全脚本
-						copmleteFile := fmt.Sprintf("%s/_%s", goCompletionDir, name.(string))
-						generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
-						flag := function.RunCommandGetFlag("bash", generateArgs)
-						if flag {
-							fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n", name.(string))
-						} else {
-							fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n", name.(string))
-						}
 					}
-					fmt.Println()
 				}
 			}
 		}
