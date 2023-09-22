@@ -285,10 +285,12 @@ var installCmd = &cobra.Command{
 								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n", name.(string))
 								fmt.Printf(text)
 								length = len(text)
+								extra += 11 // 根据Sprintf定义格式不同需要增减
 							} else {
 								text := fmt.Sprintf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n", name.(string))
 								fmt.Printf(text)
 								length = len(text)
+								extra += 11 // 根据Sprintf定义格式不同需要增减
 							}
 						} else {
 							text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
