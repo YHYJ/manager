@@ -165,7 +165,6 @@ var installCmd = &cobra.Command{
 							} else { // 存在，更新
 								if err := os.Remove(localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-									return
 								}
 								if err := function.InstallFile(compileProgram, localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
@@ -206,13 +205,11 @@ var installCmd = &cobra.Command{
 					body, err := function.RequestApi(goSourceApiUrl)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						return
 					}
 					// 获取远端版本
 					remoteVersion, err := function.ParseApiResponse(body)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						return
 					}
 					// 获取本地版本
 					localVersion, commandErr := function.RunCommandGetResult(localProgram, nameArgs)
@@ -225,7 +222,6 @@ var installCmd = &cobra.Command{
 						if function.FileExist(goSourceTempDir) {
 							if err := os.RemoveAll(goSourceTempDir); err != nil {
 								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								return
 							}
 						}
 						goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)
@@ -233,7 +229,6 @@ var installCmd = &cobra.Command{
 						// 进到下载的远端文件目录
 						if err = function.GoToDir(goSourceTempDir); err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							return
 						}
 						// 编译生成程序
 						buildArgs := []string{"build", "-trimpath", "-o", name.(string)}
@@ -250,7 +245,6 @@ var installCmd = &cobra.Command{
 							} else { // 存在，更新
 								if err := os.Remove(localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-									return
 								}
 								if err := function.InstallFile(compileProgram, localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
