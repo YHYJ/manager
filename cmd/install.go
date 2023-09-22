@@ -231,7 +231,7 @@ var installCmd = &cobra.Command{
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 						}
 						// 编译生成程序
-						buildArgs := []string{"build", "-ldflags='-s -w'", "-trimpath", "-o", name.(string)}
+						buildArgs := []string{"build", "-ldflags=-s -w", "-trimpath", "-o", name.(string)}
 						function.RunCommandGetFlag("go", buildArgs)
 						// 检测编译生成的程序是否存在
 						if function.FileExist(compileProgram) {
