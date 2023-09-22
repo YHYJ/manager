@@ -165,7 +165,10 @@ var installCmd = &cobra.Command{
 									if err = os.Chmod(localProgram, 0755); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									}
-									fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+									fmt.Printf(text)
+									length = len(text)
+									extra += 11 // 根据Sprintf定义格式不同需要增减
 								}
 							} else { // 存在，更新
 								if err := os.Remove(localProgram); err != nil {
@@ -178,11 +181,17 @@ var installCmd = &cobra.Command{
 									if err = os.Chmod(localProgram, 0755); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									}
-									fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+									fmt.Printf(text)
+									length = len(text)
+									extra += 11 // 根据Sprintf定义格式不同需要增减
 								}
 							}
 						} else {
-							fmt.Printf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
+							text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
+							fmt.Printf(text)
+							length = len(text)
+							extra -= 11 // 根据Sprintf定义格式不同需要增减
 						}
 					}
 					dashes := strings.Repeat("-", length-extra) //组装分隔符
@@ -203,6 +212,8 @@ var installCmd = &cobra.Command{
 				// 遍历所有程序名
 				for _, name := range goNames {
 					// 组装变量
+					length := 0                                                                                        // 分隔符长度
+					extra := 21                                                                                        // 分隔符多余的长度
 					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, name.(string), name.(string))               // 编译生成的最新程序
 					goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string)) // API URL
 					localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                   // 本地程序路径
@@ -221,7 +232,9 @@ var installCmd = &cobra.Command{
 					localVersion, commandErr := function.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
-						fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
+						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
+						fmt.Printf(text)
+						length = len(text)
 					} else { // 版本不一致，则更新程序，并输出已更新信息
 						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
 						goSourceTempDir := fmt.Sprintf("%s/%s", installTemp, name.(string))
@@ -246,7 +259,10 @@ var installCmd = &cobra.Command{
 								if err := function.InstallFile(compileProgram, localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 								} else {
-									fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+									fmt.Printf(text)
+									length = len(text)
+									extra += 11 // 根据Sprintf定义格式不同需要增减
 								}
 							} else { // 存在，更新
 								if err := os.Remove(localProgram); err != nil {
@@ -255,7 +271,10 @@ var installCmd = &cobra.Command{
 								if err := function.InstallFile(compileProgram, localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 								} else {
-									fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+									fmt.Printf(text)
+									length = len(text)
+									extra += 11 // 根据Sprintf定义格式不同需要增减
 								}
 							}
 							// 生成/更新自动补全脚本
@@ -263,14 +282,23 @@ var installCmd = &cobra.Command{
 							generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
 							flag := function.RunCommandGetFlag("bash", generateArgs)
 							if flag {
-								fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n", name.(string))
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n", name.(string))
+								fmt.Printf(text)
+								length = len(text)
 							} else {
-								fmt.Printf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n", name.(string))
+								text := fmt.Sprintf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n", name.(string))
+								fmt.Printf(text)
+								length = len(text)
 							}
 						} else {
-							fmt.Printf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
+							text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
+							fmt.Printf(text)
+							length = len(text)
+							extra -= 11 // 根据Sprintf定义格式不同需要增减
 						}
 					}
+					dashes := strings.Repeat("-", length-extra) //组装分隔符
+					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
 				}
 			}
 		}
