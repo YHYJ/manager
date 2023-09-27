@@ -16,6 +16,7 @@ help:
 tidy:
 	@echo -e "\x1b[32m==>\x1b[0m Tidying up dependencies"
 	@go mod tidy
+	@echo -e "\x1b[32m[✔]\x1b[0m Successfully tidied up dependencies"
 
 build:
 	@echo -e "\x1b[32m==>\x1b[0m Trying to compile project"
