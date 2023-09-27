@@ -20,16 +20,17 @@ import (
 )
 
 // 通过HTTP协议克隆仓库
-func CloneRepoViaHTTP(path string, url string, repo string) {
+func CloneRepoViaHTTP(path string, url string, repo string) error {
 	_, err := git.PlainClone(path+"/"+repo, false, &git.CloneOptions{
 		URL:               url + "/" + repo,
 		RecurseSubmodules: 1,
 	})
-	if err != nil {
-		fmt.Printf("\x1b[31m==>\x1b[0m Clone \x1b[34m%s\x1b[0m error: %s\n", repo, err)
-	} else {
+	if err == nil {
 		fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m success\n", repo)
+		return nil
 	}
+
+	return fmt.Errorf("\x1b[31m==>\x1b[0m Clone \x1b[34m%s\x1b[0m error: %s\n", repo, err)
 }
 
 // 通过HTTP协议下载文件

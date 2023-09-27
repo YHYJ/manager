@@ -32,22 +32,29 @@ var installCmd = &cobra.Command{
 		shellFlag, _ := cmd.Flags().GetBool("shell")
 
 		var (
-			installPath         string
-			installTemp         string
-			goSourceUrl         string
-			goSourceApi         string
-			goSourceUsername    string
-			goNames             []interface{}
-			goCompletionDir     string
-			shellSourceUrl      string
-			shellSourceApi      string
-			shellSourceBranch   string
-			shellSourceUsername string
-			shellRepo           string
-			shellDir            string
-			shellNames          []interface{}
-			httpProxy           string
-			httpsProxy          string
+			installPath                 string
+			installTemp                 string
+			goSourceUrl                 string
+			goFallbackSourceUrl         string
+			goSourceApi                 string
+			goFallbackSourceApi         string
+			goSourceUsername            string
+			goFallbackSourceUsername    string
+			goNames                     []interface{}
+			goCompletionDir             string
+			shellSourceUrl              string
+			shellFallbackSourceUrl      string
+			shellSourceApi              string
+			shellFallbackSourceApi      string
+			shellSourceBranch           string
+			shellFallbackSourceBranch   string
+			shellSourceUsername         string
+			shellFallbackSourceUsername string
+			shellRepo                   string
+			shellDir                    string
+			shellNames                  []interface{}
+			httpProxy                   string
+			httpsProxy                  string
 		)
 		// 检查配置文件是否存在
 		configTree, err := function.GetTomlConfig(cfgFile)
@@ -64,11 +71,20 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.go.source_url") {
 				goSourceUrl = configTree.Get("install.go.source_url").(string)
 			}
+			if configTree.Has("install.go.fallback_source_url") {
+				goFallbackSourceUrl = configTree.Get("install.go.fallback_source_url").(string)
+			}
 			if configTree.Has("install.go.source_api") {
 				goSourceApi = configTree.Get("install.go.source_api").(string)
 			}
+			if configTree.Has("install.go.fallback_source_api") {
+				goFallbackSourceApi = configTree.Get("install.go.fallback_source_api").(string)
+			}
 			if configTree.Has("install.go.source_username") {
 				goSourceUsername = configTree.Get("install.go.source_username").(string)
+			}
+			if configTree.Has("install.go.fallback_source_username") {
+				goFallbackSourceUsername = configTree.Get("install.go.fallback_source_username").(string)
 			}
 			if configTree.Has("install.go.names") {
 				goNames = configTree.Get("install.go.names").([]interface{})
@@ -79,14 +95,26 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.shell.source_url") {
 				shellSourceUrl = configTree.Get("install.shell.source_url").(string)
 			}
+			if configTree.Has("install.shell.fallback_source_url") {
+				shellFallbackSourceUrl = configTree.Get("install.shell.fallback_source_url").(string)
+			}
 			if configTree.Has("install.shell.source_api") {
 				shellSourceApi = configTree.Get("install.shell.source_api").(string)
+			}
+			if configTree.Has("install.shell.fallback_source_api") {
+				shellFallbackSourceApi = configTree.Get("install.shell.fallback_source_api").(string)
 			}
 			if configTree.Has("install.shell.source_branch") {
 				shellSourceBranch = configTree.Get("install.shell.source_branch").(string)
 			}
+			if configTree.Has("install.shell.fallback_source_branch") {
+				shellFallbackSourceBranch = configTree.Get("install.shell.fallback_source_branch").(string)
+			}
 			if configTree.Has("install.shell.source_username") {
 				shellSourceUsername = configTree.Get("install.shell.source_username").(string)
+			}
+			if configTree.Has("install.shell.fallback_source_username") {
+				shellFallbackSourceUsername = configTree.Get("install.shell.fallback_source_username").(string)
 			}
 			if configTree.Has("install.shell.repo") {
 				shellRepo = configTree.Get("install.shell.repo").(string)
@@ -122,17 +150,21 @@ var installCmd = &cobra.Command{
 				// 遍历所有脚本名
 				for _, name := range shellNames {
 					// 组装变量
-					length := 0                                                                                                                                // 分隔符长度
-					extra := 21                                                                                                                                // 分隔符多余的长度
-					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, shellRepo, name.(string))                                                           // 从远端下载的最新脚本
-					shellSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string)) // API URL
-					localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                                           // 本地程序路径
-					gitHashObjectArgs := []string{"hash-object", localProgram}                                                                                 // 本地程序参数
+					length := 0                                                                                                                                                        // 分隔符长度
+					extra := 21                                                                                                                                                        // 分隔符多余的长度
+					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, shellRepo, name.(string))                                                                                   // 从远端下载的最新脚本
+					shellSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string))                         // API URL
+					shellFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellFallbackSourceApi, shellFallbackSourceUsername, shellRepo, shellDir, name.(string)) // Fallback API URL
+					localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                                                                   // 本地程序路径
+					gitHashObjectArgs := []string{"hash-object", localProgram}                                                                                                         // 本地程序参数
 					// 请求API
 					body, err := function.RequestApi(shellSourceApiUrl)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						return
+						if err != nil {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							body, err = function.RequestApi(shellFallbackSourceApiUrl)
+						}
 					}
 					// 获取远端脚本Hash值
 					remoteHash, err := function.ParseApiResponse(body)
@@ -151,9 +183,17 @@ var installCmd = &cobra.Command{
 						// 下载远端脚本
 						shellSourceTempDir := fmt.Sprintf("%s/%s", installTemp, shellRepo)
 						shellSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellSourceUrl, shellSourceUsername, shellRepo, shellSourceBranch)
+						shellFallbackSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellFallbackSourceUrl, shellFallbackSourceUsername, shellRepo, shellFallbackSourceBranch)
 						shellUrlFile := fmt.Sprintf("%s/%s", shellDir, name.(string))
 						shellOutputFile := fmt.Sprintf("%s/%s", shellSourceTempDir, name.(string))
-						function.DownloadFile(shellSource, shellUrlFile, shellOutputFile)
+						_, err := function.DownloadFile(shellSource, shellUrlFile, shellOutputFile)
+						if err != nil {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							_, err = function.DownloadFile(shellFallbackSource, shellUrlFile, shellOutputFile)
+							if err != nil {
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							}
+						}
 						// 检测脚本文件是否存在
 						if function.FileExist(compileProgram) {
 							// 检测本地程序是否存在
@@ -212,16 +252,21 @@ var installCmd = &cobra.Command{
 				// 遍历所有程序名
 				for _, name := range goNames {
 					// 组装变量
-					length := 0                                                                                        // 分隔符长度
-					extra := 21                                                                                        // 分隔符多余的长度
-					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, name.(string), name.(string))               // 编译生成的最新程序
-					goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string)) // API URL
-					localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                   // 本地程序路径
-					nameArgs := []string{"version", "--only"}                                                          // 本地程序参数
+					length := 0                                                                                                                // 分隔符长度
+					extra := 21                                                                                                                // 分隔符多余的长度
+					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, name.(string), name.(string))                                       // 编译生成的最新程序
+					goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string))                         // API URL
+					goFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // Fallback API URL
+					localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                           // 本地程序路径
+					nameArgs := []string{"version", "--only"}                                                                                  // 本地程序参数
 					// 请求API
 					body, err := function.RequestApi(goSourceApiUrl)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						body, err = function.RequestApi(goFallbackSourceApiUrl)
+						if err != nil {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						}
 					}
 					// 获取远端版本
 					remoteVersion, err := function.ParseApiResponse(body)
@@ -244,7 +289,15 @@ var installCmd = &cobra.Command{
 							}
 						}
 						goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)
-						function.CloneRepoViaHTTP(installTemp, goSource, name.(string))
+						goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername)
+						err := function.CloneRepoViaHTTP(installTemp, goSource, name.(string))
+						if err != nil {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							err = function.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string))
+							if err != nil {
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							}
+						}
 						// 进到下载的远端文件目录
 						if err = function.GoToDir(goSourceTempDir); err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
