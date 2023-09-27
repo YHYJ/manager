@@ -22,10 +22,10 @@ build:
 	@go build -trimpath -ldflags "-s -w" -o $(TARGET)
 	@echo -e "\x1b[32m[✔]\x1b[0m Successfully generated \x1b[36m$(TARGET)\x1b[0m"
 
-install: build
+install:
 	@echo -e "\x1b[34m==>\x1b[0m Trying to install $(TARGET)"
 	@install --mode=755 --owner=$(ATTRIBUTION) --group=$(ATTRIBUTION) $(TARGET) $(INSTALL_PATH)/$(TARGET)
-	@echo -e "\x1b[32m[✔]\x1b[0m Successfully installed $(TARGET)"
+	@echo -e "\x1b[32m[✔]\x1b[0m Successfully installed \x1b[36m$(TARGET)\x1b[0m"
 
 clean:
 	@echo -e "\x1b[34m==>\x1b[0m Cleaning build process files"
