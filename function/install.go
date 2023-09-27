@@ -26,9 +26,9 @@ func CloneRepoViaHTTP(path string, url string, repo string) {
 		RecurseSubmodules: 1,
 	})
 	if err != nil {
-		fmt.Printf("\x1b[31m==>\x1b[0m Clone \x1b[32m%s\x1b[0m error: %s\n", repo, err)
+		fmt.Printf("\x1b[31m==>\x1b[0m Clone \x1b[34m%s\x1b[0m error: %s\n", repo, err)
 	} else {
-		fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[32m%s\x1b[0m success\n", repo)
+		fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m success\n", repo)
 	}
 }
 
