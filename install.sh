@@ -110,7 +110,7 @@ function compileInstall() {
   cd "$repo_temp" || exit $err_file
   # 检测Makefile文件是否存在，存在则使用Makefile编译，不存在则使用go build编译
   if [ -e "Makefile" ]; then
-    if command -v make &> /dev/null; then
+    if command -v make > /dev/null 2>&1; then
       # Compile
       make
       # Install
@@ -119,7 +119,7 @@ function compileInstall() {
       echo -e "\x1b[31mError: 'make' not installed!\x1b[0m"
     fi
   elif [ -e "main.go" ]; then
-    if command -v go &> /dev/null; then
+    if command -v go > /dev/null 2>&1; then
       # Compile
       echo -e "\x1b[32m==>\x1b[0m Trying to compile project"
       go build -trimpath -ldflags="-s -w" -o "$app_name"
