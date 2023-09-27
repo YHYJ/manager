@@ -114,7 +114,7 @@ function compileInstall() {
       # Compile
       make
       # Install
-      pkexec make install
+      make install
     else
       echo -e "\x1b[31mError: 'make' not installed!\x1b[0m"
     fi
@@ -126,7 +126,7 @@ function compileInstall() {
       echo -e "\x1b[32m[✔]\x1b[0m Successfully generated \x1b[32m$app_name\x1b[0m"
       # Install
       echo -e "\x1b[32m==>\x1b[0m Trying to install $app_name"
-      pkexec install --mode=755 --owner=$attribution --group=$attribution $app_name $install_path/$app_name
+      install --mode=755 --owner=$attribution --group=$attribution $app_name $install_path/$app_name
       echo -e "\x1b[32m[✔]\x1b[0m Successfully installed \x1b[32m$app_name\x1b[0m"
     else
       echo -e "\x1b[31mError: 'go' not installed!\x1b[0m"
