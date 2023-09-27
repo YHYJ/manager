@@ -254,7 +254,7 @@ var installCmd = &cobra.Command{
 							makeArgs := []string{}
 							function.RunCommandGetFlag("make", makeArgs)
 						} else { // Makefile文件不存在则使用go build编译
-							buildArgs := []string{"build", "-ldflags=-s -w", "-trimpath", "-o", name.(string)}
+							buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
 							function.RunCommandGetFlag("go", buildArgs)
 						}
 						// 检测编译生成的程序是否存在
