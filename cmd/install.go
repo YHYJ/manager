@@ -60,6 +60,7 @@ var installCmd = &cobra.Command{
 		configTree, err := function.GetTomlConfig(cfgFile)
 		if err != nil {
 			fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+			return
 		} else {
 			// 获取配置项
 			if configTree.Has("install.path") {
@@ -161,16 +162,16 @@ var installCmd = &cobra.Command{
 					body, err := function.RequestApi(shellSourceApiUrl)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						body, err = function.RequestApi(shellFallbackSourceApiUrl)
 						if err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							body, err = function.RequestApi(shellFallbackSourceApiUrl)
+							continue
 						}
 					}
 					// 获取远端脚本Hash值
 					remoteHash, err := function.ParseApiResponse(body)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						return
 					}
 					// 获取本地脚本Hash值
 					localHash, commandErr := function.RunCommandGetResult("git", gitHashObjectArgs)
@@ -192,6 +193,7 @@ var installCmd = &cobra.Command{
 							_, err = function.DownloadFile(shellFallbackSource, shellUrlFile, shellOutputFile)
 							if err != nil {
 								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								continue
 							}
 						}
 						// 检测脚本文件是否存在
@@ -200,6 +202,7 @@ var installCmd = &cobra.Command{
 							if commandErr != nil { // 不存在，安装
 								if err := function.InstallFile(compileProgram, localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									continue
 								} else {
 									// 为已安装的脚本设置可执行权限
 									if err = os.Chmod(localProgram, 0755); err != nil {
@@ -216,6 +219,7 @@ var installCmd = &cobra.Command{
 								}
 								if err := function.InstallFile(compileProgram, localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									continue
 								} else {
 									// 为已更新的脚本设置可执行权限
 									if err = os.Chmod(localProgram, 0755); err != nil {
@@ -266,6 +270,7 @@ var installCmd = &cobra.Command{
 						body, err = function.RequestApi(goFallbackSourceApiUrl)
 						if err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							continue
 						}
 					}
 					// 获取远端版本
@@ -296,19 +301,23 @@ var installCmd = &cobra.Command{
 							err = function.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string))
 							if err != nil {
 								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								continue
 							}
 						}
 						// 进到下载的远端文件目录
 						if err = function.GoToDir(goSourceTempDir); err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							continue
 						}
 						// 编译生成程序
 						if function.FileExist("Makefile") { // Makefile文件存在则使用make编译
 							makeArgs := []string{}
 							function.RunCommandGetFlag("make", makeArgs)
-						} else { // Makefile文件不存在则使用go build编译
+						} else if function.FileExist("main.go") { // Makefile文件不存在则使用go build编译
 							buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
 							function.RunCommandGetFlag("go", buildArgs)
+						} else {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", "Makefile or main.go file does not exist")
 						}
 						// 检测编译生成的程序是否存在
 						if function.FileExist(compileProgram) {
@@ -320,6 +329,7 @@ var installCmd = &cobra.Command{
 								} else { // Makefile文件不存在则使用自定义函数安装
 									if err := function.InstallFile(compileProgram, localProgram); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+										continue
 									} else {
 										// 为已安装的脚本设置可执行权限
 										if err = os.Chmod(localProgram, 0755); err != nil {
@@ -341,6 +351,7 @@ var installCmd = &cobra.Command{
 									}
 									if err := function.InstallFile(compileProgram, localProgram); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+										continue
 									} else {
 										// 为已安装的脚本设置可执行权限
 										if err = os.Chmod(localProgram, 0755); err != nil {
