@@ -250,40 +250,55 @@ var installCmd = &cobra.Command{
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 						}
 						// 编译生成程序
-						buildArgs := []string{"build", "-ldflags=-s -w", "-trimpath", "-o", name.(string)}
-						function.RunCommandGetFlag("go", buildArgs)
+						if function.FileExist("Makefile") { // Makefile文件存在则使用make编译
+							makeArgs := []string{}
+							function.RunCommandGetFlag("make", makeArgs)
+						} else { // Makefile文件不存在则使用go build编译
+							buildArgs := []string{"build", "-ldflags=-s -w", "-trimpath", "-o", name.(string)}
+							function.RunCommandGetFlag("go", buildArgs)
+						}
 						// 检测编译生成的程序是否存在
 						if function.FileExist(compileProgram) {
 							// 检测本地程序是否存在
 							if commandErr != nil { // 不存在，安装
-								if err := function.InstallFile(compileProgram, localProgram); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								} else {
-									// 为已安装的脚本设置可执行权限
-									if err = os.Chmod(localProgram, 0755); err != nil {
+								if function.FileExist("Makefile") { // Makefile文件存在则使用make install安装
+									makeArgs := []string{"install"}
+									function.RunCommandGetFlag("make", makeArgs)
+								} else { // Makefile文件不存在则使用自定义函数安装
+									if err := function.InstallFile(compileProgram, localProgram); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									} else {
+										// 为已安装的脚本设置可执行权限
+										if err = os.Chmod(localProgram, 0755); err != nil {
+											fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+										}
 									}
-									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
-									fmt.Printf(text)
-									length = len(text)
-									extra += 11 // 根据Sprintf定义格式不同需要增减
 								}
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+								fmt.Printf(text)
+								length = len(text)
+								extra += 11 // 根据Sprintf定义格式不同需要增减
 							} else { // 存在，更新
-								if err := os.Remove(localProgram); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								}
-								if err := function.InstallFile(compileProgram, localProgram); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								} else {
-									// 为已安装的脚本设置可执行权限
-									if err = os.Chmod(localProgram, 0755); err != nil {
+								if function.FileExist("Makefile") { // Makefile文件存在则使用make install更新
+									makeArgs := []string{"install"}
+									function.RunCommandGetFlag("make", makeArgs)
+								} else { // Makefile文件不存在则使用自定义函数更新
+									if err := os.Remove(localProgram); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									}
-									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
-									fmt.Printf(text)
-									length = len(text)
-									extra += 11 // 根据Sprintf定义格式不同需要增减
+									if err := function.InstallFile(compileProgram, localProgram); err != nil {
+										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									} else {
+										// 为已安装的脚本设置可执行权限
+										if err = os.Chmod(localProgram, 0755); err != nil {
+											fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+										}
+									}
 								}
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+								fmt.Printf(text)
+								length = len(text)
+								extra += 11 // 根据Sprintf定义格式不同需要增减
 							}
 							// 生成/更新自动补全脚本
 							copmleteFile := fmt.Sprintf("%s/_%s", goCompletionDir, name.(string))
