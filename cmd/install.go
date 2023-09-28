@@ -282,7 +282,7 @@ var installCmd = &cobra.Command{
 					localVersion, commandErr := function.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
-						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
+						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33;1m%s\x1b[0m is already the latest version\n", name.(string), remoteVersion)
 						fmt.Printf(text)
 						length = len(text)
 					} else { // 版本不一致，则更新程序，并输出已更新信息
@@ -337,7 +337,7 @@ var installCmd = &cobra.Command{
 										}
 									}
 								}
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string), remoteVersion)
 								fmt.Printf(text)
 								length = len(text)
 								extra += 11 // 根据Sprintf定义格式不同需要增减
@@ -359,7 +359,7 @@ var installCmd = &cobra.Command{
 										}
 									}
 								}
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string), remoteVersion)
 								fmt.Printf(text)
 								length = len(text)
 								extra += 11 // 根据Sprintf定义格式不同需要增减
