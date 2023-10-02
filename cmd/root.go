@@ -37,5 +37,5 @@ var cfgFile = "/etc/manager/config.toml"
 func init() {
 	rootCmd.Flags().BoolP("help", "h", false, "help for Manager")
 
-	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", cfgFile, "Config file")
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", cfgFile, "Specify configuration file")
 }
