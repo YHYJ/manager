@@ -33,11 +33,10 @@ var setupCmd = &cobra.Command{
 		npmFlag, _ := cmd.Flags().GetBool("npm")
 		pipFlag, _ := cmd.Flags().GetBool("pip")
 
-		// 接收错误信息的变量
 		var (
-		errSubject string
-		errInfo error
-		errReport string
+			subjectName string
+			errInfo     error
+			errReport   string
 		)
 
 		// 根据参数执行操作
@@ -47,75 +46,91 @@ var setupCmd = &cobra.Command{
 
 		// 配置chezmoi
 		if chezmoiFlag {
-			errSubject = "chezmoi"
+			subjectName = "chezmoi"
 			errInfo = function.WriteFile(function.ChezmoiConfigFile, function.ChezmoiConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
 			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
 		}
 		// 配置cobra
 		if cobraFlag {
-			errSubject = "cobra"
+			subjectName = "cobra"
 			errInfo = function.WriteFile(function.CobraConfigFile, function.CobraConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
 			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
 		}
 		// 配置docker
 		if dockerFlag {
-			errSubject = "docker"
+			subjectName = "docker"
 			errInfo = function.WriteFile(function.DockerConfigFile, function.DockerConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
 			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
 		}
 		// 配置frpc
 		if frpcFlag {
-			errSubject = "frpc"
+			subjectName = "frpc"
 			errInfo = function.WriteFile(function.FrpcConfigFile, function.FrpcConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
 			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
 		}
 		// 配置git
 		if gitFlag {
-			errSubject = "git"
+			subjectName = "git"
 			errInfo = function.WriteFile(function.GitConfigFile, function.GitConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
 			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
 		}
 		// 配置golang
 		if goFlag {
-			errSubject = "go"
+			subjectName = "go"
 			errInfo = function.WriteFile(function.GoConfigFile, function.GoConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
 			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
 		}
 		// 配置npm
 		if npmFlag {
-			errSubject = "npm"
+			subjectName = "npm"
 			errInfo = function.WriteFile(function.NpmConfigFile, function.NpmConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
 			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
 		}
 		// 配置pip
 		if pipFlag {
-			errSubject = "pip"
+			subjectName = "pip"
 			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
 			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
 		}
 	},
 }
