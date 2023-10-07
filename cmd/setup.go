@@ -30,9 +30,11 @@ var setupCmd = &cobra.Command{
 		gitFlag, _ := cmd.Flags().GetBool("git")
 
 		// 接收错误信息的变量
-		var errSubject string
-		var errInfo error
-		var errReport string
+		var (
+		errSubject string
+		errInfo error
+		errReport string
+		)
 
 		// 根据参数执行操作
 		if allFlag {
@@ -43,37 +45,36 @@ var setupCmd = &cobra.Command{
 			errSubject = "pip"
 			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
 			if errInfo != nil {
-				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
+				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 			}
 		}
 		// 配置npm
 		if npmFlag {
 			errSubject = "npm"
-			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
+			errInfo = function.WriteFile(function.NpmConfigFile, function.NpmConfig)
 			if errInfo != nil {
-				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
+				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 			}
 		}
 		// 配置docker
 		if dockerFlag {
 			errSubject = "docker"
-			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
+			errInfo = function.WriteFile(function.DockerConfigFile, function.DockerConfig)
 			if errInfo != nil {
-				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
+				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 			}
 		}
 		// 配置git
 		if gitFlag {
 			errSubject = "git"
-			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
+			errInfo = function.WriteFile(function.GitConfigFile, function.GitConfig)
 			if errInfo != nil {
-				errReport = errReport + errSubject + ": " + errInfo.Error() + "\n"
+				errReport = fmt.Sprintf("%s: %s\n", errSubject, errInfo.Error())
+				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 			}
-		}
-
-		// 输出错误信息
-		if errReport != "" {
-			fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 		}
 	},
 }
