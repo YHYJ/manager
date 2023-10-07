@@ -376,12 +376,12 @@ var installCmd = &cobra.Command{
 							generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
 							flag := function.RunCommandGetFlag("bash", generateArgs)
 							if flag {
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), acsInstallSuccessMessage)
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m %s\n", acsInstallSuccessMessage)
 								fmt.Printf(text)
 								textLength = len(text)
 								sepExtraLength -= 11 // 根据Sprintf定义格式不同需要增减
 							} else {
-								text := fmt.Sprintf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), acsInstallFailedMessage)
+								text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
 								fmt.Printf(text)
 								textLength = len(text)
 								sepExtraLength -= 11 // 根据Sprintf定义格式不同需要增减
