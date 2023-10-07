@@ -22,12 +22,15 @@ var configCmd = &cobra.Command{
 	Short: "Operate configuration file",
 	Long:  `Manipulate the program's configuration files, including generating and printing.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// 获取配置文件路径
-		cfgFile, _ := cmd.Flags().GetString("config")
 		// 解析参数
+		cfgFile, _ := cmd.Flags().GetString("config")
 		createFlag, _ := cmd.Flags().GetBool("create")
 		forceFlag, _ := cmd.Flags().GetBool("force")
 		printFlag, _ := cmd.Flags().GetBool("print")
+
+		var (
+			cfgFileNotFoundMessage = "Configuration file not found (use --create to create a configuration file)" // 配置文件不存在
+		)
 
 		// 检查配置文件是否存在
 		cfgFileExist := function.FileExist(cfgFile)
@@ -67,7 +70,7 @@ var configCmd = &cobra.Command{
 					fmt.Println(configTree)
 				}
 			} else {
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", "Configuration file not found (use --create to create a configuration file)")
+				fmt.Printf("\x1b[31m%s\x1b[0m\n", cfgFileNotFoundMessage)
 			}
 		}
 	},
