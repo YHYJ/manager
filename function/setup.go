@@ -9,43 +9,37 @@ Description: 子命令`setup`功能函数
 
 package function
 
-var varHome = GetVariable("HOME")
+import "fmt"
 
-// pip配置文件内容
-var PipConfigFile = varHome + "/.config/pip/pip.conf"
-var PipConfig = `[global]
-index-url = http://mirrors.aliyun.com/pypi/simple
-trusted-host = mirrors.aliyun.com
-`
+var (
+	varHome = GetVariable("HOME")
 
-// npm配置文件内容
-var NpmConfigFile = varHome + "/.npmrc"
-var NpmConfig = `registry=https://registry.npm.taobao.org`
+	// pip配置文件内容
+	PipConfig     = "[global]\nindex-url = http://mirrors.aliyun.com/pypi/simple\ntrusted-host = mirrors.aliyun.com"
+	PipConfigFile = varHome + "/.config/pip/pip.conf"
 
-// docker配置文件内容
-var DockerConfigFile = "/etc/systemd/system/docker.service.d/override.conf"
-var DockerConfig = `[Service]
-ExecStart=
-ExecStart=/usr/bin/dockerd --data-root=` + varHome + `/Documents/Docker/Root -H fd://
-`
+	// npm配置文件内容
+	NpmConfig     = "registry=https://registry.npm.taobao.org"
+	NpmConfigFile = varHome + "/.npmrc"
 
-// git配置文件内容
-var GitConfigFile = varHome + "/.gitconfig"
-var GitConfig = `[user]
-	name = ` + GetHostname() + `
-	email = yj1516268@outlook.com
-[core]
-	editor = /usr/bin/nvim
-	autocrlf = input
-[merge]
-	tool = vimdiff
-[color]
-	ui = true
-[pull]
-	rebase = false
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-`
+	// docker配置文件内容
+	DockerConfig     = "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --data-root=" + varHome + "/Documents/Docker/Root -H fd://"
+	DockerConfigFile = "/etc/systemd/system/docker.service.d/override.conf"
+
+	// git配置文件内容
+	gitUserName          = "name = " + GetHostname()
+	gitUserEmail         = "email = yj1516268@outlook.com"
+	gitCoreEditor        = "editor = vim"
+	gitCoreAutoCRLF      = "autocrlf = input"
+	gitMergeTool         = "tool = vimdiff"
+	gitColorUI           = "ui = true"
+	gitPullRebase        = "rebase = false"
+	gitFilterLfsClean    = "clean = git-lfs clean -- %f"
+	gitFilterLfsSmudge   = "smudge = git-lfs smudge -- %f"
+	gitFilterLfsProcess  = "process = git-lfs filter-process"
+	gitFilterLfsRequired = "required = true"
+	sep                  = "    "
+	format               = "[user]\n%s%s\n%s%s\n[core]\n%s%s\n%s%s\n[merge]\n%s%s\n[color]\n%s%s\n[pull]\n%s%s\n[filter \"lfs\"]\n%s%s\n%s%s\n%s%s\n%s%s"
+	GitConfig            = fmt.Sprintf(format, sep, gitUserName, sep, gitUserEmail, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
+	GitConfigFile        = varHome + "/.gitconfig"
+)
