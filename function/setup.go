@@ -16,23 +16,31 @@ var (
 	sep     = "    "
 
 	// chezmoi
-	chezmoiSourceDir    = `sourceDir = "~/Documents/Repos/System/Profile"`
-	chezmoiAutoCommit   = "autoCommit = false"
-	chezmoiAutoPush     = "autoPush = false"
-	chezmoiConfigFormat = "%s\n[git]\n%s%s\n%s%s\n"
+	chezmoiSourceDir    = `"~/Documents/Repos/System/Profile"`
+	chezmoiAutoCommit   = false
+	chezmoiAutoPush     = false
+	chezmoiConfigFormat = "sourceDir = %s\n[git]\n%sautoCommit = %v\n%sautoPush = %v\n"
 	ChezmoiConfig       = fmt.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
 	ChezmoiConfigFile   = varHome + "/.config/chezmoi/chezmoi.toml"
 
 	// cobra配置
-	CobraConfig     = "author: YJ <yj1516268@outlook.com>\nlicense: GPLv3\nuseViper: false\n"
-	CobraConfigFile = varHome + "/.cobra.yaml"
+	cobraAuthor       = "YJ"
+	cobraEmail        = "yj1516268@outlook.com"
+	cobraLicense      = "GPLv3"
+	cobraUseViper     = false
+	cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
+	CobraConfig       = fmt.Sprintf(cobraConfigFormat, cobraAuthor, cobraEmail, cobraLicense, cobraUseViper)
+	CobraConfigFile   = varHome + "/.cobra.yaml"
 
 	// docker配置
-	DockerServiceConfig       = "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --data-root=" + varHome + "/Documents/Docker/Root -H fd://\n"
-	DockerServiceConfigFile   = "/etc/systemd/system/docker.service.d/override.conf"
-	dockerMirrorsConfigFormat = "{\n%s\"registry-mirrors\": [\"https://docker.mirrors.ustc.edu.cn\"]\n}\n"
-	DockerMirrorsConfig       = fmt.Sprintf(dockerMirrorsConfigFormat, sep)
-	DockerMirrorsConfigFile   = "/etc/docker/daemon.json"
+	// docker service
+	DockerServiceConfig     = "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --data-root=" + varHome + "/Documents/Docker/Root -H fd://\n"
+	DockerServiceConfigFile = "/etc/systemd/system/docker.service.d/override.conf"
+	// docker mirrors
+	dockerMirrorsRegistryMirrors = []string{`"https://docker.mirrors.ustc.edu.cn"`}
+	dockerMirrorsConfigFormat    = "{\n%s\"registry-mirrors\": %s\n}\n"
+	DockerMirrorsConfig          = fmt.Sprintf(dockerMirrorsConfigFormat, sep, dockerMirrorsRegistryMirrors)
+	DockerMirrorsConfigFile      = "/etc/docker/daemon.json"
 
 	// frpc配置
 	FrpcConfig     = "[Service]\nRestart=always\n"
