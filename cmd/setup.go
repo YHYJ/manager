@@ -86,6 +86,6 @@ func init() {
 	setupCmd.Flags().BoolP("docker", "", false, "Set up Docker Root Directory")
 	setupCmd.Flags().BoolP("git", "", false, "Set up git and generate SSH keys")
 
-	setupCmd.Flags().BoolP("help", "h", false, "help for setup")
+	setupCmd.Flags().BoolP("help", "h", false, "help for setup command")
 	rootCmd.AddCommand(setupCmd)
 }

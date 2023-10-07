@@ -406,6 +406,6 @@ func init() {
 	installCmd.Flags().BoolP("go", "", false, "Install or update programs developed based on go")
 	installCmd.Flags().BoolP("shell", "", false, "Install or update shell scripts")
 
-	installCmd.Flags().BoolP("help", "h", false, "help for install")
+	installCmd.Flags().BoolP("help", "h", false, "help for install command")
 	rootCmd.AddCommand(installCmd)
 }
