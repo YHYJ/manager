@@ -53,7 +53,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 				return
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置cobra
 		if cobraFlag {
@@ -64,18 +64,26 @@ var setupCmd = &cobra.Command{
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 				return
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置docker
 		if dockerFlag {
-			subjectName = "docker"
-			errInfo = function.WriteFile(function.DockerConfigFile, function.DockerConfig)
+			subjectName = "docker service"
+			errInfo = function.WriteFile(function.DockerServiceConfigFile, function.DockerServiceConfig)
 			if errInfo != nil {
 				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 				return
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
+			subjectName = "docker mirrors"
+			errInfo = function.WriteFile(function.DockerMirrorsConfigFile, function.DockerMirrorsConfig)
+			if errInfo != nil {
+				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
+				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
+				return
+			}
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置frpc
 		if frpcFlag {
@@ -86,7 +94,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 				return
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置git
 		if gitFlag {
@@ -97,7 +105,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 				return
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置golang
 		if goFlag {
@@ -108,7 +116,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 				return
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置npm
 		if npmFlag {
@@ -119,7 +127,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 				return
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置pip
 		if pipFlag {
@@ -130,7 +138,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
 				return
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m Setup completed\n", subjectName)
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 	},
 }
@@ -139,7 +147,7 @@ func init() {
 	setupCmd.Flags().BoolP("all", "", false, "Set up all programs/scripts")
 	setupCmd.Flags().BoolP("chezmoi", "", false, "Set up chezmoi")
 	setupCmd.Flags().BoolP("cobra", "", false, "Set up cobra-cli")
-	setupCmd.Flags().BoolP("docker", "", false, "Set up Docker Root Directory (need to be root)")
+	setupCmd.Flags().BoolP("docker", "", false, "Set up docker (need to be root)")
 	setupCmd.Flags().BoolP("frpc", "", false, "Set up frpc restart timing (need to be root)")
 	setupCmd.Flags().BoolP("git", "", false, "Set up git and generate SSH keys")
 	setupCmd.Flags().BoolP("go", "", false, "Set up golang")

@@ -28,8 +28,10 @@ var (
 	CobraConfigFile = varHome + "/.cobra.yaml"
 
 	// docker配置
-	DockerConfig     = "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --data-root=" + varHome + "/Documents/Docker/Root -H fd://"
-	DockerConfigFile = "/etc/systemd/system/docker.service.d/override.conf"
+	DockerServiceConfig     = "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --data-root=" + varHome + "/Documents/Docker/Root -H fd://"
+	DockerServiceConfigFile = "/etc/systemd/system/docker.service.d/override.conf"
+	DockerMirrorsConfig     = `{"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]}`
+	DockerMirrorsConfigFile = "/etc/docker/daemon.json"
 
 	// frpc配置
 	FrpcConfig     = "[Service]\nRestart=always\n"
