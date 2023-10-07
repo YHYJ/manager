@@ -36,7 +36,6 @@ var setupCmd = &cobra.Command{
 		var (
 			subjectName string
 			errInfo     error
-			errReport   string
 		)
 
 		// 根据参数执行操作
@@ -47,98 +46,118 @@ var setupCmd = &cobra.Command{
 		// 配置chezmoi
 		if chezmoiFlag {
 			subjectName = "chezmoi"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.ChezmoiConfigFile)
 			errInfo = function.WriteFile(function.ChezmoiConfigFile, function.ChezmoiConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			} else {
+				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置cobra
 		if cobraFlag {
-			subjectName = "cobra"
+			subjectName = "cobra-cli"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.CobraConfigFile)
 			errInfo = function.WriteFile(function.CobraConfigFile, function.CobraConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			} else {
+				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置docker
 		if dockerFlag {
-			subjectName = "docker service"
+			// docker service
+			subjectName = "docker"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1mdocker service\x1b[0m\n")
+			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s root dir\x1b[0m\n", subjectName)
+			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.DockerServiceConfigFile)
 			errInfo = function.WriteFile(function.DockerServiceConfigFile, function.DockerServiceConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n", errInfo.Error())
+			} else {
+				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
-			subjectName = "docker mirrors"
+			// docker mirrors
+			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1mdocker mirrors\x1b[0m\n")
+			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s registry mirrors\x1b[0m\n", subjectName)
+			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.DockerMirrorsConfigFile)
 			errInfo = function.WriteFile(function.DockerMirrorsConfigFile, function.DockerMirrorsConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			} else {
+				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置frpc
 		if frpcFlag {
 			subjectName = "frpc"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s restart timing\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.FrpcConfigFile)
 			errInfo = function.WriteFile(function.FrpcConfigFile, function.FrpcConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			} else {
+				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置git
 		if gitFlag {
 			subjectName = "git"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.GitConfigFile)
 			errInfo = function.WriteFile(function.GitConfigFile, function.GitConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			} else {
+				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置golang
 		if goFlag {
 			subjectName = "go"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s environment file\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.GoConfigFile)
 			errInfo = function.WriteFile(function.GoConfigFile, function.GoConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			} else {
+				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置npm
 		if npmFlag {
 			subjectName = "npm"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s registry\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.NpmConfigFile)
 			errInfo = function.WriteFile(function.NpmConfigFile, function.NpmConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			} else {
+				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 		// 配置pip
 		if pipFlag {
 			subjectName = "pip"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s mirrors\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.PipConfigFile)
 			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
 			if errInfo != nil {
-				errReport = fmt.Sprintf("%s: %s\n", subjectName, errInfo.Error())
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", errReport)
-				return
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			} else {
+				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m setup completed\n", subjectName)
 		}
 	},
 }

@@ -24,14 +24,15 @@ var (
 	ChezmoiConfigFile   = varHome + "/.config/chezmoi/chezmoi.toml"
 
 	// cobra配置
-	CobraConfig     = "author: YJ <yj1516268@outlook.com>\nlicense: GPLv3\nuseViper: false"
+	CobraConfig     = "author: YJ <yj1516268@outlook.com>\nlicense: GPLv3\nuseViper: false\n"
 	CobraConfigFile = varHome + "/.cobra.yaml"
 
 	// docker配置
-	DockerServiceConfig     = "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --data-root=" + varHome + "/Documents/Docker/Root -H fd://"
-	DockerServiceConfigFile = "/etc/systemd/system/docker.service.d/override.conf"
-	DockerMirrorsConfig     = `{"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]}`
-	DockerMirrorsConfigFile = "/etc/docker/daemon.json"
+	DockerServiceConfig       = "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --data-root=" + varHome + "/Documents/Docker/Root -H fd://\n"
+	DockerServiceConfigFile   = "/etc/systemd/system/docker.service.d/override.conf"
+	dockerMirrorsConfigFormat = "{\n%s\"registry-mirrors\": [\"https://docker.mirrors.ustc.edu.cn\"]\n}\n"
+	DockerMirrorsConfig       = fmt.Sprintf(dockerMirrorsConfigFormat, sep)
+	DockerMirrorsConfigFile   = "/etc/docker/daemon.json"
 
 	// frpc配置
 	FrpcConfig     = "[Service]\nRestart=always\n"
@@ -54,14 +55,14 @@ var (
 	GitConfigFile        = varHome + "/.gitconfig"
 
 	// golang配置
-	GoConfig     = fmt.Sprintf("GO111MODULE=on\nGOBIN=%s/.go/bin\nGOPATH=%s/.go\nGOCACHE=%s/.cache/go/go-build\nGOMODCACHE=%s/.cache/go/pkg/mod", varHome, varHome, varHome, varHome)
+	GoConfig     = fmt.Sprintf("GO111MODULE=on\nGOBIN=%s/.go/bin\nGOPATH=%s/.go\nGOCACHE=%s/.cache/go/go-build\nGOMODCACHE=%s/.cache/go/pkg/mod\n", varHome, varHome, varHome, varHome)
 	GoConfigFile = varHome + "/.config/go/env"
 
 	// npm配置
-	NpmConfig     = "registry=https://registry.npm.taobao.org"
+	NpmConfig     = "registry=https://registry.npm.taobao.org\n"
 	NpmConfigFile = varHome + "/.npmrc"
 
 	// pip配置
-	PipConfig     = "[global]\nindex-url = http://mirrors.aliyun.com/pypi/simple\ntrusted-host = mirrors.aliyun.com"
+	PipConfig     = "[global]\nindex-url = http://mirrors.aliyun.com/pypi/simple\ntrusted-host = mirrors.aliyun.com\n"
 	PipConfigFile = varHome + "/.config/pip/pip.conf"
 )
