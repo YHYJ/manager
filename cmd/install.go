@@ -31,6 +31,7 @@ var installCmd = &cobra.Command{
 		goFlag, _ := cmd.Flags().GetBool("go")
 		shellFlag, _ := cmd.Flags().GetBool("shell")
 
+		// 配置文件项
 		var (
 			installPath                 string
 			installTemp                 string
@@ -56,6 +57,15 @@ var installCmd = &cobra.Command{
 			httpProxy                   string
 			httpsProxy                  string
 		)
+
+		// 输出文本
+		var (
+			latestVersionMessage     = "is already the latest version"                 // 已安装的程序和脚本为最新版
+			unableToCompileMessage   = "Makefile or main.go file does not exist"       // 缺失编译文件无法完成编译
+			acsInstallSuccessMessage = "auto-completion script installed successfully" // 自动补全脚本安装成功
+			acsInstallFailedMessage  = "auto-completion script installation failed"    // 自动补全脚本安装失败
+		)
+
 		// 检查配置文件是否存在
 		configTree, err := function.GetTomlConfig(cfgFile)
 		if err != nil {
@@ -177,7 +187,7 @@ var installCmd = &cobra.Command{
 					localHash, commandErr := function.RunCommandGetResult("git", gitHashObjectArgs)
 					// 比较远端和本地脚本Hash值
 					if remoteHash == localHash { // Hash值一致，则输出无需更新信息
-						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m is already the latest version\n", name.(string))
+						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), latestVersionMessage)
 						fmt.Printf(text)
 						length = len(text)
 					} else { // Hash值不一致，则更新脚本，并输出已更新信息
@@ -282,7 +292,7 @@ var installCmd = &cobra.Command{
 					localVersion, commandErr := function.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
-						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33;1m%s\x1b[0m is already the latest version\n", name.(string), remoteVersion)
+						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33;1m%s\x1b[0m %s\n", name.(string), remoteVersion, latestVersionMessage)
 						fmt.Printf(text)
 						length = len(text)
 					} else { // 版本不一致，则更新程序，并输出已更新信息
@@ -317,7 +327,7 @@ var installCmd = &cobra.Command{
 							buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
 							function.RunCommandGetFlag("go", buildArgs)
 						} else {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", "Makefile or main.go file does not exist")
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", unableToCompileMessage)
 						}
 						// 检测编译生成的程序是否存在
 						if function.FileExist(compileProgram) {
@@ -369,12 +379,12 @@ var installCmd = &cobra.Command{
 							generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
 							flag := function.RunCommandGetFlag("bash", generateArgs)
 							if flag {
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installed successfully\n", name.(string))
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), acsInstallSuccessMessage)
 								fmt.Printf(text)
 								length = len(text)
 								extra -= 11 // 根据Sprintf定义格式不同需要增减
 							} else {
-								text := fmt.Sprintf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m auto-completion script installation failed\n", name.(string))
+								text := fmt.Sprintf("\x1b[31m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), acsInstallFailedMessage)
 								fmt.Printf(text)
 								length = len(text)
 								extra -= 11 // 根据Sprintf定义格式不同需要增减
