@@ -26,6 +26,10 @@ var (
 	DockerConfig     = "[Service]\nExecStart=\nExecStart=/usr/bin/dockerd --data-root=" + varHome + "/Documents/Docker/Root -H fd://"
 	DockerConfigFile = "/etc/systemd/system/docker.service.d/override.conf"
 
+	// frpc配置文件内容
+	FrpcConfig     = "[Service]\nRestart=always\n"
+	FrpcConfigFile = "/etc/systemd/system/frpc.service.d/override.conf"
+
 	// git配置文件内容
 	gitUserName          = "name = " + GetHostname()
 	gitUserEmail         = "email = yj1516268@outlook.com"
