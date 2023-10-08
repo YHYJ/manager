@@ -50,7 +50,7 @@ var (
 
 	// frpc配置
 	frpcRestart      = "always"
-	frpcConfigFormat = "[Service]\nRestart=%s\n"
+	frpcConfigFormat = "[Service]\nRestart=\nRestart=%s\n"
 	FrpcConfig       = fmt.Sprintf(frpcConfigFormat, frpcRestart)
 	FrpcConfigFile   = "/etc/systemd/system/frpc.service.d/override.conf"
 
