@@ -294,6 +294,7 @@ var installCmd = &cobra.Command{
 						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33;1m%s\x1b[0m %s\n", name.(string), remoteVersion, latestVersionMessage)
 						fmt.Printf(text)
 						textLength = len(text)
+						sepExtraLength += 11 // 根据Sprintf定义格式不同需要增减
 					} else { // 版本不一致，则更新程序，并输出已更新信息
 						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
 						goSourceTempDir := fmt.Sprintf("%s/%s", installTemp, name.(string))
