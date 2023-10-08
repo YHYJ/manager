@@ -59,8 +59,6 @@ var installCmd = &cobra.Command{
 
 		// 输出文本
 		var (
-			textLength               = 0                                               // 输出文本的长度
-			sepExtraLength           = 21                                              // 应减去的分隔符多余的长度
 			latestVersionMessage     = "is already the latest version"                 // 已安装的程序和脚本为最新版
 			unableToCompileMessage   = "Makefile or main.go file does not exist"       // 缺失编译文件无法完成编译
 			acsInstallSuccessMessage = "auto-completion script installed successfully" // 自动补全脚本安装成功
@@ -162,6 +160,8 @@ var installCmd = &cobra.Command{
 				// 遍历所有脚本名
 				for _, name := range shellNames {
 					// 组装变量
+					textLength := 0                                                                                                                                                    // 输出文本的长度
+					sepExtraLength := 21                                                                                                                                               // 应减去的分隔符多余的长度
 					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, shellRepo, name.(string))                                                                                   // 从远端下载的最新脚本
 					shellSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string))                         // API URL
 					shellFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellFallbackSourceApi, shellFallbackSourceUsername, shellRepo, shellDir, name.(string)) // Fallback API URL
@@ -265,6 +265,8 @@ var installCmd = &cobra.Command{
 				// 遍历所有程序名
 				for _, name := range goNames {
 					// 组装变量
+					textLength := 0                                                                                                            // 输出文本的长度
+					sepExtraLength := 21                                                                                                       // 应减去的分隔符多余的长度
 					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, name.(string), name.(string))                                       // 编译生成的最新程序
 					goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string))                         // API URL
 					goFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // Fallback API URL
