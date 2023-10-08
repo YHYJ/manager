@@ -12,6 +12,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -161,7 +162,6 @@ var installCmd = &cobra.Command{
 				for _, name := range shellNames {
 					// 组装变量
 					textLength := 0                                                                                                                                                    // 输出文本的长度
-					sepExtraLength := 21                                                                                                                                               // 应减去的分隔符多余的长度
 					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, shellRepo, name.(string))                                                                                   // 从远端下载的最新脚本
 					shellSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string))                         // API URL
 					shellFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellFallbackSourceApi, shellFallbackSourceUsername, shellRepo, shellDir, name.(string)) // Fallback API URL
@@ -188,7 +188,8 @@ var installCmd = &cobra.Command{
 					if remoteHash == localHash { // Hash值一致，则输出无需更新信息
 						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), latestVersionMessage)
 						fmt.Printf(text)
-						textLength = len(text)
+						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+						textLength = len(controlRegex.ReplaceAllString(text, ""))
 					} else { // Hash值不一致，则更新脚本，并输出已更新信息
 						// 下载远端脚本
 						shellSourceTempDir := fmt.Sprintf("%s/%s", installTemp, shellRepo)
@@ -219,8 +220,8 @@ var installCmd = &cobra.Command{
 									}
 									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
 									fmt.Printf(text)
-									textLength = len(text)
-									sepExtraLength += 11 // 根据Sprintf定义格式不同需要增减
+									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+									textLength = len(controlRegex.ReplaceAllString(text, ""))
 								}
 							} else { // 存在，更新
 								if err := os.Remove(localProgram); err != nil {
@@ -236,19 +237,19 @@ var installCmd = &cobra.Command{
 									}
 									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
 									fmt.Printf(text)
-									textLength = len(text)
-									sepExtraLength += 11 // 根据Sprintf定义格式不同需要增减
+									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+									textLength = len(controlRegex.ReplaceAllString(text, ""))
 								}
 							}
 						} else {
 							text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
 							fmt.Printf(text)
-							textLength = len(text)
-							sepExtraLength -= 11 // 根据Sprintf定义格式不同需要增减
+							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+							textLength = len(controlRegex.ReplaceAllString(text, ""))
 						}
 					}
-					dashes := strings.Repeat("-", textLength-sepExtraLength) //组装分隔符
-					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)                // 美化输出
+					dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
+					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
 				}
 			}
 			// 安装/更新基于go开发的程序
@@ -266,7 +267,6 @@ var installCmd = &cobra.Command{
 				for _, name := range goNames {
 					// 组装变量
 					textLength := 0                                                                                                            // 输出文本的长度
-					sepExtraLength := 21                                                                                                       // 应减去的分隔符多余的长度
 					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, name.(string), name.(string))                                       // 编译生成的最新程序
 					goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string))                         // API URL
 					goFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // Fallback API URL
@@ -293,8 +293,8 @@ var installCmd = &cobra.Command{
 					if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
 						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33;1m%s\x1b[0m %s\n", name.(string), remoteVersion, latestVersionMessage)
 						fmt.Printf(text)
-						textLength = len(text)
-						sepExtraLength += 11 // 根据Sprintf定义格式不同需要增减
+						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+						textLength = len(controlRegex.ReplaceAllString(text, ""))
 					} else { // 版本不一致，则更新程序，并输出已更新信息
 						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
 						goSourceTempDir := fmt.Sprintf("%s/%s", installTemp, name.(string))
@@ -349,8 +349,8 @@ var installCmd = &cobra.Command{
 								}
 								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string), remoteVersion)
 								fmt.Printf(text)
-								textLength = len(text)
-								sepExtraLength += 11 // 根据Sprintf定义格式不同需要增减
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							} else { // 存在，更新
 								if function.FileExist("Makefile") { // Makefile文件存在则使用make install更新
 									makeArgs := []string{"install"}
@@ -371,8 +371,8 @@ var installCmd = &cobra.Command{
 								}
 								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string), remoteVersion)
 								fmt.Printf(text)
-								textLength = len(text)
-								sepExtraLength += 11 // 根据Sprintf定义格式不同需要增减
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							}
 							// 生成/更新自动补全脚本
 							copmleteFile := fmt.Sprintf("%s/_%s", goCompletionDir, name.(string))
@@ -381,23 +381,23 @@ var installCmd = &cobra.Command{
 							if flag {
 								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m %s\n", acsInstallSuccessMessage)
 								fmt.Printf(text)
-								textLength = len(text)
-								sepExtraLength -= 20 // 根据Sprintf定义格式不同需要增减
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							} else {
 								text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
 								fmt.Printf(text)
-								textLength = len(text)
-								sepExtraLength -= 20 // 根据Sprintf定义格式不同需要增减
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							}
 						} else {
 							text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
 							fmt.Printf(text)
-							textLength = len(text)
-							sepExtraLength -= 11 // 根据Sprintf定义格式不同需要增减
+							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+							textLength = len(controlRegex.ReplaceAllString(text, ""))
 						}
 					}
-					dashes := strings.Repeat("-", textLength-sepExtraLength) //组装分隔符
-					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)                // 美化输出
+					dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
+					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
 				}
 			}
 		}
