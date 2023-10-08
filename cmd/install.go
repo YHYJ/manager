@@ -382,12 +382,12 @@ var installCmd = &cobra.Command{
 								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m %s\n", acsInstallSuccessMessage)
 								fmt.Printf(text)
 								textLength = len(text)
-								sepExtraLength -= 11 // 根据Sprintf定义格式不同需要增减
+								sepExtraLength -= 20 // 根据Sprintf定义格式不同需要增减
 							} else {
 								text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
 								fmt.Printf(text)
 								textLength = len(text)
-								sepExtraLength -= 11 // 根据Sprintf定义格式不同需要增减
+								sepExtraLength -= 20 // 根据Sprintf定义格式不同需要增减
 							}
 						} else {
 							text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
