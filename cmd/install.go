@@ -182,6 +182,7 @@ var installCmd = &cobra.Command{
 					remoteHash, err := function.ParseApiResponse(body)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						continue
 					}
 					// 获取本地脚本Hash值
 					localHash, commandErr := function.RunCommandGetResult("git", gitHashObjectArgs)
@@ -289,6 +290,7 @@ var installCmd = &cobra.Command{
 					remoteVersion, err := function.ParseApiResponse(body)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						continue
 					}
 					// 获取本地版本
 					localVersion, commandErr := function.RunCommandGetResult(localProgram, nameArgs)
@@ -325,10 +327,16 @@ var installCmd = &cobra.Command{
 						// 编译生成程序
 						if function.FileExist("Makefile") { // Makefile文件存在则使用make编译
 							makeArgs := []string{}
-							function.RunCommandGetFlag("make", makeArgs)
+							if err = function.RunCommand("make", makeArgs); err != nil {
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								continue
+							}
 						} else if function.FileExist("main.go") { // Makefile文件不存在则使用go build编译
 							buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
-							function.RunCommandGetFlag("go", buildArgs)
+							if err := function.RunCommand("go", buildArgs); err != nil {
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								continue
+							}
 						} else {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", unableToCompileMessage)
 						}
@@ -338,7 +346,10 @@ var installCmd = &cobra.Command{
 							if commandErr != nil { // 不存在，安装
 								if function.FileExist("Makefile") { // Makefile文件存在则使用make install安装
 									makeArgs := []string{"install"}
-									function.RunCommandGetFlag("make", makeArgs)
+									if err := function.RunCommand("make", makeArgs); err != nil {
+										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+										continue
+									}
 								} else { // Makefile文件不存在则使用自定义函数安装
 									if err := function.InstallFile(compileProgram, localProgram); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
@@ -357,7 +368,10 @@ var installCmd = &cobra.Command{
 							} else { // 存在，更新
 								if function.FileExist("Makefile") { // Makefile文件存在则使用make install更新
 									makeArgs := []string{"install"}
-									function.RunCommandGetFlag("make", makeArgs)
+									if err := function.RunCommand("make", makeArgs); err != nil {
+										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+										continue
+									}
 								} else { // Makefile文件不存在则使用自定义函数更新
 									if err := os.Remove(localProgram); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
@@ -380,14 +394,13 @@ var installCmd = &cobra.Command{
 							// 生成/更新自动补全脚本
 							copmleteFile := fmt.Sprintf("%s/_%s", goCompletionDir, name.(string))
 							generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s", localProgram, copmleteFile)}
-							flag := function.RunCommandGetFlag("bash", generateArgs)
-							if flag {
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m %s\n", acsInstallSuccessMessage)
+							if err := function.RunCommand("bash", generateArgs); err != nil {
+								text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
 								fmt.Printf(text)
 								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							} else {
-								text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m %s\n", acsInstallSuccessMessage)
 								fmt.Printf(text)
 								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 								textLength = len(controlRegex.ReplaceAllString(text, ""))
