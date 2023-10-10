@@ -14,6 +14,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/yhyj/manager/function"
@@ -250,6 +251,8 @@ var installCmd = &cobra.Command{
 					}
 					dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
 					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
+					// 添加一个0.01秒的延时，使输出更加顺畅
+					time.Sleep(100 * time.Millisecond)
 				}
 			}
 			// 安装/更新基于go开发的程序
@@ -398,6 +401,8 @@ var installCmd = &cobra.Command{
 					}
 					dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
 					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
+					// 添加一个0.01秒的延时，使输出更加顺畅
+					time.Sleep(100 * time.Millisecond)
 				}
 			}
 		}
