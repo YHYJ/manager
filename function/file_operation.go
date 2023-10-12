@@ -29,7 +29,7 @@ func FileExist(filePath string) bool {
 	return true
 }
 
-// 判断文件是否为空
+// 判断文件是否为空（无法判断文件夹）
 func FileEmpty(filePath string) bool {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -41,6 +41,21 @@ func FileEmpty(filePath string) bool {
 		return true
 	}
 	return fi.Size() == 0
+}
+
+// 判断文件夹是否为空，包括隐藏文件
+func FolderEmpty(filePath string) bool {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return true
+	}
+	defer file.Close()
+
+	_, err = file.Readdir(1)
+	if err == io.EOF {
+		return true
+	}
+	return false
 }
 
 // 创建文件，如果其父目录不存在则创建父目录
