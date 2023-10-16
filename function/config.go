@@ -42,11 +42,6 @@ func GetTomlConfig(filePath string) (*toml.Tree, error) {
 
 // 写入toml配置文件
 func WriteTomlConfig(filePath string) (int64, error) {
-	// 获取指定用户信息
-	userInfo, err := GetUserInfo(1000)
-	if err != nil {
-		return 0, err
-	}
 	// 定义一个map[string]interface{}类型的变量并赋值
 	exampleConf := map[string]interface{}{
 		"variable": map[string]interface{}{
@@ -64,7 +59,6 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"fallback_source_username": "YHYJ",
 				"fallback_source_api": "https://api.github.com",
 				"names":  []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"},
-				"completion_dir": userInfo.HomeDir + "/.cache/oh-my-zsh/completions",
 			},
 			"shell": map[string]interface{}{
 				"source_url": "https://git.yj1516.top",

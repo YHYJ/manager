@@ -18,19 +18,22 @@ import (
 
 var platformChart = map[string]map[string]string{
 	"linux": {
-		"HOME": "HOME",
-		"PWD":  "PWD",
-		"USER": "USER",
+		"HOME":          "HOME",
+		"PWD":           "PWD",
+		"USER":          "USER",
+		"ZSH_CACHE_DIR": "ZSH_CACHE_DIR",
 	},
 	"darwin": {
-		"HOME": "HOME",
-		"PWD":  "PWD",
-		"USER": "USER",
+		"HOME":          "HOME",
+		"PWD":           "PWD",
+		"USER":          "USER",
+		"ZSH_CACHE_DIR": "ZSH_CACHE_DIR",
 	},
 	"windows": {
-		"HOME": "USERPROFILE",
-		"PWD":  "PWD",
-		"USER": "USERNAME",
+		"HOME":          "USERPROFILE",
+		"PWD":           "PWD",
+		"USER":          "USERNAME",
+		"ZSH_CACHE_DIR": "ZSH_CACHE_DIR",
 	},
 }
 
@@ -42,7 +45,7 @@ func GetVariable(key string) string {
 	return os.Getenv(varKey)
 }
 
-// 获取不再环境变量中的HOSTNAME
+// 获取不在环境变量中的HOSTNAME
 func GetHostname() string {
 	hostname, err := os.Hostname()
 	if err != nil {
