@@ -18,22 +18,19 @@ import (
 
 var platformChart = map[string]map[string]string{
 	"linux": {
-		"HOME":          "HOME",
-		"PWD":           "PWD",
-		"USER":          "USER",
-		"ZSH_CACHE_DIR": "ZSH_CACHE_DIR",
+		"HOME": "HOME",
+		"PWD":  "PWD",
+		"USER": "USER",
 	},
 	"darwin": {
-		"HOME":          "HOME",
-		"PWD":           "PWD",
-		"USER":          "USER",
-		"ZSH_CACHE_DIR": "ZSH_CACHE_DIR",
+		"HOME": "HOME",
+		"PWD":  "PWD",
+		"USER": "USER",
 	},
 	"windows": {
-		"HOME":          "USERPROFILE",
-		"PWD":           "PWD",
-		"USER":          "USERNAME",
-		"ZSH_CACHE_DIR": "ZSH_CACHE_DIR",
+		"HOME": "USERPROFILE",
+		"PWD":  "PWD",
+		"USER": "USERNAME",
 	},
 }
 
@@ -66,4 +63,13 @@ func GetUserInfo(uid int) (*user.User, error) {
 		return nil, err
 	}
 	return userInfo, nil
+}
+
+// 获取当前用户信息
+func GetCurrentUserInfo() (*user.User, error) {
+	currentUser, err := user.Current()
+	if err != nil {
+		return nil, err
+	}
+	return currentUser, nil
 }

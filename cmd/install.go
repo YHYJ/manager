@@ -43,6 +43,7 @@ var installCmd = &cobra.Command{
 			goSourceUsername            string
 			goFallbackSourceUsername    string
 			goNames                     []interface{}
+			goCompletionDir             string
 			shellSourceUrl              string
 			shellFallbackSourceUrl      string
 			shellSourceApi              string
@@ -99,6 +100,9 @@ var installCmd = &cobra.Command{
 			}
 			if configTree.Has("install.go.names") {
 				goNames = configTree.Get("install.go.names").([]interface{})
+			}
+			if configTree.Has("install.go.completion_dir") {
+				goCompletionDir = configTree.Get("install.go.completion_dir").(string)
 			}
 			if configTree.Has("install.shell.source_url") {
 				shellSourceUrl = configTree.Get("install.shell.source_url").(string)
@@ -388,17 +392,13 @@ var installCmd = &cobra.Command{
 								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							}
 							// 生成/更新自动补全脚本
-							completeDir := fmt.Sprintf("%s/%s", function.GetVariable("ZSH_CACHE_DIR"), "completions")
-							if !function.FileExist(completeDir) {
-								if err := function.CreateDir(completeDir); err != nil {
-									text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", err)
-									fmt.Printf(text)
-									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-									textLength = len(controlRegex.ReplaceAllString(text, ""))
+							if !function.FileExist(goCompletionDir) {
+								if err := function.CreateDir(goCompletionDir); err != nil {
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									continue
 								}
 							}
-							generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completeDir, name.(string))}
+							generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, goCompletionDir, name.(string))}
 							if err := function.RunCommand("bash", generateArgs); err != nil {
 								text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
 								fmt.Printf(text)
