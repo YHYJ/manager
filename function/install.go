@@ -52,8 +52,7 @@ func DownloadFile(url string, urlFile string, outputFile string) (string, error)
 	// 创建下载文件夹
 	dir, filename := filepath.Split(outputFile)
 	if dir != "" {
-		err := os.MkdirAll(dir, 0755)
-		if err != nil {
+		if err := os.MkdirAll(dir, 0755); err != nil {
 			return "", fmt.Errorf("Error creating download folder: %s", err)
 		}
 	}

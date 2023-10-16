@@ -33,10 +33,7 @@ var setupCmd = &cobra.Command{
 		npmFlag, _ := cmd.Flags().GetBool("npm")
 		pipFlag, _ := cmd.Flags().GetBool("pip")
 
-		var (
-			subjectName string
-			errInfo     error
-		)
+		var subjectName string
 
 		// 根据参数执行操作
 		if allFlag {
@@ -49,9 +46,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.ChezmoiConfigFile)
-			errInfo = function.WriteFile(function.ChezmoiConfigFile, function.ChezmoiConfig)
-			if errInfo != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			if err := function.WriteFile(function.ChezmoiConfigFile, function.ChezmoiConfig); err != nil {
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
@@ -62,9 +58,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.CobraConfigFile)
-			errInfo = function.WriteFile(function.CobraConfigFile, function.CobraConfig)
-			if errInfo != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			if err := function.WriteFile(function.CobraConfigFile, function.CobraConfig); err != nil {
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
@@ -77,9 +72,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1mdocker service\x1b[0m\n")
 			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s root dir\x1b[0m\n", subjectName)
 			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.DockerServiceConfigFile)
-			errInfo = function.WriteFile(function.DockerServiceConfigFile, function.DockerServiceConfig)
-			if errInfo != nil {
-				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n", errInfo.Error())
+			if err := function.WriteFile(function.DockerServiceConfigFile, function.DockerServiceConfig); err != nil {
+				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n", err.Error())
 			} else {
 				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n")
 			}
@@ -87,9 +81,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1mdocker mirrors\x1b[0m\n")
 			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s registry mirrors\x1b[0m\n", subjectName)
 			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.DockerMirrorsConfigFile)
-			errInfo = function.WriteFile(function.DockerMirrorsConfigFile, function.DockerMirrorsConfig)
-			if errInfo != nil {
-				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			if err := function.WriteFile(function.DockerMirrorsConfigFile, function.DockerMirrorsConfig); err != nil {
+				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
@@ -100,9 +93,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s restart timing\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.FrpcConfigFile)
-			errInfo = function.WriteFile(function.FrpcConfigFile, function.FrpcConfig)
-			if errInfo != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			if err := function.WriteFile(function.FrpcConfigFile, function.FrpcConfig); err != nil {
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
@@ -113,9 +105,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.GitConfigFile)
-			errInfo = function.WriteFile(function.GitConfigFile, function.GitConfig)
-			if errInfo != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			if err := function.WriteFile(function.GitConfigFile, function.GitConfig); err != nil {
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
@@ -126,9 +117,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s environment file\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.GoConfigFile)
-			errInfo = function.WriteFile(function.GoConfigFile, function.GoConfig)
-			if errInfo != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			if err := function.WriteFile(function.GoConfigFile, function.GoConfig); err != nil {
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
@@ -139,9 +129,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s registry\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.NpmConfigFile)
-			errInfo = function.WriteFile(function.NpmConfigFile, function.NpmConfig)
-			if errInfo != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			if err := function.WriteFile(function.NpmConfigFile, function.NpmConfig); err != nil {
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
@@ -152,9 +141,8 @@ var setupCmd = &cobra.Command{
 			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s mirrors\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.PipConfigFile)
-			errInfo = function.WriteFile(function.PipConfigFile, function.PipConfig)
-			if errInfo != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", errInfo.Error())
+			if err := function.WriteFile(function.PipConfigFile, function.PipConfig);err != nil {
+				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
 			}
