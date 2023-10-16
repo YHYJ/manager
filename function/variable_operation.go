@@ -1,10 +1,10 @@
 /*
-File: check_variable.go
+File: variable_operation.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-08 16:01:45
 
-Description: 执行变量操作
+Description: 操作变量
 */
 
 package function
