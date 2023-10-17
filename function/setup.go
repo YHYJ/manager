@@ -90,4 +90,26 @@ var (
 	pipConfigFormat = "[global]\nindex-url = %s\ntrusted-host = %s\n"
 	PipConfig       = fmt.Sprintf(pipConfigFormat, pipIndexUrl, pipTrustedHost)
 	PipConfigFile   = home + "/.config/pip/pip.conf"
+
+	// system-checkupdates timer和service的依赖项
+	SystemCheckupdatesDependencies = "system-checkupdates >= 3.0.0-20230313.1"
+	// system-checkupdates配置 - system-checkupdates timer
+	systemCheckupdatesTimerConfigFormat      = "[Unit]\nDescription=%s\n\n[Timer]\nOnBootSec=%s\nOnUnitInactiveSec=%s\nAccuracySec=%s\nPersistent=%v\n\n[Install]\nWantedBy=%s\n"
+	systemcheckupdatesTimerDescription       = "Timer for system-checkupdates"
+	systemcheckupdatesTimerOnBootSec         = "10min"
+	systemcheckupdatesTimerOnUnitInactiveSec = "2h"
+	systemcheckupdatesTimerAccuracySec       = "30min"
+	systemcheckupdatesTimerPersistent        = true
+	systemcheckupdatesTimerWantedBy          = "timers.target"
+	SystemCheckupdatesTimerConfig            = fmt.Sprintf(systemCheckupdatesTimerConfigFormat, systemcheckupdatesTimerDescription, systemcheckupdatesTimerOnBootSec, systemcheckupdatesTimerOnUnitInactiveSec, systemcheckupdatesTimerAccuracySec, systemcheckupdatesTimerPersistent, systemcheckupdatesTimerWantedBy)
+	SystemCheckupdatesTimerConfigFile        = "/etc/systemd/system/system-checkupdates.timer"
+	// system-checkupdates配置 - system-checkupdates service
+	systemCheckupdatesServiceConfigFormat = "[Unit]\nDescription=%s\nAfter=%s\nWants=%s\n\n[Service]\nType=%s\nExecStart=%s\n"
+	systemcheckupdatesServiceDescription  = "System checkupdates"
+	systemcheckupdatesServiceAfter        = "network.target"
+	systemcheckupdatesServiceWants        = "network.target"
+	systemcheckupdatesServiceType         = "oneshot"
+	systemcheckupdatesServiceExecStart    = "/usr/local/bin/system-checkupdates --check"
+	SystemCheckupdatesServiceConfig       = fmt.Sprintf(systemCheckupdatesServiceConfigFormat, systemcheckupdatesServiceDescription, systemcheckupdatesServiceAfter, systemcheckupdatesServiceWants, systemcheckupdatesServiceType, systemcheckupdatesServiceExecStart)
+	SystemCheckupdatesServiceConfigFile   = "/etc/systemd/system/system-checkupdates.service"
 )
