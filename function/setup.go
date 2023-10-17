@@ -108,7 +108,7 @@ var (
 	PipConfigFile   = home + "/.config/pip/pip.conf"
 
 	// system-checkupdates timer和service的依赖项
-	SystemCheckupdatesDependencies = "system-checkupdates >= 3.0.0-20230313.1"
+	SystemCheckupdatesDependencies = "/usr/local/bin/system-checkupdates" // >= 3.0.0-20230313.1
 	// system-checkupdates配置 - system-checkupdates timer
 	systemCheckupdatesTimerConfigFormat      = "[Unit]\nDescription=%s\n\n[Timer]\nOnBootSec=%s\nOnUnitInactiveSec=%s\nAccuracySec=%s\nPersistent=%v\n\n[Install]\nWantedBy=%s\n"
 	systemcheckupdatesTimerDescription       = "Timer for system-checkupdates"
