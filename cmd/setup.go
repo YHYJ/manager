@@ -34,143 +34,173 @@ var setupCmd = &cobra.Command{
 		pipFlag, _ := cmd.Flags().GetBool("pip")
 		systemcheckupdatesFlag, _ := cmd.Flags().GetBool("system-checkupdates")
 
-		var subjectName string
-
 		// 根据参数执行操作
 		if allFlag {
 			chezmoiFlag, cobraFlag, dockerFlag, frpcFlag, gitFlag, goFlag, npmFlag, pipFlag, systemcheckupdatesFlag = true, true, true, true, true, true, true, true, true
 		}
 
+		// 预定义变量
+		var (
+			subjectName      string
+			descriptorText   string
+			subjectMinorName string
+		)
+
+		// 定义输出格式
+		subjectNameFormat := "\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n"
+		subjectMinorNameFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m \x1b[34;1m%s\x1b[0m\n"
+		descriptorFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s %s\x1b[0m\n"
+		configFileFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n"
+		errorFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n"
+		successFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Status: \x1b[33;7m%s\x1b[0m\n\n"
+
 		// 配置chezmoi
 		if chezmoiFlag {
 			subjectName = "chezmoi"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.ChezmoiConfigFile)
+			descriptorText = "configuration file"
+			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 1, function.ChezmoiConfigFile)
 			if err := function.WriteFile(function.ChezmoiConfigFile, function.ChezmoiConfig); err != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
+				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
-				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
 		// 配置cobra
 		if cobraFlag {
 			subjectName = "cobra-cli"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.CobraConfigFile)
+			descriptorText = "configuration file"
+			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 1, function.CobraConfigFile)
 			if err := function.WriteFile(function.CobraConfigFile, function.CobraConfig); err != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
+				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
-				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
 		// 配置docker
 		if dockerFlag {
-			// docker service
 			subjectName = "docker"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1mdocker service\x1b[0m\n")
-			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s root dir\x1b[0m\n", subjectName)
-			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.DockerServiceConfigFile)
+			fmt.Printf(subjectNameFormat, subjectName)
+			// docker service
+			subjectMinorName = "docker service"
+			descriptorText = "root directory"
+			fmt.Printf(subjectMinorNameFormat, 1, subjectMinorName)
+			fmt.Printf(descriptorFormat, 2, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 2, function.DockerServiceConfigFile)
 			if err := function.WriteFile(function.DockerServiceConfigFile, function.DockerServiceConfig); err != nil {
-				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n", err.Error())
+				errorFormat = "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n"
+				fmt.Printf(errorFormat, 2, err.Error())
 			} else {
-				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n")
+				successFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Status: \x1b[33;7m%s\x1b[0m\n"
+				fmt.Printf(successFormat, 2, "Setup completed")
 			}
 			// docker mirrors
-			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1mdocker mirrors\x1b[0m\n")
-			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s registry mirrors\x1b[0m\n", subjectName)
-			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.DockerMirrorsConfigFile)
+			subjectMinorName = "docker mirrors"
+			descriptorText = "registry mirrors"
+			fmt.Printf(subjectMinorNameFormat, 1, subjectMinorName)
+			fmt.Printf(descriptorFormat, 2, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 2, function.DockerMirrorsConfigFile)
 			if err := function.WriteFile(function.DockerMirrorsConfigFile, function.DockerMirrorsConfig); err != nil {
-				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
+				fmt.Printf(errorFormat, 2, err.Error())
 			} else {
-				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+				fmt.Printf(successFormat, 2, "Setup completed")
 			}
 		}
 		// 配置frpc
 		if frpcFlag {
 			subjectName = "frpc"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s restart timing\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.FrpcConfigFile)
+			descriptorText = "restart timing"
+			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 1, function.FrpcConfigFile)
 			if err := function.WriteFile(function.FrpcConfigFile, function.FrpcConfig); err != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
+				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
-				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
 		// 配置git
 		if gitFlag {
 			subjectName = "git"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s configuration file\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.GitConfigFile)
+			descriptorText = "configuration file"
+			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 1, function.GitConfigFile)
 			if err := function.WriteFile(function.GitConfigFile, function.GitConfig); err != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
+				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
-				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
 		// 配置golang
 		if goFlag {
 			subjectName = "go"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s environment file\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.GoConfigFile)
+			descriptorText = "environment file"
+			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 1, function.GoConfigFile)
 			if err := function.WriteFile(function.GoConfigFile, function.GoConfig); err != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
+				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
-				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
 		// 配置npm
 		if npmFlag {
 			subjectName = "npm"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s registry\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.NpmConfigFile)
+			descriptorText = "registry"
+			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 1, function.NpmConfigFile)
 			if err := function.WriteFile(function.NpmConfigFile, function.NpmConfig); err != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
+				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
-				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
 		// 配置pip
 		if pipFlag {
 			subjectName = "pip"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s mirrors\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.PipConfigFile)
+			descriptorText = "mirrors"
+			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 1, function.PipConfigFile)
 			if err := function.WriteFile(function.PipConfigFile, function.PipConfig); err != nil {
-				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
+				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
-				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
 		// 配置system-checkupdates
 		if systemcheckupdatesFlag {
-			// system-checkupdates timer
 			subjectName = "system-checkupdates"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1m%s service\x1b[0m\n", subjectName)
-			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s timer\x1b[0m\n", subjectName)
-			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.SystemCheckupdatesTimerConfigFile)
+			fmt.Printf(subjectNameFormat, subjectName)
+			// system-checkupdates timer
+			subjectMinorName = "system-checkupdates timer"
+			descriptorText = "timer"
+			fmt.Printf(subjectMinorNameFormat, 1, subjectMinorName)
+			fmt.Printf(descriptorFormat, 2, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 2, function.SystemCheckupdatesTimerConfigFile)
 			if err := function.WriteFile(function.SystemCheckupdatesTimerConfigFile, function.SystemCheckupdatesTimerConfig); err != nil {
-				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n", err.Error())
+				errorFormat = "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n"
+				fmt.Printf(errorFormat, 2, err.Error())
 			} else {
-				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n")
+				successFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Status: \x1b[33;7m%s\x1b[0m\n"
+				fmt.Printf(successFormat, 2, "Setup completed")
 			}
 			// system-checkupdates service
-			subjectName = "system-checkupdates"
-			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
-			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1m%s service\x1b[0m\n", subjectName)
-			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s service\x1b[0m\n", subjectName)
-			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.SystemCheckupdatesServiceConfigFile)
+			subjectMinorName = "system-checkupdates service"
+			descriptorText = "service"
+			fmt.Printf(subjectMinorNameFormat, 1, subjectMinorName)
+			fmt.Printf(descriptorFormat, 2, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 2, function.SystemCheckupdatesServiceConfigFile)
 			if err := function.WriteFile(function.SystemCheckupdatesServiceConfigFile, function.SystemCheckupdatesServiceConfig); err != nil {
-				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n", err.Error())
+				fmt.Printf(errorFormat, 2, err.Error())
 			} else {
-				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n")
+				fmt.Printf(successFormat, 2, "Setup completed")
 			}
 		}
 	},
