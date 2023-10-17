@@ -32,12 +32,13 @@ var setupCmd = &cobra.Command{
 		goFlag, _ := cmd.Flags().GetBool("go")
 		npmFlag, _ := cmd.Flags().GetBool("npm")
 		pipFlag, _ := cmd.Flags().GetBool("pip")
+		systemcheckupdatesFlag, _ := cmd.Flags().GetBool("system-checkupdates")
 
 		var subjectName string
 
 		// 根据参数执行操作
 		if allFlag {
-			chezmoiFlag, cobraFlag, dockerFlag, frpcFlag, gitFlag, goFlag, npmFlag, pipFlag = true, true, true, true, true, true, true, true
+			chezmoiFlag, cobraFlag, dockerFlag, frpcFlag, gitFlag, goFlag, npmFlag, pipFlag, systemcheckupdatesFlag = true, true, true, true, true, true, true, true, true
 		}
 
 		// 配置chezmoi
@@ -141,10 +142,35 @@ var setupCmd = &cobra.Command{
 			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s mirrors\x1b[0m\n", subjectName)
 			fmt.Printf(" \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.PipConfigFile)
-			if err := function.WriteFile(function.PipConfigFile, function.PipConfig);err != nil {
+			if err := function.WriteFile(function.PipConfigFile, function.PipConfig); err != nil {
 				fmt.Printf(" \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n", err.Error())
 			} else {
 				fmt.Printf(" \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n\n")
+			}
+		}
+		// 配置system-checkupdates
+		if systemcheckupdatesFlag {
+			// system-checkupdates timer
+			subjectName = "system-checkupdates"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1m%s service\x1b[0m\n", subjectName)
+			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s timer\x1b[0m\n", subjectName)
+			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.SystemCheckupdatesTimerConfigFile)
+			if err := function.WriteFile(function.SystemCheckupdatesTimerConfigFile, function.SystemCheckupdatesTimerConfig); err != nil {
+				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n", err.Error())
+			} else {
+				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n")
+			}
+			// system-checkupdates service
+			subjectName = "system-checkupdates"
+			fmt.Printf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n", subjectName)
+			fmt.Printf(" \x1b[32m-\x1b[0m \x1b[34;1m%s service\x1b[0m\n", subjectName)
+			fmt.Printf("  \x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s service\x1b[0m\n", subjectName)
+			fmt.Printf("  \x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n", function.SystemCheckupdatesServiceConfigFile)
+			if err := function.WriteFile(function.SystemCheckupdatesServiceConfigFile, function.SystemCheckupdatesServiceConfig); err != nil {
+				fmt.Printf("  \x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n", err.Error())
+			} else {
+				fmt.Printf("  \x1b[32m-\x1b[0m Status: \x1b[33;7mSetup completed\x1b[0m\n")
 			}
 		}
 	},
@@ -160,6 +186,7 @@ func init() {
 	setupCmd.Flags().BoolP("go", "", false, "Set up golang")
 	setupCmd.Flags().BoolP("npm", "", false, "Set up the mirror source used by npm")
 	setupCmd.Flags().BoolP("pip", "", false, "Set up the mirror source used by pip")
+	setupCmd.Flags().BoolP("system-checkupdates", "", false, "Set up system-checkupdates (need to be root)")
 
 	setupCmd.Flags().BoolP("help", "h", false, "help for setup command")
 	rootCmd.AddCommand(setupCmd)
