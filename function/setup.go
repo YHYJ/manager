@@ -21,40 +21,41 @@ var (
 	sep      = strings.Repeat(" ", 4)
 
 	// chezmoi
+	chezmoiConfigFormat = "sourceDir = %s\n[git]\n%sautoCommit = %v\n%sautoPush = %v\n"
 	chezmoiSourceDir    = `"~/Documents/Repos/System/Profile"`
 	chezmoiAutoCommit   = false
 	chezmoiAutoPush     = false
-	chezmoiConfigFormat = "sourceDir = %s\n[git]\n%sautoCommit = %v\n%sautoPush = %v\n"
 	ChezmoiConfig       = fmt.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
 	ChezmoiConfigFile   = home + "/.config/chezmoi/chezmoi.toml"
 
 	// cobra配置
+	cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
 	cobraAuthor       = "YJ"
 	cobraLicense      = "GPLv3"
 	cobraUseViper     = false
-	cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
 	CobraConfig       = fmt.Sprintf(cobraConfigFormat, cobraAuthor, email, cobraLicense, cobraUseViper)
 	CobraConfigFile   = home + "/.cobra.yaml"
 
 	// docker配置 - docker service
+	dockerServiceConfigFormat = "[Service]\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
 	dockerServiceExecStart    = "/usr/bin/dockerd"
 	dockerServiceDataRoot     = home + "/Documents/Docker/Root"
-	dockerServiceConfigFormat = "[Service]\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
 	DockerServiceConfig       = fmt.Sprintf(dockerServiceConfigFormat, dockerServiceExecStart, dockerServiceDataRoot)
 	DockerServiceConfigFile   = "/etc/systemd/system/docker.service.d/override.conf"
 	// docker配置 - docker mirrors
-	dockerMirrorsRegistryMirrors = []string{`"https://docker.mirrors.ustc.edu.cn"`}
 	dockerMirrorsConfigFormat    = "{\n%s\"registry-mirrors\": %s\n}\n"
+	dockerMirrorsRegistryMirrors = []string{`"https://docker.mirrors.ustc.edu.cn"`}
 	DockerMirrorsConfig          = fmt.Sprintf(dockerMirrorsConfigFormat, sep, dockerMirrorsRegistryMirrors)
 	DockerMirrorsConfigFile      = "/etc/docker/daemon.json"
 
 	// frpc配置
-	frpcRestart      = "always"
 	frpcConfigFormat = "[Service]\nRestart=\nRestart=%s\n"
+	frpcRestart      = "always"
 	FrpcConfig       = fmt.Sprintf(frpcConfigFormat, frpcRestart)
 	FrpcConfigFile   = "/etc/systemd/system/frpc.service.d/override.conf"
 
 	// git配置
+	gitConfigFormat      = "[user]\n%sname = %s\n%semail = %s\n[core]\n%seditor = %s\n%sautocrlf = %s\n[merge]\n%stool = %s\n[color]\n%sui = %v\n[pull]\n%srebase = %v\n[filter \"lfs\"]\n%sclean = %s\n%ssmudge = %s\n%sprocess = %s\n%srequired = %v\n"
 	gitCoreEditor        = "vim"
 	gitCoreAutoCRLF      = "input"
 	gitMergeTool         = "vimdiff"
@@ -64,30 +65,29 @@ var (
 	gitFilterLfsSmudge   = "git-lfs smudge -- %f"
 	gitFilterLfsProcess  = "git-lfs filter-process"
 	gitFilterLfsRequired = true
-	gitConfigFormat      = "[user]\n%sname = %s\n%semail = %s\n[core]\n%seditor = %s\n%sautocrlf = %s\n[merge]\n%stool = %s\n[color]\n%sui = %v\n[pull]\n%srebase = %v\n[filter \"lfs\"]\n%sclean = %s\n%ssmudge = %s\n%sprocess = %s\n%srequired = %v\n"
 	GitConfig            = fmt.Sprintf(gitConfigFormat, sep, hostname, sep, email, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
 	GitConfigFile        = home + "/.gitconfig"
 
 	// golang配置
+	goConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
 	goGO111MODULE  = "on"
 	goGOBIN        = home + "/.go/bin"
 	goGOPATH       = home + "/.go"
 	goGOCACHE      = home + "/.cache/go/go-build"
 	goGOMODCACHE   = home + "/.cache/go/pkg/mod"
-	goConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
 	GoConfig       = fmt.Sprintf(goConfigFormat, goGO111MODULE, goGOBIN, goGOPATH, goGOCACHE, goGOMODCACHE)
 	GoConfigFile   = home + "/.config/go/env"
 
 	// npm配置
-	npmRegistry     = "https://registry.npm.taobao.org"
 	npmConfigFormat = "registry=%s\n"
+	npmRegistry     = "https://registry.npm.taobao.org"
 	NpmConfig       = fmt.Sprintf(npmConfigFormat, npmRegistry)
 	NpmConfigFile   = home + "/.npmrc"
 
 	// pip配置
+	pipConfigFormat = "[global]\nindex-url = %s\ntrusted-host = %s\n"
 	pipIndexUrl     = "https://mirrors.aliyun.com/pypi/simple"
 	pipTrustedHost  = "mirrors.aliyun.com"
-	pipConfigFormat = "[global]\nindex-url = %s\ntrusted-host = %s\n"
 	PipConfig       = fmt.Sprintf(pipConfigFormat, pipIndexUrl, pipTrustedHost)
 	PipConfigFile   = home + "/.config/pip/pip.conf"
 
