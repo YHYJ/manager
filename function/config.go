@@ -64,7 +64,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"fallback_source_username": "YHYJ",
 				"fallback_source_api":      "https://api.github.com",
 				"names":                    []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"},
-				"completion_dir":           userInfo.HomeDir + "/.cache/oh-my-zsh/completions",
+				"completion_dir":           []string{userInfo.HomeDir + "/.cache/oh-my-zsh/completions", userInfo.HomeDir + "/.oh-my-zsh/cache/completions"},
 			},
 			"shell": map[string]interface{}{
 				"source_url":               "https://git.yj1516.top",
