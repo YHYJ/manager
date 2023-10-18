@@ -50,8 +50,8 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	// 定义一个map[string]interface{}类型的变量并赋值
 	exampleConf := map[string]interface{}{
 		"variable": map[string]interface{}{
-			"http_proxy":  "http://127.0.0.1:1080",
-			"https_proxy": "http://127.0.0.1:1080",
+			"http_proxy":  "",
+			"https_proxy": "",
 		},
 		"install": map[string]interface{}{
 			"path": "/usr/local/bin",
