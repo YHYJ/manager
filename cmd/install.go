@@ -217,7 +217,7 @@ var installCmd = &cobra.Command{
 									continue
 								} else {
 									// 为已安装的脚本设置可执行权限
-									if err = os.Chmod(localProgram, 0755); err != nil {
+									if err := os.Chmod(localProgram, 0755); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									}
 									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
@@ -234,7 +234,7 @@ var installCmd = &cobra.Command{
 									continue
 								} else {
 									// 为已更新的脚本设置可执行权限
-									if err = os.Chmod(localProgram, 0755); err != nil {
+									if err := os.Chmod(localProgram, 0755); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									}
 									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
@@ -310,24 +310,22 @@ var installCmd = &cobra.Command{
 						}
 						goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)
 						goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername)
-						err := function.CloneRepoViaHTTP(installTemp, goSource, name.(string))
-						if err != nil {
+						if err := function.CloneRepoViaHTTP(installTemp, goSource, name.(string)); err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							err = function.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string))
-							if err != nil {
+							if err := function.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string)); err != nil {
 								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 								continue
 							}
 						}
 						// 进到下载的远端文件目录
-						if err = function.GoToDir(goSourceTempDir); err != nil {
+						if err := function.GoToDir(goSourceTempDir); err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 							continue
 						}
 						// 编译生成程序
 						if function.FileExist("Makefile") { // Makefile文件存在则使用make编译
 							makeArgs := []string{}
-							if err = function.RunCommand("make", makeArgs); err != nil {
+							if err := function.RunCommand("make", makeArgs); err != nil {
 								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 								continue
 							}
@@ -356,7 +354,7 @@ var installCmd = &cobra.Command{
 										continue
 									} else {
 										// 为已安装的脚本设置可执行权限
-										if err = os.Chmod(localProgram, 0755); err != nil {
+										if err := os.Chmod(localProgram, 0755); err != nil {
 											fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 										}
 									}
@@ -381,7 +379,7 @@ var installCmd = &cobra.Command{
 										continue
 									} else {
 										// 为已安装的脚本设置可执行权限
-										if err = os.Chmod(localProgram, 0755); err != nil {
+										if err := os.Chmod(localProgram, 0755); err != nil {
 											fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 										}
 									}
