@@ -143,75 +143,214 @@ var installCmd = &cobra.Command{
 			if configTree.Has("variable.https_proxy") {
 				httpsProxy = configTree.Get("variable.https_proxy").(string)
 			}
+		}
 
-			// 根据参数执行操作
-			if allFlag {
-				goFlag, shellFlag = true, true
+		// 根据参数执行操作
+		if allFlag {
+			goFlag, shellFlag = true, true
+		}
+
+		// 安装/更新shell脚本
+		if shellFlag {
+			fmt.Printf("\n\x1b[36;3m%s\x1b[0m\n", "Installing shell-based programs...")
+			// 设置代理
+			function.SetVariable("http_proxy", httpProxy)
+			function.SetVariable("https_proxy", httpsProxy)
+			// 创建临时目录
+			if err := function.CreateDir(installTemp); err != nil {
+				fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+				return
 			}
-			// 安装/更新shell脚本
-			if shellFlag {
-				fmt.Printf("\n\x1b[36;3m%s\x1b[0m\n", "Installing shell-based programs...")
-				// 设置代理
-				function.SetVariable("http_proxy", httpProxy)
-				function.SetVariable("https_proxy", httpsProxy)
-				// 创建临时目录
-				if err := function.CreateDir(installTemp); err != nil {
+			// 遍历所有脚本名
+			for _, name := range shellNames {
+				// 组装变量
+				textLength := 0                                                                                                                                                    // 输出文本的长度
+				compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, shellRepo, name.(string))                                                                                   // 从远端下载的最新脚本
+				shellSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string))                         // API URL
+				shellFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellFallbackSourceApi, shellFallbackSourceUsername, shellRepo, shellDir, name.(string)) // Fallback API URL
+				localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                                                                   // 本地程序路径
+				gitHashObjectArgs := []string{"hash-object", localProgram}                                                                                                         // 本地程序参数
+				// 请求API
+				body, err := function.RequestApi(shellSourceApiUrl)
+				if err != nil {
 					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-					return
-				}
-				// 遍历所有脚本名
-				for _, name := range shellNames {
-					// 组装变量
-					textLength := 0                                                                                                                                                    // 输出文本的长度
-					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, shellRepo, name.(string))                                                                                   // 从远端下载的最新脚本
-					shellSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string))                         // API URL
-					shellFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellFallbackSourceApi, shellFallbackSourceUsername, shellRepo, shellDir, name.(string)) // Fallback API URL
-					localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                                                                   // 本地程序路径
-					gitHashObjectArgs := []string{"hash-object", localProgram}                                                                                                         // 本地程序参数
-					// 请求API
-					body, err := function.RequestApi(shellSourceApiUrl)
+					body, err = function.RequestApi(shellFallbackSourceApiUrl)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						body, err = function.RequestApi(shellFallbackSourceApiUrl)
+						continue
+					}
+				}
+				// 获取远端脚本Hash值
+				remoteHash, err := function.ParseApiResponse(body)
+				if err != nil {
+					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					continue
+				}
+				// 获取本地脚本Hash值
+				localHash, commandErr := function.RunCommandGetResult("git", gitHashObjectArgs)
+				// 比较远端和本地脚本Hash值
+				if remoteHash == localHash { // Hash值一致，则输出无需更新信息
+					text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), latestVersionMessage)
+					fmt.Printf(text)
+					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+					textLength = len(controlRegex.ReplaceAllString(text, ""))
+				} else { // Hash值不一致，则更新脚本，并输出已更新信息
+					// 下载远端脚本
+					shellSourceTempDir := fmt.Sprintf("%s/%s", installTemp, shellRepo)
+					shellSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellSourceUrl, shellSourceUsername, shellRepo, shellSourceBranch)
+					shellFallbackSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellFallbackSourceUrl, shellFallbackSourceUsername, shellRepo, shellFallbackSourceBranch)
+					shellUrlFile := fmt.Sprintf("%s/%s", shellDir, name.(string))
+					shellOutputFile := fmt.Sprintf("%s/%s", shellSourceTempDir, name.(string))
+					_, err := function.DownloadFile(shellSource, shellUrlFile, shellOutputFile)
+					if err != nil {
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						_, err = function.DownloadFile(shellFallbackSource, shellUrlFile, shellOutputFile)
 						if err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 							continue
 						}
 					}
-					// 获取远端脚本Hash值
-					remoteHash, err := function.ParseApiResponse(body)
+					// 检测脚本文件是否存在
+					if function.FileExist(compileProgram) {
+						// 检测本地程序是否存在
+						if commandErr != nil { // 不存在，安装
+							if err := function.InstallFile(compileProgram, localProgram); err != nil {
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								continue
+							} else {
+								// 为已安装的脚本设置可执行权限
+								if err := os.Chmod(localProgram, 0755); err != nil {
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								}
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+								fmt.Printf(text)
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
+							}
+						} else { // 存在，更新
+							if err := os.Remove(localProgram); err != nil {
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							}
+							if err := function.InstallFile(compileProgram, localProgram); err != nil {
+								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								continue
+							} else {
+								// 为已更新的脚本设置可执行权限
+								if err := os.Chmod(localProgram, 0755); err != nil {
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								}
+								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+								fmt.Printf(text)
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
+							}
+						}
+					} else {
+						text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
+						fmt.Printf(text)
+						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+						textLength = len(controlRegex.ReplaceAllString(text, ""))
+					}
+				}
+				dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
+				fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
+				// 添加一个0.01秒的延时，使输出更加顺畅
+				time.Sleep(100 * time.Millisecond)
+			}
+		}
+		// 安装/更新基于go开发的程序
+		if goFlag {
+			fmt.Printf("\n\x1b[36;3m%s\x1b[0m\n", "Installing go-based programs...")
+			// 设置代理
+			function.SetVariable("http_proxy", httpProxy)
+			function.SetVariable("https_proxy", httpsProxy)
+			// 创建临时目录
+			if err := function.CreateDir(installTemp); err != nil {
+				fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+				return
+			}
+			// 遍历所有程序名
+			for _, name := range goNames {
+				// 组装变量
+				textLength := 0                                                                                                            // 输出文本的长度
+				compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, name.(string), name.(string))                                       // 编译生成的最新程序
+				goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string))                         // API URL
+				goFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // Fallback API URL
+				localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                           // 本地程序路径
+				nameArgs := []string{"version", "--only"}                                                                                  // 本地程序参数
+				// 请求API
+				body, err := function.RequestApi(goSourceApiUrl)
+				if err != nil {
+					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					body, err = function.RequestApi(goFallbackSourceApiUrl)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 						continue
 					}
-					// 获取本地脚本Hash值
-					localHash, commandErr := function.RunCommandGetResult("git", gitHashObjectArgs)
-					// 比较远端和本地脚本Hash值
-					if remoteHash == localHash { // Hash值一致，则输出无需更新信息
-						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), latestVersionMessage)
-						fmt.Printf(text)
-						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-						textLength = len(controlRegex.ReplaceAllString(text, ""))
-					} else { // Hash值不一致，则更新脚本，并输出已更新信息
-						// 下载远端脚本
-						shellSourceTempDir := fmt.Sprintf("%s/%s", installTemp, shellRepo)
-						shellSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellSourceUrl, shellSourceUsername, shellRepo, shellSourceBranch)
-						shellFallbackSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellFallbackSourceUrl, shellFallbackSourceUsername, shellRepo, shellFallbackSourceBranch)
-						shellUrlFile := fmt.Sprintf("%s/%s", shellDir, name.(string))
-						shellOutputFile := fmt.Sprintf("%s/%s", shellSourceTempDir, name.(string))
-						_, err := function.DownloadFile(shellSource, shellUrlFile, shellOutputFile)
-						if err != nil {
+				}
+				// 获取远端版本
+				remoteVersion, err := function.ParseApiResponse(body)
+				if err != nil {
+					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					continue
+				}
+				// 获取本地版本
+				localVersion, commandErr := function.RunCommandGetResult(localProgram, nameArgs)
+				// 比较远端和本地版本
+				if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
+					text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33;1m%s\x1b[0m %s\n", name.(string), remoteVersion, latestVersionMessage)
+					fmt.Printf(text)
+					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+					textLength = len(controlRegex.ReplaceAllString(text, ""))
+				} else { // 版本不一致，则更新程序，并输出已更新信息
+					// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
+					goSourceTempDir := fmt.Sprintf("%s/%s", installTemp, name.(string))
+					if function.FileExist(goSourceTempDir) {
+						if err := os.RemoveAll(goSourceTempDir); err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							_, err = function.DownloadFile(shellFallbackSource, shellUrlFile, shellOutputFile)
-							if err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								continue
-							}
 						}
-						// 检测脚本文件是否存在
-						if function.FileExist(compileProgram) {
-							// 检测本地程序是否存在
-							if commandErr != nil { // 不存在，安装
+					}
+					goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)
+					goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername)
+					if err := function.CloneRepoViaHTTP(installTemp, goSource, name.(string)); err != nil {
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						if err := function.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string)); err != nil {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							continue
+						}
+					}
+					// 进到下载的远端文件目录
+					if err := function.GoToDir(goSourceTempDir); err != nil {
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						continue
+					}
+					// 编译生成程序
+					if function.FileExist("Makefile") { // Makefile文件存在则使用make编译
+						makeArgs := []string{}
+						if err := function.RunCommand("make", makeArgs); err != nil {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							continue
+						}
+					} else if function.FileExist("main.go") { // Makefile文件不存在则使用go build编译
+						buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
+						if err := function.RunCommand("go", buildArgs); err != nil {
+							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							continue
+						}
+					} else {
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", unableToCompileMessage)
+					}
+					// 检测编译生成的程序是否存在
+					if function.FileExist(compileProgram) {
+						// 检测本地程序是否存在
+						if commandErr != nil { // 不存在，安装
+							if function.FileExist("Makefile") { // Makefile文件存在则使用make install安装
+								makeArgs := []string{"install"}
+								if err := function.RunCommand("make", makeArgs); err != nil {
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									continue
+								}
+							} else { // Makefile文件不存在则使用自定义函数安装
 								if err := function.InstallFile(compileProgram, localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									continue
@@ -220,12 +359,20 @@ var installCmd = &cobra.Command{
 									if err := os.Chmod(localProgram, 0755); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									}
-									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
-									fmt.Printf(text)
-									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-									textLength = len(controlRegex.ReplaceAllString(text, ""))
 								}
-							} else { // 存在，更新
+							}
+							text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string), remoteVersion)
+							fmt.Printf(text)
+							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+							textLength = len(controlRegex.ReplaceAllString(text, ""))
+						} else { // 存在，更新
+							if function.FileExist("Makefile") { // Makefile文件存在则使用make install更新
+								makeArgs := []string{"install"}
+								if err := function.RunCommand("make", makeArgs); err != nil {
+									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									continue
+								}
+							} else { // Makefile文件不存在则使用自定义函数更新
 								if err := os.Remove(localProgram); err != nil {
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 								}
@@ -233,192 +380,46 @@ var installCmd = &cobra.Command{
 									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									continue
 								} else {
-									// 为已更新的脚本设置可执行权限
+									// 为已安装的脚本设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
 										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 									}
-									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+								}
+							}
+							text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string), remoteVersion)
+							fmt.Printf(text)
+							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+							textLength = len(controlRegex.ReplaceAllString(text, ""))
+						}
+						// 生成/更新自动补全脚本
+						for _, completionDir := range goCompletionDir {
+							if function.FileExist(completionDir.(string)) {
+								generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
+								if err := function.RunCommand("bash", generateArgs); err != nil {
+									text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
 									fmt.Printf(text)
 									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 									textLength = len(controlRegex.ReplaceAllString(text, ""))
+								} else {
+									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m %s\n", acsInstallSuccessMessage)
+									fmt.Printf(text)
+									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+									textLength = len(controlRegex.ReplaceAllString(text, ""))
+									break
 								}
 							}
-						} else {
-							text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
-							fmt.Printf(text)
-							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-							textLength = len(controlRegex.ReplaceAllString(text, ""))
 						}
-					}
-					dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
-					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
-					// 添加一个0.01秒的延时，使输出更加顺畅
-					time.Sleep(100 * time.Millisecond)
-				}
-			}
-			// 安装/更新基于go开发的程序
-			if goFlag {
-				fmt.Printf("\n\x1b[36;3m%s\x1b[0m\n", "Installing go-based programs...")
-				// 设置代理
-				function.SetVariable("http_proxy", httpProxy)
-				function.SetVariable("https_proxy", httpsProxy)
-				// 创建临时目录
-				if err := function.CreateDir(installTemp); err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-					return
-				}
-				// 遍历所有程序名
-				for _, name := range goNames {
-					// 组装变量
-					textLength := 0                                                                                                            // 输出文本的长度
-					compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, name.(string), name.(string))                                       // 编译生成的最新程序
-					goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string))                         // API URL
-					goFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // Fallback API URL
-					localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                           // 本地程序路径
-					nameArgs := []string{"version", "--only"}                                                                                  // 本地程序参数
-					// 请求API
-					body, err := function.RequestApi(goSourceApiUrl)
-					if err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						body, err = function.RequestApi(goFallbackSourceApiUrl)
-						if err != nil {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							continue
-						}
-					}
-					// 获取远端版本
-					remoteVersion, err := function.ParseApiResponse(body)
-					if err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						continue
-					}
-					// 获取本地版本
-					localVersion, commandErr := function.RunCommandGetResult(localProgram, nameArgs)
-					// 比较远端和本地版本
-					if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
-						text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33;1m%s\x1b[0m %s\n", name.(string), remoteVersion, latestVersionMessage)
+					} else {
+						text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
 						fmt.Printf(text)
 						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
-					} else { // 版本不一致，则更新程序，并输出已更新信息
-						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
-						goSourceTempDir := fmt.Sprintf("%s/%s", installTemp, name.(string))
-						if function.FileExist(goSourceTempDir) {
-							if err := os.RemoveAll(goSourceTempDir); err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							}
-						}
-						goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)
-						goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername)
-						if err := function.CloneRepoViaHTTP(installTemp, goSource, name.(string)); err != nil {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							if err := function.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string)); err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								continue
-							}
-						}
-						// 进到下载的远端文件目录
-						if err := function.GoToDir(goSourceTempDir); err != nil {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-							continue
-						}
-						// 编译生成程序
-						if function.FileExist("Makefile") { // Makefile文件存在则使用make编译
-							makeArgs := []string{}
-							if err := function.RunCommand("make", makeArgs); err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								continue
-							}
-						} else if function.FileExist("main.go") { // Makefile文件不存在则使用go build编译
-							buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
-							if err := function.RunCommand("go", buildArgs); err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-								continue
-							}
-						} else {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", unableToCompileMessage)
-						}
-						// 检测编译生成的程序是否存在
-						if function.FileExist(compileProgram) {
-							// 检测本地程序是否存在
-							if commandErr != nil { // 不存在，安装
-								if function.FileExist("Makefile") { // Makefile文件存在则使用make install安装
-									makeArgs := []string{"install"}
-									if err := function.RunCommand("make", makeArgs); err != nil {
-										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-										continue
-									}
-								} else { // Makefile文件不存在则使用自定义函数安装
-									if err := function.InstallFile(compileProgram, localProgram); err != nil {
-										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-										continue
-									} else {
-										// 为已安装的脚本设置可执行权限
-										if err := os.Chmod(localProgram, 0755); err != nil {
-											fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-										}
-									}
-								}
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string), remoteVersion)
-								fmt.Printf(text)
-								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-								textLength = len(controlRegex.ReplaceAllString(text, ""))
-							} else { // 存在，更新
-								if function.FileExist("Makefile") { // Makefile文件存在则使用make install更新
-									makeArgs := []string{"install"}
-									if err := function.RunCommand("make", makeArgs); err != nil {
-										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-										continue
-									}
-								} else { // Makefile文件不存在则使用自定义函数更新
-									if err := os.Remove(localProgram); err != nil {
-										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-									}
-									if err := function.InstallFile(compileProgram, localProgram); err != nil {
-										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-										continue
-									} else {
-										// 为已安装的脚本设置可执行权限
-										if err := os.Chmod(localProgram, 0755); err != nil {
-											fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-										}
-									}
-								}
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string), remoteVersion)
-								fmt.Printf(text)
-								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-								textLength = len(controlRegex.ReplaceAllString(text, ""))
-							}
-							// 生成/更新自动补全脚本
-							for _, completionDir := range goCompletionDir {
-								if function.FileExist(completionDir.(string)) {
-									generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
-									if err := function.RunCommand("bash", generateArgs); err != nil {
-										text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
-										fmt.Printf(text)
-										controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-										textLength = len(controlRegex.ReplaceAllString(text, ""))
-									} else {
-										text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m %s\n", acsInstallSuccessMessage)
-										fmt.Printf(text)
-										controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-										textLength = len(controlRegex.ReplaceAllString(text, ""))
-										break
-									}
-								}
-							}
-						} else {
-							text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
-							fmt.Printf(text)
-							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-							textLength = len(controlRegex.ReplaceAllString(text, ""))
-						}
 					}
-					dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
-					fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
-					// 添加一个0.01秒的延时，使输出更加顺畅
-					time.Sleep(100 * time.Millisecond)
 				}
+				dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
+				fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
+				// 添加一个0.01秒的延时，使输出更加顺畅
+				time.Sleep(100 * time.Millisecond)
 			}
 		}
 	},
