@@ -19,8 +19,11 @@ import (
 // 用来处理不同系统之间的变量名差异
 var platformChart = map[string]map[string]string{
 	"windows": {
-		"HOME": "USERPROFILE",
-		"USER": "USERNAME",
+		"HOME":     "USERPROFILE",  // 用户主目录路径
+		"USER":     "USERNAME",     // 当前登录用户名
+		"SHELL":    "ComSpec",      // 默认shell或命令提示符路径
+		"PWD":      "CD",           // 当前工作目录路径
+		"HOSTNAME": "COMPUTERNAME", // 计算机主机名
 	},
 }
 
