@@ -55,9 +55,18 @@ func SetVariable(key, value string) error {
 	return os.Setenv(key, value)
 }
 
+// 根据用户名获取用户信息
+func GetUserInfoByName(userName string) (*user.User, error) {
+	userInfo, err := user.Lookup(userName)
+	if err != nil {
+		return nil, err
+	}
+	return userInfo, nil
+}
+
 // 根据ID获取用户信息
-func GetUserInfo(uid int) (*user.User, error) {
-	userInfo, err := user.LookupId(strconv.Itoa(uid))
+func GetUserInfoById(userId int) (*user.User, error) {
+	userInfo, err := user.LookupId(strconv.Itoa(userId))
 	if err != nil {
 		return nil, err
 	}
