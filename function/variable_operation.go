@@ -16,20 +16,10 @@ import (
 	"strconv"
 )
 
+// 用来处理不同系统之间的变量名差异
 var platformChart = map[string]map[string]string{
-	"linux": {
-		"HOME": "HOME",
-		"PWD":  "PWD",
-		"USER": "USER",
-	},
-	"darwin": {
-		"HOME": "HOME",
-		"PWD":  "PWD",
-		"USER": "USER",
-	},
 	"windows": {
 		"HOME": "USERPROFILE",
-		"PWD":  "PWD",
 		"USER": "USERNAME",
 	},
 }
@@ -38,8 +28,14 @@ var platform = runtime.GOOS
 
 // 获取环境变量
 func GetVariable(key string) string {
-	varKey := platformChart[platform][key]
-	return os.Getenv(varKey)
+	if innerMap, exists := platformChart[platform]; exists {
+		if _, variableExists := innerMap[key]; variableExists {
+			key = platformChart[platform][key]
+		}
+	}
+	variable := os.Getenv(key)
+
+	return variable
 }
 
 // 获取不在环境变量中的HOSTNAME
