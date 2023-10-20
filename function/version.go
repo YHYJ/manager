@@ -14,7 +14,7 @@ import "fmt"
 // 程序信息
 var (
 	name    string = "Manager"
-	version string = "v0.8.5"
+	version string = "v0.8.6"
 )
 
 func ProgramInfo(only bool) string {
