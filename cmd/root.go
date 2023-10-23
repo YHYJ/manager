@@ -20,7 +20,7 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "manager",
 	Short: "Self-developed program manager",
-	Long:  `Manager for self-developed programs, including installation and configuration.`,
+	Long:  `manager for self-developed programs, including installation and configuration.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -36,7 +36,7 @@ func Execute() {
 var cfgFile = function.UserInfo.HomeDir + "/.config" + "/manager/config.toml"
 
 func init() {
-	rootCmd.Flags().BoolP("help", "h", false, "help for Manager")
+	rootCmd.Flags().BoolP("help", "h", false, "help for manager")
 
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", cfgFile, "Specify configuration file")
 }

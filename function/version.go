@@ -13,7 +13,7 @@ import "fmt"
 
 // 程序信息
 var (
-	name    string = "Manager"
+	name    string = "manager"
 	version string = "v0.8.5"
 )
 
