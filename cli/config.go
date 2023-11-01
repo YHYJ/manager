@@ -7,7 +7,7 @@ Created Time: 2023-06-08 16:05:47
 Description: 子命令`config`的实现
 */
 
-package function
+package cli
 
 import (
 	"fmt"
@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"github.com/pelletier/go-toml"
+	"github.com/yhyj/manager/general"
 )
 
 // 判断文件是不是toml文件
@@ -27,7 +28,7 @@ func isTomlFile(filePath string) bool {
 
 // 读取toml配置文件
 func GetTomlConfig(filePath string) (*toml.Tree, error) {
-	if !FileExist(filePath) {
+	if !general.FileExist(filePath) {
 		return nil, fmt.Errorf("Open %s: no such file or directory", filePath)
 	}
 	if !isTomlFile(filePath) {
@@ -60,7 +61,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"fallback_source_username": "YHYJ",
 				"fallback_source_api":      "https://api.github.com",
 				"names":                    []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"},
-				"completion_dir":           []string{UserInfo.HomeDir + "/.cache/oh-my-zsh/completions", UserInfo.HomeDir + "/.oh-my-zsh/cache/completions"},
+				"completion_dir":           []string{general.UserInfo.HomeDir + "/.cache/oh-my-zsh/completions", general.UserInfo.HomeDir + "/.oh-my-zsh/cache/completions"},
 			},
 			"shell": map[string]interface{}{
 				"source_url":               "https://git.yj1516.top",
@@ -77,7 +78,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			},
 		},
 	}
-	if !FileExist(filePath) {
+	if !general.FileExist(filePath) {
 		return 0, fmt.Errorf("Open %s: no such file or directory", filePath)
 	}
 	if !isTomlFile(filePath) {

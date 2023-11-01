@@ -1,5 +1,5 @@
 /*
-File: dbus_communication.go
+File: define_dbus.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-13 13:10:41
@@ -7,7 +7,7 @@ Created Time: 2023-06-13 13:10:41
 Description: D-Bus总线通信
 */
 
-package function
+package general
 
 import (
 	"os"

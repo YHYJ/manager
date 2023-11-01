@@ -1,5 +1,5 @@
 /*
-File: variable_operation.go
+File: define_variable.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-08 16:01:45
@@ -7,7 +7,7 @@ Created Time: 2023-06-08 16:01:45
 Description: 操作变量
 */
 
-package function
+package general
 
 import (
 	"os"
@@ -15,6 +15,9 @@ import (
 	"runtime"
 	"strconv"
 )
+
+// 操作系统
+var platform = runtime.GOOS
 
 // 用来处理不同系统之间的变量名差异
 var platformChart = map[string]map[string]string{
@@ -27,7 +30,16 @@ var platformChart = map[string]map[string]string{
 	},
 }
 
-var platform = runtime.GOOS
+// 用户名，当程序提权运行时，使用SUDO_USER变量获取提权前的用户名
+var UserName = func() string {
+	if GetVariable("SUDO_USER") != "" {
+		return GetVariable("SUDO_USER")
+	}
+	return GetVariable("USER")
+}()
+
+// 用户信息
+var UserInfo, _ = GetUserInfoByName(UserName)
 
 // 获取环境变量
 func GetVariable(key string) string {

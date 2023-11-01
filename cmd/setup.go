@@ -13,7 +13,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/yhyj/manager/function"
+	"github.com/yhyj/manager/cli"
+	"github.com/yhyj/manager/general"
 )
 
 // setupCmd represents the setup command
@@ -60,8 +61,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "configuration file"
 			fmt.Printf(subjectNameFormat, subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 1, function.ChezmoiConfigFile)
-			if err := function.WriteFile(function.ChezmoiConfigFile, function.ChezmoiConfig); err != nil {
+			fmt.Printf(configFileFormat, 1, cli.ChezmoiConfigFile)
+			if err := general.WriteFile(cli.ChezmoiConfigFile, cli.ChezmoiConfig); err != nil {
 				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
 				fmt.Printf(successFormat, 1, "Setup completed")
@@ -73,8 +74,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "configuration file"
 			fmt.Printf(subjectNameFormat, subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 1, function.CobraConfigFile)
-			if err := function.WriteFile(function.CobraConfigFile, function.CobraConfig); err != nil {
+			fmt.Printf(configFileFormat, 1, cli.CobraConfigFile)
+			if err := general.WriteFile(cli.CobraConfigFile, cli.CobraConfig); err != nil {
 				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
 				fmt.Printf(successFormat, 1, "Setup completed")
@@ -89,8 +90,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "root directory"
 			fmt.Printf(subjectMinorNameFormat, 1, subjectMinorName)
 			fmt.Printf(descriptorFormat, 2, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 2, function.DockerServiceConfigFile)
-			if err := function.WriteFile(function.DockerServiceConfigFile, function.DockerServiceConfig); err != nil {
+			fmt.Printf(configFileFormat, 2, cli.DockerServiceConfigFile)
+			if err := general.WriteFile(cli.DockerServiceConfigFile, cli.DockerServiceConfig); err != nil {
 				errorFormat = "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n"
 				fmt.Printf(errorFormat, 2, err.Error())
 			} else {
@@ -102,8 +103,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "registry mirrors"
 			fmt.Printf(subjectMinorNameFormat, 1, subjectMinorName)
 			fmt.Printf(descriptorFormat, 2, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 2, function.DockerMirrorsConfigFile)
-			if err := function.WriteFile(function.DockerMirrorsConfigFile, function.DockerMirrorsConfig); err != nil {
+			fmt.Printf(configFileFormat, 2, cli.DockerMirrorsConfigFile)
+			if err := general.WriteFile(cli.DockerMirrorsConfigFile, cli.DockerMirrorsConfig); err != nil {
 				fmt.Printf(errorFormat, 2, err.Error())
 			} else {
 				fmt.Printf(successFormat, 2, "Setup completed")
@@ -115,8 +116,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "restart timing"
 			fmt.Printf(subjectNameFormat, subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 1, function.FrpcConfigFile)
-			if err := function.WriteFile(function.FrpcConfigFile, function.FrpcConfig); err != nil {
+			fmt.Printf(configFileFormat, 1, cli.FrpcConfigFile)
+			if err := general.WriteFile(cli.FrpcConfigFile, cli.FrpcConfig); err != nil {
 				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
 				fmt.Printf(successFormat, 1, "Setup completed")
@@ -128,8 +129,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "configuration file"
 			fmt.Printf(subjectNameFormat, subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 1, function.GitConfigFile)
-			if err := function.WriteFile(function.GitConfigFile, function.GitConfig); err != nil {
+			fmt.Printf(configFileFormat, 1, cli.GitConfigFile)
+			if err := general.WriteFile(cli.GitConfigFile, cli.GitConfig); err != nil {
 				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
 				fmt.Printf(successFormat, 1, "Setup completed")
@@ -141,8 +142,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "environment file"
 			fmt.Printf(subjectNameFormat, subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 1, function.GoConfigFile)
-			if err := function.WriteFile(function.GoConfigFile, function.GoConfig); err != nil {
+			fmt.Printf(configFileFormat, 1, cli.GoConfigFile)
+			if err := general.WriteFile(cli.GoConfigFile, cli.GoConfig); err != nil {
 				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
 				fmt.Printf(successFormat, 1, "Setup completed")
@@ -154,8 +155,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "registry"
 			fmt.Printf(subjectNameFormat, subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 1, function.NpmConfigFile)
-			if err := function.WriteFile(function.NpmConfigFile, function.NpmConfig); err != nil {
+			fmt.Printf(configFileFormat, 1, cli.NpmConfigFile)
+			if err := general.WriteFile(cli.NpmConfigFile, cli.NpmConfig); err != nil {
 				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
 				fmt.Printf(successFormat, 1, "Setup completed")
@@ -167,8 +168,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "mirrors"
 			fmt.Printf(subjectNameFormat, subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 1, function.PipConfigFile)
-			if err := function.WriteFile(function.PipConfigFile, function.PipConfig); err != nil {
+			fmt.Printf(configFileFormat, 1, cli.PipConfigFile)
+			if err := general.WriteFile(cli.PipConfigFile, cli.PipConfig); err != nil {
 				fmt.Printf(errorFormat, 1, err.Error())
 			} else {
 				fmt.Printf(successFormat, 1, "Setup completed")
@@ -183,8 +184,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "timer"
 			fmt.Printf(subjectMinorNameFormat, 1, subjectMinorName)
 			fmt.Printf(descriptorFormat, 2, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 2, function.SystemCheckupdatesTimerConfigFile)
-			if err := function.WriteFile(function.SystemCheckupdatesTimerConfigFile, function.SystemCheckupdatesTimerConfig); err != nil {
+			fmt.Printf(configFileFormat, 2, cli.SystemCheckupdatesTimerConfigFile)
+			if err := general.WriteFile(cli.SystemCheckupdatesTimerConfigFile, cli.SystemCheckupdatesTimerConfig); err != nil {
 				errorFormat = "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n"
 				fmt.Printf(errorFormat, 2, err.Error())
 			} else {
@@ -196,8 +197,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "service"
 			fmt.Printf(subjectMinorNameFormat, 1, subjectMinorName)
 			fmt.Printf(descriptorFormat, 2, subjectName, descriptorText)
-			fmt.Printf(configFileFormat, 2, function.SystemCheckupdatesServiceConfigFile)
-			if err := function.WriteFile(function.SystemCheckupdatesServiceConfigFile, function.SystemCheckupdatesServiceConfig); err != nil {
+			fmt.Printf(configFileFormat, 2, cli.SystemCheckupdatesServiceConfigFile)
+			if err := general.WriteFile(cli.SystemCheckupdatesServiceConfigFile, cli.SystemCheckupdatesServiceConfig); err != nil {
 				fmt.Printf(errorFormat, 2, err.Error())
 			} else {
 				fmt.Printf(successFormat, 2, "Setup completed")

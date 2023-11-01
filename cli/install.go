@@ -7,7 +7,7 @@ Created Time: 2023-06-14 14:32:16
 Description: 子命令`install`的实现
 */
 
-package function
+package cli
 
 import (
 	"fmt"

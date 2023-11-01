@@ -1,5 +1,5 @@
 /*
-File: file_operation.go
+File: define_filemanager.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-08 16:04:26
@@ -7,7 +7,7 @@ Created Time: 2023-06-08 16:04:26
 Description: 文件操作
 */
 
-package function
+package general
 
 import (
 	"fmt"

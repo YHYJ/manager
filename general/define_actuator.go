@@ -1,5 +1,5 @@
 /*
-File: run_command.go
+File: define_actuator.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-09 15:01:47
@@ -7,7 +7,7 @@ Created Time: 2023-06-09 15:01:47
 Description: 执行系统命令的函数
 */
 
-package function
+package general
 
 import (
 	"os"

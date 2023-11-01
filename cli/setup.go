@@ -7,16 +7,18 @@ Created Time: 2023-06-09 14:13:47
 Description: 子命令`setup`功能函数
 */
 
-package function
+package cli
 
 import (
 	"fmt"
 	"strings"
+
+	"github.com/yhyj/manager/general"
 )
 
 var (
-	home     = GetVariable("HOME")
-	hostname = GetHostname()
+	home     = general.GetVariable("HOME")
+	hostname = general.GetHostname()
 	email    = "yj1516268@outlook.com"
 	sep      = strings.Repeat(" ", 4)
 
