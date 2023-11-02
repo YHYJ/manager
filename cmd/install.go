@@ -37,7 +37,7 @@ var installCmd = &cobra.Command{
 		var (
 			installPath                 string
 			installTemp                 string
-			installGeneratePath         string
+			goGeneratePath              string
 			goSourceUrl                 string
 			goFallbackSourceUrl         string
 			goSourceApi                 string
@@ -82,8 +82,8 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.temp") {
 				installTemp = configTree.Get("install.temp").(string)
 			}
-			if configTree.Has("install.generate_path") {
-				installGeneratePath = configTree.Get("install.generate_path").(string)
+			if configTree.Has("install.go.generate_path") {
+				goGeneratePath = configTree.Get("install.go.generate_path").(string)
 			}
 			if configTree.Has("install.go.source_url") {
 				goSourceUrl = configTree.Get("install.go.source_url").(string)
@@ -278,7 +278,7 @@ var installCmd = &cobra.Command{
 			for _, name := range goNames {
 				// 组装变量
 				textLength := 0                                                                                                            // 输出文本的长度
-				compileProgram := fmt.Sprintf("%s/%s/%s/%s", installTemp, name.(string), installGeneratePath, name.(string))               // 编译生成的最新程序
+				compileProgram := fmt.Sprintf("%s/%s/%s/%s", installTemp, name.(string), goGeneratePath, name.(string))                    // 编译生成的最新程序
 				goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string))                         // API URL
 				goFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // Fallback API URL
 				localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                           // 本地程序路径

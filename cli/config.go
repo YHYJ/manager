@@ -50,10 +50,10 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"https_proxy": "",
 		},
 		"install": map[string]interface{}{
-			"path":          "/usr/local/bin",
-			"temp":          "/tmp/manager-build",
-			"generate_path": "build",
+			"path": "/usr/local/bin",
+			"temp": "/tmp/manager-build",
 			"go": map[string]interface{}{
+				"generate_path":            "build",
 				"source_url":               "https://git.yj1516.top",
 				"source_username":          "YJ",
 				"source_api":               "https://git.yj1516.top/api/v1",
