@@ -14,7 +14,7 @@ import "fmt"
 // 程序信息
 const (
 	Name    string = "Manager"
-	Version string = "v0.9.3"
+	Version string = "v0.9.5"
 	Project string = "github.com/yhyj/manager"
 )
 
