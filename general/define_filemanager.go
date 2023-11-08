@@ -17,7 +17,7 @@ import (
 	"sync"
 )
 
-// 判断文件是否存在
+// FileExist 判断文件是否存在
 func FileExist(filePath string) bool {
 	_, err := os.Stat(filePath)
 	if err != nil {
@@ -29,7 +29,7 @@ func FileExist(filePath string) bool {
 	return true
 }
 
-// 判断文件是否为空（无法判断文件夹）
+// FileEmpty 判断文件是否为空（无法判断文件夹）
 func FileEmpty(filePath string) bool {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -43,7 +43,7 @@ func FileEmpty(filePath string) bool {
 	return fi.Size() == 0
 }
 
-// 判断文件夹是否为空，包括隐藏文件
+// FolderEmpty 判断文件夹是否为空，包括隐藏文件
 func FolderEmpty(filePath string) bool {
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -58,7 +58,7 @@ func FolderEmpty(filePath string) bool {
 	return false
 }
 
-// 创建文件，如果其父目录不存在则创建父目录
+// CreateFile 创建文件，如果其父目录不存在则创建父目录
 func CreateFile(filePath string) error {
 	if FileExist(filePath) {
 		return nil
@@ -72,7 +72,7 @@ func CreateFile(filePath string) error {
 	return err
 }
 
-// 创建文件夹，如果其父目录不存在则创建父目录
+// CreateDir 创建文件夹，如果其父目录不存在则创建父目录
 func CreateDir(dirPath string) error {
 	if FileExist(dirPath) {
 		return nil
@@ -85,12 +85,12 @@ func CreateDir(dirPath string) error {
 	return os.Mkdir(dirPath, os.ModePerm)
 }
 
-// 进到指定目录
+// GoToDir 进到指定目录
 func GoToDir(dirPath string) error {
 	return os.Chdir(dirPath)
 }
 
-// 写入内容到文件
+// WriteFile 写入内容到文件
 func WriteFile(filePath string, content string) error {
 	// 文件存在
 	if FileExist(filePath) {
@@ -130,7 +130,7 @@ func WriteFile(filePath string, content string) error {
 	return nil
 }
 
-// 删除文件
+// DeleteFile 删除文件
 func DeleteFile(filePath string) error {
 	if !FileExist(filePath) {
 		return nil
@@ -138,7 +138,7 @@ func DeleteFile(filePath string) error {
 	return os.Remove(filePath)
 }
 
-// 并发比较两个文件是否相同
+// CompareFile 并发比较两个文件是否相同
 func CompareFile(file1Path string, file2Path string) (bool, error) {
 	// 尝试打开文件
 	file1, err := os.Open(file1Path)
@@ -228,7 +228,7 @@ func CompareFile(file1Path string, file2Path string) (bool, error) {
 	return equal, nil
 }
 
-// 比较两个文件的内容是否相同
+// bytesEqual 比较两个文件的内容是否相同
 func bytesEqual(b1 []byte, b2 []byte) bool {
 	if len(b1) != len(b2) {
 		return false

@@ -19,7 +19,7 @@ import (
 	"github.com/go-git/go-git/v5"
 )
 
-// 通过HTTP协议克隆仓库
+// CloneRepoViaHTTP 通过 HTTP 协议克隆仓库
 func CloneRepoViaHTTP(path string, url string, repo string) error {
 	_, err := git.PlainClone(path+"/"+repo, false, &git.CloneOptions{
 		URL:               url + "/" + repo,
@@ -33,7 +33,7 @@ func CloneRepoViaHTTP(path string, url string, repo string) error {
 	return fmt.Errorf("\x1b[31m==>\x1b[0m Clone \x1b[34m%s\x1b[0m error: %s\n", repo, err)
 }
 
-// 通过HTTP协议下载文件
+// DownloadFile 通过 HTTP 协议下载文件
 func DownloadFile(url string, urlFile string, outputFile string) (string, error) {
 	fileDownloadUrl := fmt.Sprintf("%s/%s", url, urlFile)
 
@@ -74,7 +74,7 @@ func DownloadFile(url string, urlFile string, outputFile string) (string, error)
 	return outputFileFullname, nil
 }
 
-// 复制文件，如果文件存在则覆盖
+// InstallFile 安装文件，如果文件存在则覆盖
 func InstallFile(sourceFile, targetFile string) error {
 	// 打开源文件
 	sFile, err := os.Open(sourceFile)

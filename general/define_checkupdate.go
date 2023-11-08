@@ -18,7 +18,7 @@ import (
 	"time"
 )
 
-// 请求API，返回响应体
+// RequestApi 请求 API，返回响应体
 func RequestApi(url string) ([]byte, error) {
 	// 创建一个HTTP请求客户端
 	client := http.Client{
@@ -53,7 +53,7 @@ func RequestApi(url string) ([]byte, error) {
 	return body, nil
 }
 
-// 解析API响应体，根据JSON数据解析后的类型选择数据提取方式
+// ParseApiResponse 解析 API 响应体，根据 JSON 数据解析后的类型选择数据提取方式
 func ParseApiResponse(body []byte) (string, error) {
 	// 解码JSON格式的返回值
 	var datas interface{}
