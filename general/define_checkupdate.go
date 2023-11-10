@@ -22,7 +22,7 @@ import (
 func RequestApi(url string) ([]byte, error) {
 	// 创建一个HTTP请求客户端
 	client := http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 10 * time.Second,
 	}
 	// 创建GET请求并设置请求头
 	req, err := http.NewRequest(http.MethodGet, url, nil)
