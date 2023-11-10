@@ -317,12 +317,18 @@ var installCmd = &cobra.Command{
 					}
 					goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)
 					goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername)
+					fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m from source ", name.(string))
 					if err := cli.CloneRepoViaHTTP(installTemp, goSource, name.(string)); err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						fmt.Printf("\x1b[31merror\x1b[0m: %s\n", err)
+						fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m from fallback ", name.(string))
 						if err := cli.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string)); err != nil {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							fmt.Printf("\x1b[31merror: %s\x1b[0m\n", err)
 							continue
+						} else {
+							fmt.Printf("\x1b[32;1msuccess\x1b[0m\n")
 						}
+					} else {
+						fmt.Printf("\x1b[32;1msuccess\x1b[0m\n")
 					}
 					// 进到下载的远端文件目录
 					if err := general.GoToDir(goSourceTempDir); err != nil {

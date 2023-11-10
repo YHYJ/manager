@@ -25,12 +25,10 @@ func CloneRepoViaHTTP(path string, url string, repo string) error {
 		URL:               url + "/" + repo,
 		RecurseSubmodules: 1,
 	})
-	if err == nil {
-		fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m success\n", repo)
-		return nil
+	if err != nil {
+		return err
 	}
-
-	return fmt.Errorf("\x1b[31m==>\x1b[0m Clone \x1b[34m%s\x1b[0m error: %s\n", repo, err)
+	return nil
 }
 
 // DownloadFile 通过 HTTP 协议下载文件
