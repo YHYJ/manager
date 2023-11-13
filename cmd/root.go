@@ -11,6 +11,7 @@ package cmd
 
 import (
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/yhyj/manager/general"
@@ -33,7 +34,7 @@ func Execute() {
 	}
 }
 
-var cfgFile = general.UserInfo.HomeDir + "/.config" + "/manager/config.toml"
+var cfgFile = filepath.Join(general.UserInfo.HomeDir, ".config", "manager", "config.toml")
 
 func init() {
 	rootCmd.Flags().BoolP("help", "h", false, "help for manager")

@@ -11,6 +11,7 @@ package cli
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/yhyj/manager/general"
@@ -30,24 +31,24 @@ var (
 	chezmoiAutoCommit   = false
 	chezmoiAutoPush     = false
 	ChezmoiConfig       = fmt.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
-	ChezmoiConfigFile   = home + "/.config/chezmoi/chezmoi.toml"
+	ChezmoiConfigFile   = filepath.Join(home, ".config", "chezmoi", "chezmoi.toml")
 
 	// cobra的依赖项
-	CobraDependencies = goGOBIN + "/cobra-cli"
+	CobraDependencies = filepath.Join(goGOBIN, "cobra-cli")
 	// cobra配置
 	cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
 	cobraAuthor       = "YJ"
 	cobraLicense      = "GPLv3"
 	cobraUseViper     = false
 	CobraConfig       = fmt.Sprintf(cobraConfigFormat, cobraAuthor, email, cobraLicense, cobraUseViper)
-	CobraConfigFile   = home + "/.cobra.yaml"
+	CobraConfigFile   = filepath.Join(home, ".cobra.yaml")
 
 	// docker service和mirrors的依赖项
 	DockerDependencies = "/usr/bin/dockerd"
 	// docker配置 - docker service
 	dockerServiceConfigFormat = "[Service]\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
 	dockerServiceExecStart    = "/usr/bin/dockerd"
-	dockerServiceDataRoot     = home + "/Documents/Docker/Root"
+	dockerServiceDataRoot     = filepath.Join(home, "Documents", "Docker", "Root")
 	DockerServiceConfig       = fmt.Sprintf(dockerServiceConfigFormat, dockerServiceExecStart, dockerServiceDataRoot)
 	DockerServiceConfigFile   = "/etc/systemd/system/docker.service.d/override.conf"
 	// docker配置 - docker mirrors
@@ -78,19 +79,19 @@ var (
 	gitFilterLfsProcess  = "git-lfs filter-process"
 	gitFilterLfsRequired = true
 	GitConfig            = fmt.Sprintf(gitConfigFormat, sep, hostname, sep, email, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
-	GitConfigFile        = home + "/.gitconfig"
+	GitConfigFile        = filepath.Join(home, ".gitconfig")
 
 	// go的依赖项
 	GoDependencies = "/usr/bin/go"
 	// go配置
 	goConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
 	goGO111MODULE  = "on"
-	goGOBIN        = home + "/.go/bin"
-	goGOPATH       = home + "/.go"
-	goGOCACHE      = home + "/.cache/go/go-build"
-	goGOMODCACHE   = home + "/.cache/go/pkg/mod"
+	goGOBIN        = filepath.Join(home, ".go", "bin")
+	goGOPATH       = filepath.Join(home, ".go")
+	goGOCACHE      = filepath.Join(home, ".cache", "go", "go-build")
+	goGOMODCACHE   = filepath.Join(home, ".cache", "go", "pkg", "mod")
 	GoConfig       = fmt.Sprintf(goConfigFormat, goGO111MODULE, goGOBIN, goGOPATH, goGOCACHE, goGOMODCACHE)
-	GoConfigFile   = home + "/.config/go/env"
+	GoConfigFile   = filepath.Join(home, ".config", "go", "env")
 
 	// npm的依赖项
 	NpmDependencies = "/usr/bin/npm"
@@ -98,7 +99,7 @@ var (
 	npmConfigFormat = "registry=%s\n"
 	npmRegistry     = "https://registry.npm.taobao.org"
 	NpmConfig       = fmt.Sprintf(npmConfigFormat, npmRegistry)
-	NpmConfigFile   = home + "/.npmrc"
+	NpmConfigFile   = filepath.Join(home, ".npmrc")
 
 	// pip的依赖项
 	PipDependencies = "/usr/bin/pip"
@@ -107,7 +108,7 @@ var (
 	pipIndexUrl     = "https://mirrors.aliyun.com/pypi/simple"
 	pipTrustedHost  = "mirrors.aliyun.com"
 	PipConfig       = fmt.Sprintf(pipConfigFormat, pipIndexUrl, pipTrustedHost)
-	PipConfigFile   = home + "/.config/pip/pip.conf"
+	PipConfigFile   = filepath.Join(home, ".config", "pip", "pip.conf")
 
 	// system-checkupdates timer和service的依赖项
 	SystemCheckupdatesDependencies = "/usr/local/bin/system-checkupdates" // >= 3.0.0-20230313.1

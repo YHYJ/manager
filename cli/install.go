@@ -21,7 +21,7 @@ import (
 
 // CloneRepoViaHTTP 通过 HTTP 协议克隆仓库
 func CloneRepoViaHTTP(path string, url string, repo string) error {
-	_, err := git.PlainClone(path+"/"+repo, false, &git.CloneOptions{
+	_, err := git.PlainClone(filepath.Join(path, repo), false, &git.CloneOptions{
 		URL:               url + "/" + repo,
 		RecurseSubmodules: 1,
 	})

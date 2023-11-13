@@ -12,6 +12,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/pelletier/go-toml"
@@ -61,7 +62,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"fallback_source_username": "YHYJ",
 				"fallback_source_api":      "https://api.github.com",
 				"names":                    []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"},
-				"completion_dir":           []string{general.UserInfo.HomeDir + "/.cache/oh-my-zsh/completions", general.UserInfo.HomeDir + "/.oh-my-zsh/cache/completions"},
+				"completion_dir":           []string{filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"), filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions")},
 			},
 			"shell": map[string]interface{}{
 				"source_url":               "https://git.yj1516.top",
