@@ -17,7 +17,7 @@ import (
 )
 
 // 操作系统
-var platform = runtime.GOOS
+var Platform = runtime.GOOS
 
 // 用来处理不同系统之间的变量名差异
 var platformChart = map[string]map[string]string{
@@ -43,9 +43,9 @@ var UserInfo, _ = GetUserInfoByName(UserName)
 
 // GetVariable 获取环境变量
 func GetVariable(key string) string {
-	if innerMap, exists := platformChart[platform]; exists {
+	if innerMap, exists := platformChart[Platform]; exists {
 		if _, variableExists := innerMap[key]; variableExists {
-			key = platformChart[platform][key]
+			key = platformChart[Platform][key]
 		}
 	}
 	variable := os.Getenv(key)
