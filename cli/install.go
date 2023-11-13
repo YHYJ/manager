@@ -32,11 +32,9 @@ func CloneRepoViaHTTP(path string, url string, repo string) error {
 }
 
 // DownloadFile 通过 HTTP 协议下载文件
-func DownloadFile(url string, urlFile string, outputFile string) (string, error) {
-	fileDownloadUrl := fmt.Sprintf("%s/%s", url, urlFile)
-
+func DownloadFile(url string, outputFile string) (string, error) {
 	// 发送GET请求并获取响应
-	resp, err := http.Get(fileDownloadUrl)
+	resp, err := http.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("Error sending download request: %s", err)
 	}

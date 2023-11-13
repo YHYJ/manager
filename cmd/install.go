@@ -206,10 +206,12 @@ var installCmd = &cobra.Command{
 					shellFallbackSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellFallbackSourceUrl, shellFallbackSourceUsername, shellRepo, shellFallbackSourceBranch)
 					shellUrlFile := fmt.Sprintf("%s/%s", shellDir, name.(string))
 					shellOutputFile := fmt.Sprintf("%s/%s", shellSourceTempDir, name.(string))
-					_, err := cli.DownloadFile(shellSource, shellUrlFile, shellOutputFile)
+					fileUrl := fmt.Sprintf("%s/%s", shellSource, shellUrlFile)
+					_, err := cli.DownloadFile(fileUrl, shellOutputFile)
 					if err != nil {
 						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
-						_, err = cli.DownloadFile(shellFallbackSource, shellUrlFile, shellOutputFile)
+						fileUrl := fmt.Sprintf("%s/%s", shellFallbackSource, shellUrlFile)
+						_, err = cli.DownloadFile(fileUrl, shellOutputFile)
 						if err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
 							continue
