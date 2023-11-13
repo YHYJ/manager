@@ -44,15 +44,38 @@ func GetTomlConfig(filePath string) (*toml.Tree, error) {
 
 // WriteTomlConfig 写入 toml 配置文件
 func WriteTomlConfig(filePath string) (int64, error) {
+	// 根据系统不同决定某些参数
+	var (
+		installPath = ""         // 定义在不同平台的安装路径
+		installTemp = ""         // 定义在不同平台的编译目录
+		goNames     = []string{} // 定义在不同平台可用的程序
+		shellNames  = []string{} // 定义在不同平台可用的脚本
+	)
+	if general.Platform == "linux" {
+		installPath = "/usr/local/bin"
+		installTemp = "/tmp/manager-build"
+		goNames = []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"}
+		shellNames = []string{"collect-system", "configure-dtags", "py-virtualenv-tool", "save-docker-images", "sfm", "spacevim-update", "spider", "system-checkupdates", "trash-manager", "usb-manager"}
+	} else if general.Platform == "darwin" {
+		installPath = "/usr/local/bin"
+		installTemp = "/tmp/manager-build"
+		goNames = []string{"clone-repos", "manager", "skynet"}
+		shellNames = []string{"spacevim-update", "spider"}
+	} else if general.Platform == "windows" {
+		installPath = filepath.Join(general.GetVariable("ProgramFiles"), "Manager")
+		installTemp = filepath.Join(general.UserInfo.HomeDir, "AppData", "Local", "Temp")
+		goNames = []string{"skynet"}
+	}
 	// 定义一个map[string]interface{}类型的变量并赋值
 	exampleConf := map[string]interface{}{
 		"variable": map[string]interface{}{
-			"http_proxy":  "",
-			"https_proxy": "",
+			"http_proxy":  "", // 例如"http://127.0.0.1:8080"
+			"https_proxy": "", // 例如"http://127.0.0.1:8080"
 		},
 		"install": map[string]interface{}{
-			"path": "/usr/local/bin",
-			"temp": "/tmp/manager-build",
+			"method": "release", // 安装方法，"release"或"source"代表安装预编译的二进制文件或自行从源码编译
+			"path":   installPath,
+			"temp":   installTemp,
 			"go": map[string]interface{}{
 				"generate_path":            "build",
 				"source_url":               "https://git.yj1516.top",
@@ -61,7 +84,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"fallback_source_url":      "https://github.com",
 				"fallback_source_username": "YHYJ",
 				"fallback_source_api":      "https://api.github.com",
-				"names":                    []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"},
+				"names":                    goNames,
 				"completion_dir":           []string{filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"), filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions")},
 			},
 			"shell": map[string]interface{}{
@@ -74,8 +97,8 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"fallback_source_api":      "https://api.github.com",
 				"fallback_source_branch":   "ArchLinux",
 				"repo":                     "Program",
-				"dir":                      "System-Script/app",
-				"names":                    []string{"collect-system", "configure-dtags", "py-virtualenv-tool", "save-docker-images", "sfm", "spacevim-update", "spider", "system-checkupdates", "trash-manager", "usb-manager"},
+				"dir":                      filepath.Join("System-Script", "app"),
+				"names":                    shellNames,
 			},
 		},
 	}
