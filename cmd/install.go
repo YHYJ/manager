@@ -79,7 +79,7 @@ var installCmd = &cobra.Command{
 		// 检查配置文件是否存在
 		configTree, err := cli.GetTomlConfig(cfgFile)
 		if err != nil {
-			fmt.Printf(general.BaseErrorFormat, err)
+			fmt.Printf(general.ErrorBaseFormat, err)
 			return
 		} else {
 			// 获取配置项
@@ -164,13 +164,13 @@ var installCmd = &cobra.Command{
 
 		// 安装/更新shell脚本
 		if shellFlag {
-			fmt.Printf("\n\x1b[36;3m%s\x1b[0m\n\n", "Installing shell-based programs...")
+			fmt.Printf(general.TitleH1Format, "Installing shell-based programs...")
 			// 设置代理
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
 			// 创建临时目录
 			if err := general.CreateDir(installTemp); err != nil {
-				fmt.Printf(general.BaseErrorFormat, err)
+				fmt.Printf(general.ErrorBaseFormat, err)
 				return
 			}
 			// 遍历所有脚本名
@@ -185,26 +185,26 @@ var installCmd = &cobra.Command{
 				// 请求API
 				body, err := general.RequestApi(shellSourceApiUrl)
 				if err != nil {
-					fmt.Printf(general.BaseErrorFormat, err)
+					fmt.Printf(general.ErrorBaseFormat, err)
 					body, err = general.RequestApi(shellFallbackSourceApiUrl)
 					if err != nil {
-						fmt.Printf(general.BaseErrorFormat, err)
+						fmt.Printf(general.ErrorBaseFormat, err)
 						continue
 					}
 				}
 				// 获取远端脚本Hash值
 				remoteHash, err := general.ParseApiResponse(body)
 				if err != nil {
-					fmt.Printf(general.BaseErrorFormat, err)
+					fmt.Printf(general.ErrorBaseFormat, err)
 					continue
 				}
 				// 获取本地脚本Hash值
 				localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
 				// 比较远端和本地脚本Hash值
 				if remoteHash == localHash { // Hash值一致，则输出无需更新信息
-					text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m %s\n", name.(string), latestVersionMessage)
+					text := fmt.Sprintf(general.SliceTraverse2PSuffixFormat, "==>", " ", name.(string), " ", latestVersionMessage)
 					fmt.Printf(text)
-					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
 				} else { // Hash值不一致，则更新脚本，并输出已更新信息
 					// 下载远端脚本
@@ -214,11 +214,11 @@ var installCmd = &cobra.Command{
 					fileUrl := fmt.Sprintf("%s/%s", shellSource, shellUrlFile)
 					_, err := cli.DownloadFile(fileUrl, scriptLocalPath)
 					if err != nil {
-						fmt.Printf(general.BaseErrorFormat, err)
+						fmt.Printf(general.ErrorBaseFormat, err)
 						fileUrl := fmt.Sprintf("%s/%s", shellFallbackSource, shellUrlFile)
 						_, err = cli.DownloadFile(fileUrl, scriptLocalPath)
 						if err != nil {
-							fmt.Printf(general.BaseErrorFormat, err)
+							fmt.Printf(general.ErrorBaseFormat, err)
 							continue
 						}
 					}
@@ -227,45 +227,45 @@ var installCmd = &cobra.Command{
 						// 检测本地程序是否存在
 						if commandErr != nil { // 不存在，安装
 							if err := cli.InstallFile(scriptLocalPath, localProgram); err != nil {
-								fmt.Printf(general.BaseErrorFormat, err)
+								fmt.Printf(general.ErrorBaseFormat, err)
 								continue
 							} else {
 								// 为已安装的脚本设置可执行权限
 								if err := os.Chmod(localProgram, 0755); err != nil {
-									fmt.Printf(general.BaseErrorFormat, err)
+									fmt.Printf(general.ErrorBaseFormat, err)
 								}
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
+								text := fmt.Sprintf(general.SliceTraverse4PSuffixFormat, "==>", " ", name.(string), " ", remoteHash[:4], " ", "installation", " ", "completed")
 								fmt.Printf(text)
-								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							}
 						} else { // 存在，更新
 							if err := os.Remove(localProgram); err != nil {
-								fmt.Printf(general.BaseErrorFormat, err)
+								fmt.Printf(general.ErrorBaseFormat, err)
 							}
 							if err := cli.InstallFile(scriptLocalPath, localProgram); err != nil {
-								fmt.Printf(general.BaseErrorFormat, err)
+								fmt.Printf(general.ErrorBaseFormat, err)
 								continue
 							} else {
 								// 为已更新的脚本设置可执行权限
 								if err := os.Chmod(localProgram, 0755); err != nil {
-									fmt.Printf(general.BaseErrorFormat, err)
+									fmt.Printf(general.ErrorBaseFormat, err)
 								}
-								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
+								text := fmt.Sprintf(general.SliceTraverse4PSuffixFormat, "==>", " ", name.(string), " ", remoteHash[:4], " ", "update", " ", "completed")
 								fmt.Printf(text)
-								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							}
 						}
 					} else {
-						text := fmt.Sprintf(general.BaseErrorFormat, fmt.Sprintf("The source file %s does not exist", scriptLocalPath))
+						text := fmt.Sprintf(general.ErrorBaseFormat, fmt.Sprintf("The source file %s does not exist", scriptLocalPath))
 						fmt.Printf(text)
-						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
 					}
 				}
-				dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
-				fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
+				dashes := strings.Repeat("-", textLength-1)  //组装分隔符（减去行尾换行符的一个长度）
+				fmt.Printf(general.LineHiddenFormat, dashes) // 美化输出
 				// 添加一个0.01秒的延时，使输出更加顺畅
 				time.Sleep(100 * time.Millisecond)
 			}
@@ -273,13 +273,13 @@ var installCmd = &cobra.Command{
 
 		// 安装/更新基于go开发的程序
 		if goFlag {
-			fmt.Printf("\n\x1b[36;3m%s\x1b[0m\n\n", "Installing go-based programs...")
+			fmt.Printf(general.TitleH1Format, "Installing go-based programs...")
 			// 设置代理
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
 			// 创建临时目录
 			if err := general.CreateDir(installTemp); err != nil {
-				fmt.Printf(general.BaseErrorFormat, err)
+				fmt.Printf(general.ErrorBaseFormat, err)
 				return
 			}
 			// 遍历所有程序名
@@ -294,70 +294,70 @@ var installCmd = &cobra.Command{
 				// 请求API
 				body, err := general.RequestApi(goSourceApiUrl)
 				if err != nil {
-					fmt.Printf(general.BaseErrorFormat, err)
+					fmt.Printf(general.ErrorBaseFormat, err)
 					body, err = general.RequestApi(goFallbackSourceApiUrl)
 					if err != nil {
-						fmt.Printf(general.BaseErrorFormat, err)
+						fmt.Printf(general.ErrorBaseFormat, err)
 						continue
 					}
 				}
 				// 获取远端版本
 				remoteVersion, err := general.ParseApiResponse(body)
 				if err != nil {
-					fmt.Printf(general.BaseErrorFormat, err)
+					fmt.Printf(general.ErrorBaseFormat, err)
 					continue
 				}
 				// 获取本地版本
 				localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 				// 比较远端和本地版本
 				if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
-					text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33;1m%s\x1b[0m %s\n", name.(string), remoteVersion, latestVersionMessage)
+					text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, "==>", " ", name.(string), " ", remoteVersion, " ", latestVersionMessage)
 					fmt.Printf(text)
-					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
 				} else { // 版本不一致，则更新程序，并输出已更新信息
 					// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
 					goSourceTempDir := filepath.Join(installTemp, name.(string))
 					if general.FileExist(goSourceTempDir) {
 						if err := os.RemoveAll(goSourceTempDir); err != nil {
-							fmt.Printf(general.BaseErrorFormat, err)
+							fmt.Printf(general.ErrorBaseFormat, err)
 						}
 					}
 					goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)                         // 远端仓库克隆地址（除仓库名）
 					goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername) // 远端仓库备用克隆地址（除仓库名）
-					fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m from source ", name.(string))
+					fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from source ")
 					if err := cli.CloneRepoViaHTTP(installTemp, goSource, name.(string)); err != nil {
-						fmt.Printf(general.SuffixErrorFormat, "error", " -> ", err)
-						fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m from fallback ", name.(string))
+						fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
+						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from fallback source ")
 						if err := cli.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string)); err != nil {
-							fmt.Printf(general.SuffixErrorFormat, "error", " -> ", err)
+							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
 							continue
 						} else {
-							fmt.Printf("\x1b[32;1msuccess\x1b[0m\n")
+							fmt.Printf(general.SuccessFormat, "success")
 						}
 					} else {
-						fmt.Printf("\x1b[32;1msuccess\x1b[0m\n")
+						fmt.Printf(general.SuccessFormat, "success")
 					}
 					// 进到下载的远端文件目录
 					if err := general.GoToDir(goSourceTempDir); err != nil {
-						fmt.Printf(general.BaseErrorFormat, err)
+						fmt.Printf(general.ErrorBaseFormat, err)
 						continue
 					}
 					// 编译生成程序
 					if general.FileExist("Makefile") { // Makefile文件存在则使用make编译
 						makeArgs := []string{}
 						if err := general.RunCommand("make", makeArgs); err != nil {
-							fmt.Printf(general.BaseErrorFormat, err)
+							fmt.Printf(general.ErrorBaseFormat, err)
 							continue
 						}
 					} else if general.FileExist("main.go") { // Makefile文件不存在则使用go build编译
 						buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
 						if err := general.RunCommand("go", buildArgs); err != nil {
-							fmt.Printf(general.BaseErrorFormat, err)
+							fmt.Printf(general.ErrorBaseFormat, err)
 							continue
 						}
 					} else {
-						fmt.Printf(general.BaseErrorFormat, unableToCompileMessage)
+						fmt.Printf(general.ErrorBaseFormat, unableToCompileMessage)
 					}
 					// 检测编译生成的程序是否存在
 					if general.FileExist(compileProgram) {
@@ -366,48 +366,48 @@ var installCmd = &cobra.Command{
 							if general.FileExist("Makefile") { // Makefile文件存在则使用make install安装
 								makeArgs := []string{"install"}
 								if err := general.RunCommand("make", makeArgs); err != nil {
-									fmt.Printf(general.BaseErrorFormat, err)
+									fmt.Printf(general.ErrorBaseFormat, err)
 									continue
 								}
 							} else { // Makefile文件不存在则使用自定义函数安装
 								if err := cli.InstallFile(compileProgram, localProgram); err != nil {
-									fmt.Printf(general.BaseErrorFormat, err)
+									fmt.Printf(general.ErrorBaseFormat, err)
 									continue
 								} else {
 									// 为已安装的脚本设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
-										fmt.Printf(general.BaseErrorFormat, err)
+										fmt.Printf(general.ErrorBaseFormat, err)
 									}
 								}
 							}
-							text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string), remoteVersion)
+							text := fmt.Sprintf(general.SliceTraverse4PSuffixFormat, "==>", " ", name.(string), " ", remoteVersion, " ", "installation", " ", "completed")
 							fmt.Printf(text)
-							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 							textLength = len(controlRegex.ReplaceAllString(text, ""))
 						} else { // 存在，更新
 							if general.FileExist("Makefile") { // Makefile文件存在则使用make install更新
 								makeArgs := []string{"install"}
 								if err := general.RunCommand("make", makeArgs); err != nil {
-									fmt.Printf(general.BaseErrorFormat, err)
+									fmt.Printf(general.ErrorBaseFormat, err)
 									continue
 								}
 							} else { // Makefile文件不存在则使用自定义函数更新
 								if err := os.Remove(localProgram); err != nil {
-									fmt.Printf(general.BaseErrorFormat, err)
+									fmt.Printf(general.ErrorBaseFormat, err)
 								}
 								if err := cli.InstallFile(compileProgram, localProgram); err != nil {
-									fmt.Printf(general.BaseErrorFormat, err)
+									fmt.Printf(general.ErrorBaseFormat, err)
 									continue
 								} else {
 									// 为已安装的脚本设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
-										fmt.Printf(general.BaseErrorFormat, err)
+										fmt.Printf(general.ErrorBaseFormat, err)
 									}
 								}
 							}
-							text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[33m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string), remoteVersion)
+							text := fmt.Sprintf(general.SliceTraverse4PSuffixFormat, "==>", " ", name.(string), " ", remoteVersion, " ", "update", " ", "completed")
 							fmt.Printf(text)
-							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 							textLength = len(controlRegex.ReplaceAllString(text, ""))
 						}
 						// 生成/更新自动补全脚本
@@ -415,28 +415,28 @@ var installCmd = &cobra.Command{
 							if general.FileExist(completionDir.(string)) {
 								generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
 								if err := general.RunCommand("bash", generateArgs); err != nil {
-									text := fmt.Sprintf(general.SuffixErrorFormat, "==>", " ", acsInstallFailedMessage)
+									text := fmt.Sprintf(general.ErrorSuffixFormat, "==>", " ", acsInstallFailedMessage)
 									fmt.Printf(text)
-									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 									textLength = len(controlRegex.ReplaceAllString(text, ""))
 								} else {
-									text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m %s\n", acsInstallSuccessMessage)
+									text := fmt.Sprintf(general.SuccessSuffixFormat, "==>", " ", acsInstallSuccessMessage)
 									fmt.Printf(text)
-									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 									textLength = len(controlRegex.ReplaceAllString(text, ""))
 									break
 								}
 							}
 						}
 					} else {
-						text := fmt.Sprintf(general.BaseErrorFormat, fmt.Sprintf("The source file %s does not exist", compileProgram))
+						text := fmt.Sprintf(general.ErrorBaseFormat, fmt.Sprintf("The source file %s does not exist", compileProgram))
 						fmt.Printf(text)
-						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
 					}
 				}
-				dashes := strings.Repeat("-", textLength-1) //组装分隔符（减去行尾换行符的一个长度）
-				fmt.Printf("\x1b[30m%s\x1b[0m\n", dashes)   // 美化输出
+				dashes := strings.Repeat("-", textLength-1)  //组装分隔符（减去行尾换行符的一个长度）
+				fmt.Printf(general.LineHiddenFormat, dashes) // 美化输出
 				// 添加一个0.01秒的延时，使输出更加顺畅
 				time.Sleep(100 * time.Millisecond)
 			}

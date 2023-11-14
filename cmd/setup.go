@@ -25,7 +25,7 @@ var setupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// 检查平台
 		if general.Platform != "linux" && general.Platform != "darwin" {
-			fmt.Println("\x1b[33;1mOnly Linux and macOS are supported\x1b[0m")
+			fmt.Printf(general.InfoFormat, "Only Linux and macOS are supported")
 			return
 		}
 
@@ -54,7 +54,6 @@ var setupCmd = &cobra.Command{
 		)
 
 		// 定义输出格式
-		subjectNameFormat := "\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m\n"
 		subjectMinorNameFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m \x1b[34;1m%s\x1b[0m\n"
 		descriptorFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Descriptor: \x1b[33mSet up %s %s\x1b[0m\n"
 		configFileFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Configuration file: \x1b[33m%s\x1b[0m\n"
@@ -65,7 +64,7 @@ var setupCmd = &cobra.Command{
 		if chezmoiFlag {
 			subjectName = "chezmoi"
 			descriptorText = "configuration file"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
 			fmt.Printf(configFileFormat, 1, cli.ChezmoiConfigFile)
 			if err := general.WriteFile(cli.ChezmoiConfigFile, cli.ChezmoiConfig); err != nil {
@@ -78,7 +77,7 @@ var setupCmd = &cobra.Command{
 		if cobraFlag {
 			subjectName = "cobra-cli"
 			descriptorText = "configuration file"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
 			fmt.Printf(configFileFormat, 1, cli.CobraConfigFile)
 			if err := general.WriteFile(cli.CobraConfigFile, cli.CobraConfig); err != nil {
@@ -90,7 +89,7 @@ var setupCmd = &cobra.Command{
 		// 配置docker
 		if dockerFlag {
 			subjectName = "docker"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			// docker service
 			subjectMinorName = "docker service"
 			descriptorText = "root directory"
@@ -120,7 +119,7 @@ var setupCmd = &cobra.Command{
 		if frpcFlag {
 			subjectName = "frpc"
 			descriptorText = "restart timing"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
 			fmt.Printf(configFileFormat, 1, cli.FrpcConfigFile)
 			if err := general.WriteFile(cli.FrpcConfigFile, cli.FrpcConfig); err != nil {
@@ -133,7 +132,7 @@ var setupCmd = &cobra.Command{
 		if gitFlag {
 			subjectName = "git"
 			descriptorText = "configuration file"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
 			fmt.Printf(configFileFormat, 1, cli.GitConfigFile)
 			if err := general.WriteFile(cli.GitConfigFile, cli.GitConfig); err != nil {
@@ -146,7 +145,7 @@ var setupCmd = &cobra.Command{
 		if goFlag {
 			subjectName = "go"
 			descriptorText = "environment file"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
 			fmt.Printf(configFileFormat, 1, cli.GoConfigFile)
 			if err := general.WriteFile(cli.GoConfigFile, cli.GoConfig); err != nil {
@@ -159,7 +158,7 @@ var setupCmd = &cobra.Command{
 		if npmFlag {
 			subjectName = "npm"
 			descriptorText = "registry"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
 			fmt.Printf(configFileFormat, 1, cli.NpmConfigFile)
 			if err := general.WriteFile(cli.NpmConfigFile, cli.NpmConfig); err != nil {
@@ -172,7 +171,7 @@ var setupCmd = &cobra.Command{
 		if pipFlag {
 			subjectName = "pip"
 			descriptorText = "mirrors"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
 			fmt.Printf(configFileFormat, 1, cli.PipConfigFile)
 			if err := general.WriteFile(cli.PipConfigFile, cli.PipConfig); err != nil {
@@ -184,7 +183,7 @@ var setupCmd = &cobra.Command{
 		// 配置system-checkupdates
 		if systemcheckupdatesFlag {
 			subjectName = "system-checkupdates"
-			fmt.Printf(subjectNameFormat, subjectName)
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
 			// system-checkupdates timer
 			subjectMinorName = "system-checkupdates timer"
 			descriptorText = "timer"

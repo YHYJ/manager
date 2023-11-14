@@ -44,24 +44,24 @@ var configCmd = &cobra.Command{
 					general.CreateFile(cfgFile)
 					_, err := cli.WriteTomlConfig(cfgFile)
 					if err != nil {
-						fmt.Printf(general.BaseErrorFormat, err)
+						fmt.Printf(general.ErrorBaseFormat, err)
 						return
 					}
-					fmt.Printf("Create \x1b[33;1m%s\x1b[0m: file overwritten\n", cfgFile)
+					fmt.Printf(general.InfoPrefixSuffixFormat, "Create", " ", cfgFile, ": ", "file overwritten")
 				} else {
-					fmt.Printf("Create \x1b[33m%s\x1b[0m: file exists (use --force to overwrite)\n", cfgFile)
+					fmt.Printf(general.InfoPrefixSuffixFormat, "Create", " ", cfgFile, ": ", "file exists (use --force to overwrite)")
 				}
 			} else {
 				if err := general.CreateFile(cfgFile); err != nil {
-					fmt.Printf(general.BaseErrorFormat, err)
+					fmt.Printf(general.ErrorBaseFormat, err)
 					return
 				}
 				_, err := cli.WriteTomlConfig(cfgFile)
 				if err != nil {
-					fmt.Printf(general.BaseErrorFormat, err)
+					fmt.Printf(general.ErrorBaseFormat, err)
 					return
 				}
-				fmt.Printf("Create \x1b[33;1m%s\x1b[0m: file created\n", cfgFile)
+				fmt.Printf(general.InfoPrefixSuffixFormat, "Create", " ", cfgFile, ": ", "file created")
 			}
 		}
 
@@ -69,12 +69,12 @@ var configCmd = &cobra.Command{
 			if cfgFileExist {
 				configTree, err := cli.GetTomlConfig(cfgFile)
 				if err != nil {
-					fmt.Printf(general.BaseErrorFormat, err)
+					fmt.Printf(general.ErrorBaseFormat, err)
 				} else {
 					fmt.Println(configTree)
 				}
 			} else {
-				fmt.Printf(general.BaseErrorFormat, cfgFileNotFoundMessage)
+				fmt.Printf(general.ErrorBaseFormat, cfgFileNotFoundMessage)
 			}
 		}
 	},
