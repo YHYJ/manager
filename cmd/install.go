@@ -12,6 +12,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -170,10 +171,10 @@ var installCmd = &cobra.Command{
 			for _, name := range shellNames {
 				// 组装变量
 				textLength := 0                                                                                                                                                    // 输出文本的长度
-				compileProgram := fmt.Sprintf("%s/%s/%s", installTemp, shellRepo, name.(string))                                                                                   // 从远端下载的最新脚本
+				compileProgram := filepath.Join(installTemp, shellRepo, name.(string))                                                                                             // 从远端下载的最新脚本
 				shellSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string))                         // API URL
 				shellFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/contents/%s/%s", shellFallbackSourceApi, shellFallbackSourceUsername, shellRepo, shellDir, name.(string)) // Fallback API URL
-				localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                                                                   // 本地程序路径
+				localProgram := filepath.Join(installPath, name.(string))                                                                                                          // 本地程序路径
 				gitHashObjectArgs := []string{"hash-object", localProgram}                                                                                                         // 本地程序参数
 				// 请求API
 				body, err := general.RequestApi(shellSourceApiUrl)
@@ -201,11 +202,11 @@ var installCmd = &cobra.Command{
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
 				} else { // Hash值不一致，则更新脚本，并输出已更新信息
 					// 下载远端脚本
-					shellSourceTempDir := fmt.Sprintf("%s/%s", installTemp, shellRepo)
+					shellSourceTempDir := filepath.Join(installTemp, shellRepo)
 					shellSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellSourceUrl, shellSourceUsername, shellRepo, shellSourceBranch)
 					shellFallbackSource := fmt.Sprintf("%s/%s/%s/raw/branch/%s", shellFallbackSourceUrl, shellFallbackSourceUsername, shellRepo, shellFallbackSourceBranch)
-					shellUrlFile := fmt.Sprintf("%s/%s", shellDir, name.(string))
-					shellOutputFile := fmt.Sprintf("%s/%s", shellSourceTempDir, name.(string))
+					shellUrlFile := filepath.Join(shellDir, name.(string))
+					shellOutputFile := filepath.Join(shellSourceTempDir, name.(string))
 					fileUrl := fmt.Sprintf("%s/%s", shellSource, shellUrlFile)
 					_, err := cli.DownloadFile(fileUrl, shellOutputFile)
 					if err != nil {
@@ -280,10 +281,10 @@ var installCmd = &cobra.Command{
 			for _, name := range goNames {
 				// 组装变量
 				textLength := 0                                                                                                            // 输出文本的长度
-				compileProgram := fmt.Sprintf("%s/%s/%s/%s", installTemp, name.(string), goGeneratePath, name.(string))                    // 编译生成的最新程序
+				compileProgram := filepath.Join(installTemp, name.(string), goGeneratePath, name.(string))                                 // 编译生成的最新程序
 				goSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goSourceApi, goSourceUsername, name.(string))                         // API URL
 				goFallbackSourceApiUrl := fmt.Sprintf("%s/repos/%s/%s/tags", goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // Fallback API URL
-				localProgram := fmt.Sprintf("%s/%s", installPath, name.(string))                                                           // 本地程序路径
+				localProgram := filepath.Join(installPath, name.(string))                                                                  // 本地程序路径
 				nameArgs := []string{"version", "--only"}                                                                                  // 本地程序参数
 				// 请求API
 				body, err := general.RequestApi(goSourceApiUrl)
@@ -311,7 +312,7 @@ var installCmd = &cobra.Command{
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
 				} else { // 版本不一致，则更新程序，并输出已更新信息
 					// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
-					goSourceTempDir := fmt.Sprintf("%s/%s", installTemp, name.(string))
+					goSourceTempDir := filepath.Join(installTemp, name.(string))
 					if general.FileExist(goSourceTempDir) {
 						if err := os.RemoveAll(goSourceTempDir); err != nil {
 							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
