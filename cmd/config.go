@@ -42,7 +42,11 @@ var configCmd = &cobra.Command{
 				if forceFlag {
 					general.DeleteFile(cfgFile)
 					general.CreateFile(cfgFile)
-					cli.WriteTomlConfig(cfgFile)
+					_, err := cli.WriteTomlConfig(cfgFile)
+					if err != nil {
+						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						return
+					}
 					fmt.Printf("Create \x1b[33;1m%s\x1b[0m: file overwritten\n", cfgFile)
 				} else {
 					fmt.Printf("Create \x1b[33m%s\x1b[0m: file exists (use --force to overwrite)\n", cfgFile)
