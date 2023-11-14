@@ -20,9 +20,15 @@ import (
 // setupCmd represents the setup command
 var setupCmd = &cobra.Command{
 	Use:   "setup",
-	Short: "Set up installed programs/scripts",
-	Long:  `Set up installed self-developed programs/scripts.`,
+	Short: "Set up installed programs/scripts (Linux/macOS only)",
+	Long:  `Set up installed self-developed programs/scripts (Linux/macOS only).`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// 检查平台
+		if general.Platform != "linux" && general.Platform != "darwin" {
+			fmt.Println("\x1b[33;1mOnly Linux and macOS are supported\x1b[0m")
+			return
+		}
+
 		// 解析参数
 		allFlag, _ := cmd.Flags().GetBool("all")
 		chezmoiFlag, _ := cmd.Flags().GetBool("chezmoi")
