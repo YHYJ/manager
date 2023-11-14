@@ -44,7 +44,7 @@ var configCmd = &cobra.Command{
 					general.CreateFile(cfgFile)
 					_, err := cli.WriteTomlConfig(cfgFile)
 					if err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						fmt.Printf(general.BaseErrorFormat, err)
 						return
 					}
 					fmt.Printf("Create \x1b[33;1m%s\x1b[0m: file overwritten\n", cfgFile)
@@ -53,12 +53,12 @@ var configCmd = &cobra.Command{
 				}
 			} else {
 				if err := general.CreateFile(cfgFile); err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					fmt.Printf(general.BaseErrorFormat, err)
 					return
 				}
 				_, err := cli.WriteTomlConfig(cfgFile)
 				if err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					fmt.Printf(general.BaseErrorFormat, err)
 					return
 				}
 				fmt.Printf("Create \x1b[33;1m%s\x1b[0m: file created\n", cfgFile)
@@ -69,12 +69,12 @@ var configCmd = &cobra.Command{
 			if cfgFileExist {
 				configTree, err := cli.GetTomlConfig(cfgFile)
 				if err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					fmt.Printf(general.BaseErrorFormat, err)
 				} else {
 					fmt.Println(configTree)
 				}
 			} else {
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", cfgFileNotFoundMessage)
+				fmt.Printf(general.BaseErrorFormat, cfgFileNotFoundMessage)
 			}
 		}
 	},

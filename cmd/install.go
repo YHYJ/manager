@@ -79,7 +79,7 @@ var installCmd = &cobra.Command{
 		// 检查配置文件是否存在
 		configTree, err := cli.GetTomlConfig(cfgFile)
 		if err != nil {
-			fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+			fmt.Printf(general.BaseErrorFormat, err)
 			return
 		} else {
 			// 获取配置项
@@ -170,7 +170,7 @@ var installCmd = &cobra.Command{
 			general.SetVariable("https_proxy", httpsProxy)
 			// 创建临时目录
 			if err := general.CreateDir(installTemp); err != nil {
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+				fmt.Printf(general.BaseErrorFormat, err)
 				return
 			}
 			// 遍历所有脚本名
@@ -185,17 +185,17 @@ var installCmd = &cobra.Command{
 				// 请求API
 				body, err := general.RequestApi(shellSourceApiUrl)
 				if err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					fmt.Printf(general.BaseErrorFormat, err)
 					body, err = general.RequestApi(shellFallbackSourceApiUrl)
 					if err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						fmt.Printf(general.BaseErrorFormat, err)
 						continue
 					}
 				}
 				// 获取远端脚本Hash值
 				remoteHash, err := general.ParseApiResponse(body)
 				if err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					fmt.Printf(general.BaseErrorFormat, err)
 					continue
 				}
 				// 获取本地脚本Hash值
@@ -214,11 +214,11 @@ var installCmd = &cobra.Command{
 					fileUrl := fmt.Sprintf("%s/%s", shellSource, shellUrlFile)
 					_, err := cli.DownloadFile(fileUrl, scriptLocalPath)
 					if err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						fmt.Printf(general.BaseErrorFormat, err)
 						fileUrl := fmt.Sprintf("%s/%s", shellFallbackSource, shellUrlFile)
 						_, err = cli.DownloadFile(fileUrl, scriptLocalPath)
 						if err != nil {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							fmt.Printf(general.BaseErrorFormat, err)
 							continue
 						}
 					}
@@ -227,12 +227,12 @@ var installCmd = &cobra.Command{
 						// 检测本地程序是否存在
 						if commandErr != nil { // 不存在，安装
 							if err := cli.InstallFile(scriptLocalPath, localProgram); err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								fmt.Printf(general.BaseErrorFormat, err)
 								continue
 							} else {
 								// 为已安装的脚本设置可执行权限
 								if err := os.Chmod(localProgram, 0755); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									fmt.Printf(general.BaseErrorFormat, err)
 								}
 								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1minstallation\x1b[0m complete\n", name.(string))
 								fmt.Printf(text)
@@ -241,15 +241,15 @@ var installCmd = &cobra.Command{
 							}
 						} else { // 存在，更新
 							if err := os.Remove(localProgram); err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								fmt.Printf(general.BaseErrorFormat, err)
 							}
 							if err := cli.InstallFile(scriptLocalPath, localProgram); err != nil {
-								fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+								fmt.Printf(general.BaseErrorFormat, err)
 								continue
 							} else {
 								// 为已更新的脚本设置可执行权限
 								if err := os.Chmod(localProgram, 0755); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									fmt.Printf(general.BaseErrorFormat, err)
 								}
 								text := fmt.Sprintf("\x1b[32;1m==>\x1b[0m \x1b[34m%s\x1b[0m \x1b[35;1mupdate\x1b[0m complete\n", name.(string))
 								fmt.Printf(text)
@@ -258,7 +258,7 @@ var installCmd = &cobra.Command{
 							}
 						}
 					} else {
-						text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", scriptLocalPath)
+						text := fmt.Sprintf(general.BaseErrorFormat, fmt.Sprintf("The source file %s does not exist", scriptLocalPath))
 						fmt.Printf(text)
 						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
@@ -279,7 +279,7 @@ var installCmd = &cobra.Command{
 			general.SetVariable("https_proxy", httpsProxy)
 			// 创建临时目录
 			if err := general.CreateDir(installTemp); err != nil {
-				fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+				fmt.Printf(general.BaseErrorFormat, err)
 				return
 			}
 			// 遍历所有程序名
@@ -294,17 +294,17 @@ var installCmd = &cobra.Command{
 				// 请求API
 				body, err := general.RequestApi(goSourceApiUrl)
 				if err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					fmt.Printf(general.BaseErrorFormat, err)
 					body, err = general.RequestApi(goFallbackSourceApiUrl)
 					if err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						fmt.Printf(general.BaseErrorFormat, err)
 						continue
 					}
 				}
 				// 获取远端版本
 				remoteVersion, err := general.ParseApiResponse(body)
 				if err != nil {
-					fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+					fmt.Printf(general.BaseErrorFormat, err)
 					continue
 				}
 				// 获取本地版本
@@ -320,17 +320,17 @@ var installCmd = &cobra.Command{
 					goSourceTempDir := filepath.Join(installTemp, name.(string))
 					if general.FileExist(goSourceTempDir) {
 						if err := os.RemoveAll(goSourceTempDir); err != nil {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							fmt.Printf(general.BaseErrorFormat, err)
 						}
 					}
 					goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)                         // 远端仓库克隆地址（除仓库名）
 					goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername) // 远端仓库备用克隆地址（除仓库名）
 					fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m from source ", name.(string))
 					if err := cli.CloneRepoViaHTTP(installTemp, goSource, name.(string)); err != nil {
-						fmt.Printf("\x1b[31merror\x1b[0m: %s\n", err)
+						fmt.Printf(general.SuffixErrorFormat, "error", " -> ", err)
 						fmt.Printf("\x1b[32;1m==>\x1b[0m Clone \x1b[34m%s\x1b[0m from fallback ", name.(string))
 						if err := cli.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string)); err != nil {
-							fmt.Printf("\x1b[31merror: %s\x1b[0m\n", err)
+							fmt.Printf(general.SuffixErrorFormat, "error", " -> ", err)
 							continue
 						} else {
 							fmt.Printf("\x1b[32;1msuccess\x1b[0m\n")
@@ -340,24 +340,24 @@ var installCmd = &cobra.Command{
 					}
 					// 进到下载的远端文件目录
 					if err := general.GoToDir(goSourceTempDir); err != nil {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+						fmt.Printf(general.BaseErrorFormat, err)
 						continue
 					}
 					// 编译生成程序
 					if general.FileExist("Makefile") { // Makefile文件存在则使用make编译
 						makeArgs := []string{}
 						if err := general.RunCommand("make", makeArgs); err != nil {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							fmt.Printf(general.BaseErrorFormat, err)
 							continue
 						}
 					} else if general.FileExist("main.go") { // Makefile文件不存在则使用go build编译
 						buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
 						if err := general.RunCommand("go", buildArgs); err != nil {
-							fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+							fmt.Printf(general.BaseErrorFormat, err)
 							continue
 						}
 					} else {
-						fmt.Printf("\x1b[31m%s\x1b[0m\n", unableToCompileMessage)
+						fmt.Printf(general.BaseErrorFormat, unableToCompileMessage)
 					}
 					// 检测编译生成的程序是否存在
 					if general.FileExist(compileProgram) {
@@ -366,17 +366,17 @@ var installCmd = &cobra.Command{
 							if general.FileExist("Makefile") { // Makefile文件存在则使用make install安装
 								makeArgs := []string{"install"}
 								if err := general.RunCommand("make", makeArgs); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									fmt.Printf(general.BaseErrorFormat, err)
 									continue
 								}
 							} else { // Makefile文件不存在则使用自定义函数安装
 								if err := cli.InstallFile(compileProgram, localProgram); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									fmt.Printf(general.BaseErrorFormat, err)
 									continue
 								} else {
 									// 为已安装的脚本设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
-										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+										fmt.Printf(general.BaseErrorFormat, err)
 									}
 								}
 							}
@@ -388,20 +388,20 @@ var installCmd = &cobra.Command{
 							if general.FileExist("Makefile") { // Makefile文件存在则使用make install更新
 								makeArgs := []string{"install"}
 								if err := general.RunCommand("make", makeArgs); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									fmt.Printf(general.BaseErrorFormat, err)
 									continue
 								}
 							} else { // Makefile文件不存在则使用自定义函数更新
 								if err := os.Remove(localProgram); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									fmt.Printf(general.BaseErrorFormat, err)
 								}
 								if err := cli.InstallFile(compileProgram, localProgram); err != nil {
-									fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+									fmt.Printf(general.BaseErrorFormat, err)
 									continue
 								} else {
 									// 为已安装的脚本设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
-										fmt.Printf("\x1b[31m%s\x1b[0m\n", err)
+										fmt.Printf(general.BaseErrorFormat, err)
 									}
 								}
 							}
@@ -415,7 +415,7 @@ var installCmd = &cobra.Command{
 							if general.FileExist(completionDir.(string)) {
 								generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
 								if err := general.RunCommand("bash", generateArgs); err != nil {
-									text := fmt.Sprintf("\x1b[31m==>\x1b[0m %s\n", acsInstallFailedMessage)
+									text := fmt.Sprintf(general.SuffixErrorFormat, "==>", " ", acsInstallFailedMessage)
 									fmt.Printf(text)
 									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 									textLength = len(controlRegex.ReplaceAllString(text, ""))
@@ -429,7 +429,7 @@ var installCmd = &cobra.Command{
 							}
 						}
 					} else {
-						text := fmt.Sprintf("\x1b[31mThe source file %s does not exist\x1b[0m\n", compileProgram)
+						text := fmt.Sprintf(general.BaseErrorFormat, fmt.Sprintf("The source file %s does not exist", compileProgram))
 						fmt.Printf(text)
 						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
