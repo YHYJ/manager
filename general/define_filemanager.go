@@ -4,29 +4,107 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-08 16:04:26
 
-Description: 文件操作
+Description: 文件管理
 */
 
 package general
 
 import (
+	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 )
 
+// ReadFileLine 读取文件指定行
+func ReadFileLine(file string, line int) string {
+	// 打开文件
+	text, err := os.Open(file)
+	// 相当于Python的with语句
+	defer text.Close()
+	// 处理错误
+	if err != nil {
+		log.Println(err)
+	}
+	// 行计数
+	count := 1
+	// 创建一个扫描器对象按行遍历
+	scanner := bufio.NewScanner(text)
+	// 逐行读取，输出指定行
+	for scanner.Scan() {
+		if line == count {
+			return scanner.Text()
+		}
+		count++
+	}
+	return ""
+}
+
+// ReadFileKey 读取文件包含指定字符串的行
+func ReadFileKey(file, key string) string {
+	// 打开文件
+	text, err := os.Open(file)
+	// 相当于Python的with语句
+	defer text.Close()
+	// 处理错误
+	if err != nil {
+		log.Println(err)
+	}
+	// 创建一个扫描器对象按行遍历
+	scanner := bufio.NewScanner(text)
+	// 逐行读取，输出指定行
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), key) {
+			return scanner.Text()
+		}
+	}
+	return ""
+}
+
+// ReadFileCount 获取文件包含指定字符串的行的计数
+func ReadFileCount(file, key string) int {
+	// 打开文件
+	text, err := os.Open(file)
+	// 相当于Python的with语句
+	defer text.Close()
+	// 处理错误
+	if err != nil {
+		log.Println(err)
+	}
+	// 计数器
+	count := 0
+	// 创建一个扫描器对象按行遍历
+	scanner := bufio.NewScanner(text)
+	// 逐行读取，输出指定行
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), key) {
+			count++
+		}
+	}
+	return count
+}
+
 // FileExist 判断文件是否存在
 func FileExist(filePath string) bool {
-	_, err := os.Stat(filePath)
-	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return false
 	}
 	return true
+}
+
+// GetAbsPath 获取指定文件的绝对路径
+func GetAbsPath(filePath string) string {
+	// 获取绝对路径
+	absPath, err := filepath.Abs(filePath)
+	if err != nil {
+		return ""
+	} else {
+		return absPath
+	}
 }
 
 // FileEmpty 判断文件是否为空（无法判断文件夹）

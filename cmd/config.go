@@ -23,8 +23,9 @@ var configCmd = &cobra.Command{
 	Short: "Operate configuration file",
 	Long:  `Manipulate the program's configuration files, including generating and printing.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// 解析参数
+		// 获取配置文件路径
 		cfgFile, _ := cmd.Flags().GetString("config")
+		// 解析参数
 		createFlag, _ := cmd.Flags().GetBool("create")
 		forceFlag, _ := cmd.Flags().GetBool("force")
 		printFlag, _ := cmd.Flags().GetBool("print")
@@ -40,8 +41,14 @@ var configCmd = &cobra.Command{
 		if createFlag {
 			if cfgFileExist {
 				if forceFlag {
-					general.DeleteFile(cfgFile)
-					general.CreateFile(cfgFile)
+					if err := general.DeleteFile(cfgFile); err != nil {
+						fmt.Printf(general.ErrorBaseFormat, err)
+						return
+					}
+					if err := general.CreateFile(cfgFile); err != nil {
+						fmt.Printf(general.ErrorBaseFormat, err)
+						return
+					}
 					_, err := cli.WriteTomlConfig(cfgFile)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
