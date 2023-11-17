@@ -251,7 +251,7 @@ var installCmd = &cobra.Command{
 								if err := os.Chmod(localProgram, 0755); err != nil {
 									fmt.Printf(general.ErrorBaseFormat, err)
 								}
-								text := fmt.Sprintf(general.SliceTraverse4PSuffixFormat, "==>", " ", name.(string), " ", remoteHash[:4], " ", "update", " ", "completed")
+								text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", "update", " ", localHash, " -> ", remoteHash[:4])
 								fmt.Printf(text)
 								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 								textLength = len(controlRegex.ReplaceAllString(text, ""))
@@ -405,7 +405,7 @@ var installCmd = &cobra.Command{
 									}
 								}
 							}
-							text := fmt.Sprintf(general.SliceTraverse4PSuffixFormat, "==>", " ", name.(string), " ", remoteVersion, " ", "update", " ", "completed")
+							text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", "update", " ", localVersion, " -> ", remoteVersion)
 							fmt.Printf(text)
 							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 							textLength = len(controlRegex.ReplaceAllString(text, ""))
