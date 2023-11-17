@@ -17,6 +17,8 @@
 
 <!-- vim-markdown-toc GFM -->
 
+* [Install](#install)
+  * [一键安装](#一键安装)
 * [Usage](#usage)
 * [Compile](#compile)
   * [当前平台](#当前平台)
@@ -40,6 +42,14 @@
 ---
 
 自开发程序管理器
+
+## Install
+
+### 一键安装
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/YHYJ/manager/main/install.sh | sudo bash -s
+```
 
 ## Usage
 
