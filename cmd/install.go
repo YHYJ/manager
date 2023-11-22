@@ -193,7 +193,7 @@ var installCmd = &cobra.Command{
 					}
 				}
 				// 获取远端脚本Hash值
-				remoteHash, err := general.ParseApiResponse(body)
+				remoteHash, err := general.ParseTagApiResponse(body)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
 					continue
@@ -302,7 +302,7 @@ var installCmd = &cobra.Command{
 					}
 				}
 				// 获取远端版本
-				remoteVersion, err := general.ParseApiResponse(body)
+				remoteVersion, err := general.ParseTagApiResponse(body)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
 					continue

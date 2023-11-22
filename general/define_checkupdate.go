@@ -53,8 +53,10 @@ func RequestApi(url string) ([]byte, error) {
 	return body, nil
 }
 
-// ParseApiResponse 解析 API 响应体，根据 JSON 数据解析后的类型选择数据提取方式
-func ParseApiResponse(body []byte) (string, error) {
+// ParseTagApiResponse 解析 API 响应体，根据 JSON 数据解析后的类型选择数据提取方式
+//
+// 该函数解析的是和 https://api.github.com/repos/{OWNER}/{REPO}/tags 返回值结构相同的数据
+func ParseTagApiResponse(body []byte) (string, error) {
 	// 解码JSON格式的返回值
 	var datas interface{}
 	if err := json.Unmarshal(body, &datas); err != nil {
@@ -82,6 +84,34 @@ func ParseApiResponse(body []byte) (string, error) {
 		// 获取文件哈希值，适用于不带外部版本信息的
 		fileHash := datas.(map[string]interface{})["sha"].(string)
 		return fileHash, nil
+	} else {
+		return "", fmt.Errorf("Response body has unknown structure")
+	}
+}
+
+// ParseLatestApiResponse 解析 API 响应体，根据 JSON 数据解析后的类型选择数据提取方式
+//
+// 该函数解析的是和 https://api.github.com/repos/{OWNER}/{REPO}/releases/latest 返回值结构相同的数据
+func ParseLatestApiResponse(body []byte) (string, error) {
+	// 解码JSON格式的返回值
+	var datas interface{}
+	if err := json.Unmarshal(body, &datas); err != nil {
+		return "", err
+	}
+
+	// 判断数据类型
+	kind := reflect.ValueOf(datas).Kind()
+
+	if kind == reflect.Map { // '{}'结构
+		// 判断响应体长度
+		length := len(datas.(map[string]interface{}))
+		if length == 0 {
+			return "", fmt.Errorf("Response body is empty")
+		}
+		// 获取最新Release对应的Tag名
+		latestTag := datas.(map[string]interface{})["tag_name"].(string)
+		fmt.Println(latestTag)
+		return "Wait", nil
 	} else {
 		return "", fmt.Errorf("Response body has unknown structure")
 	}
