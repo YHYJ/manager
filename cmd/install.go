@@ -37,7 +37,7 @@ var installCmd = &cobra.Command{
 		// 配置文件项
 		var (
 			installPath                 string
-			installTemp                 string
+			installSourceTemp           string
 			goGeneratePath              string
 			goSourceUrl                 string
 			goFallbackSourceUrl         string
@@ -86,8 +86,8 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.path") {
 				installPath = configTree.Get("install.path").(string)
 			}
-			if configTree.Has("install.temp") {
-				installTemp = configTree.Get("install.temp").(string)
+			if configTree.Has("install.source_temp") {
+				installSourceTemp = configTree.Get("install.source_temp").(string)
 			}
 			if configTree.Has("install.go.generate_path") {
 				goGeneratePath = configTree.Get("install.go.generate_path").(string)
@@ -169,7 +169,7 @@ var installCmd = &cobra.Command{
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
 			// 创建临时目录
-			if err := general.CreateDir(installTemp); err != nil {
+			if err := general.CreateDir(installSourceTemp); err != nil {
 				fmt.Printf(general.ErrorBaseFormat, err)
 				return
 			}
@@ -177,7 +177,7 @@ var installCmd = &cobra.Command{
 			for _, name := range shellNames {
 				// 组装变量
 				textLength := 0                                                                                                                                            // 输出文本的长度
-				scriptLocalPath := filepath.Join(installTemp, shellRepo, name.(string))                                                                                    // 脚本本地存储位置
+				scriptLocalPath := filepath.Join(installSourceTemp, shellRepo, name.(string))                                                                              // 脚本本地存储位置
 				shellSourceApiUrl := fmt.Sprintf(shellSourceApiUrlFormat, shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string))                         // 请求远端仓库中脚本的Hash值的API
 				shellFallbackSourceApiUrl := fmt.Sprintf(shellSourceApiUrlFormat, shellFallbackSourceApi, shellFallbackSourceUsername, shellRepo, shellDir, name.(string)) // 请求远端仓库中脚本的Hash值的备用API
 				localProgram := filepath.Join(installPath, name.(string))                                                                                                  // 本地程序路径
@@ -278,7 +278,7 @@ var installCmd = &cobra.Command{
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
 			// 创建临时目录
-			if err := general.CreateDir(installTemp); err != nil {
+			if err := general.CreateDir(installSourceTemp); err != nil {
 				fmt.Printf(general.ErrorBaseFormat, err)
 				return
 			}
@@ -286,7 +286,7 @@ var installCmd = &cobra.Command{
 			for _, name := range goNames {
 				// 组装变量
 				textLength := 0                                                                                                           // 输出文本的长度
-				compileProgram := filepath.Join(installTemp, name.(string), goGeneratePath, name.(string))                                // 编译生成的最新程序
+				compileProgram := filepath.Join(installSourceTemp, name.(string), goGeneratePath, name.(string))                          // 编译生成的最新程序
 				goSourceApiUrl := fmt.Sprintf(goSourceApiUrlFormat, goSourceApi, goSourceUsername, name.(string))                         // 请求远端仓库最新Tag的API
 				goFallbackSourceApiUrl := fmt.Sprintf(goSourceApiUrlFormat, goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // 请求远端仓库最新Tag的备用API
 				localProgram := filepath.Join(installPath, name.(string))                                                                 // 本地程序路径
@@ -317,7 +317,7 @@ var installCmd = &cobra.Command{
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
 				} else { // 版本不一致，则更新程序，并输出已更新信息
 					// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
-					goSourceTempDir := filepath.Join(installTemp, name.(string))
+					goSourceTempDir := filepath.Join(installSourceTemp, name.(string))
 					if general.FileExist(goSourceTempDir) {
 						if err := os.RemoveAll(goSourceTempDir); err != nil {
 							fmt.Printf(general.ErrorBaseFormat, err)
@@ -326,10 +326,10 @@ var installCmd = &cobra.Command{
 					goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)                         // 远端仓库克隆地址（除仓库名）
 					goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername) // 远端仓库备用克隆地址（除仓库名）
 					fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from source ")
-					if err := cli.CloneRepoViaHTTP(installTemp, goSource, name.(string)); err != nil {
+					if err := cli.CloneRepoViaHTTP(installSourceTemp, goSource, name.(string)); err != nil {
 						fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
 						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from fallback source ")
-						if err := cli.CloneRepoViaHTTP(installTemp, goFallbackSource, name.(string)); err != nil {
+						if err := cli.CloneRepoViaHTTP(installSourceTemp, goFallbackSource, name.(string)); err != nil {
 							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
 							continue
 						} else {
