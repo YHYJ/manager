@@ -131,8 +131,7 @@ func GetLatestTagFromLatestApi(body []byte) (string, error) {
 		}
 		// 获取最新Release对应的Tag
 		latestTag := datas.(map[string]interface{})["tag_name"].(string)
-		fmt.Println(latestTag)
-		return "Wait", nil
+		return latestTag, nil
 	} else {
 		return "", fmt.Errorf("Response body has unknown structure")
 	}
