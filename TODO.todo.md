@@ -1,3 +1,4 @@
+- [ ] 优先安装Github Release里打包好的程序，其次使用Github仓库代码下载编译安装，Gitea作为最后的备用 (2023-11-22 10:11)
 - [X] 优化输出信息 (2023-06-16 13:40)
 - [X] 完成install --script部分 (2023-06-16 16:36)
 - [X] 默认配置项增加'go.fallbacksource'和'shell.fallbacksource' (2023-07-12 16:18)
