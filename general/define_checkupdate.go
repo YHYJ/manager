@@ -136,3 +136,72 @@ func GetLatestTagFromLatestApi(body []byte) (string, error) {
 		return "", fmt.Errorf("Response body has unknown structure")
 	}
 }
+
+// 指定要获取信息的文件名
+type FileName struct {
+	ChecksumsFile string `json:"checksums"`
+	ArchiveFile   string `json:"archive"`
+}
+
+// 存储多文件信息
+type multipleFilesInfo struct {
+	ChecksumsFileInfo singleFileInfo `json:"checksums_file_info"`
+	ArchiveFileInfo   singleFileInfo `json:"archive_file_info"`
+}
+
+// 存储单文件信息
+type singleFileInfo struct {
+	Name          string  `json:"name"`
+	Size          float64 `json:"size"`
+	ContentType   string  `json:"content_type"`
+	DownloadUrl   string  `json:"download_url"`
+	DownloadCount float64 `json:"download_count"`
+}
+
+// GetFileInfoFromLatestApi 解析 API 响应体，获取指定文件的信息
+func GetFileInfoFromLatestApi(body []byte, fileName FileName) (multipleFilesInfo, error) {
+	filesInfo := multipleFilesInfo{}
+
+	// 解码JSON格式的返回值
+	var datas interface{}
+	if err := json.Unmarshal(body, &datas); err != nil {
+		return filesInfo, err
+	}
+
+	checksumsFileInfo := singleFileInfo{} // 存储校验文件信息
+	archiveFileInfo := singleFileInfo{}   // 存储压缩包信息
+
+	// 判断数据类型
+	kind := reflect.ValueOf(datas).Kind()
+
+	if kind == reflect.Map { // '{}'结构
+		// 判断响应体长度
+		length := len(datas.(map[string]interface{}))
+		if length == 0 {
+			return filesInfo, fmt.Errorf("Response body is empty")
+		}
+		// 获取最新Release的Assets信息，下载链接等包含在里面
+		assets := datas.(map[string]interface{})["assets"].([]interface{})
+		for _, asset := range assets {
+			if asset.(map[string]interface{})["name"] == fileName.ChecksumsFile {
+				checksumsFileInfo.Name = asset.(map[string]interface{})["name"].(string)
+				checksumsFileInfo.Size = asset.(map[string]interface{})["size"].(float64)
+				checksumsFileInfo.ContentType = asset.(map[string]interface{})["content_type"].(string)
+				checksumsFileInfo.DownloadUrl = asset.(map[string]interface{})["browser_download_url"].(string)
+				checksumsFileInfo.DownloadCount = asset.(map[string]interface{})["download_count"].(float64)
+			}
+			if asset.(map[string]interface{})["name"] == fileName.ArchiveFile {
+				archiveFileInfo.Name = asset.(map[string]interface{})["name"].(string)
+				archiveFileInfo.Size = asset.(map[string]interface{})["size"].(float64)
+				archiveFileInfo.ContentType = asset.(map[string]interface{})["content_type"].(string)
+				archiveFileInfo.DownloadUrl = asset.(map[string]interface{})["browser_download_url"].(string)
+				archiveFileInfo.DownloadCount = asset.(map[string]interface{})["download_count"].(float64)
+			}
+		}
+		filesInfo.ChecksumsFileInfo = checksumsFileInfo
+		filesInfo.ArchiveFileInfo = archiveFileInfo
+		return filesInfo, nil
+	} else {
+		return filesInfo, fmt.Errorf("Response body has unknown structure")
+	}
+}
