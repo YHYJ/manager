@@ -95,7 +95,8 @@ var (
 // ---------- 环境变量
 
 // 操作系统
-var Platform = runtime.GOOS
+var Platform = runtime.GOOS // 操作系统
+var Arch = runtime.GOARCH   // 系统架构
 
 // 用户名，当程序提权运行时，使用SUDO_USER变量获取提权前的用户名
 var UserName = func() string {
