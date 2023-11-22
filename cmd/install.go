@@ -193,7 +193,7 @@ var installCmd = &cobra.Command{
 					}
 				}
 				// 获取远端脚本Hash值
-				remoteHash, err := general.ParseTagApiResponse(body)
+				remoteHash, err := general.GetLatestHashFromTagApi(body)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
 					continue
@@ -301,8 +301,8 @@ var installCmd = &cobra.Command{
 						continue
 					}
 				}
-				// 获取远端版本
-				remoteVersion, err := general.ParseTagApiResponse(body)
+				// 获取远端版本（用于Source安装）
+				remoteTag, err := general.GetLatestTagFromTagApi(body)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
 					continue
@@ -310,8 +310,8 @@ var installCmd = &cobra.Command{
 				// 获取本地版本
 				localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 				// 比较远端和本地版本
-				if remoteVersion == localVersion { // 版本一致，则输出无需更新信息
-					text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, "==>", " ", name.(string), " ", remoteVersion, " ", latestVersionMessage)
+				if remoteTag == localVersion { // 版本一致，则输出无需更新信息
+					text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, "==>", " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
 					fmt.Printf(text)
 					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
@@ -380,7 +380,7 @@ var installCmd = &cobra.Command{
 									}
 								}
 							}
-							text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteVersion, " ", "installed")
+							text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteTag, " ", "installed")
 							fmt.Printf(text)
 							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 							textLength = len(controlRegex.ReplaceAllString(text, ""))
@@ -405,7 +405,7 @@ var installCmd = &cobra.Command{
 									}
 								}
 							}
-							text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localVersion, " -> ", remoteVersion, " ", "updated")
+							text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
 							fmt.Printf(text)
 							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 							textLength = len(controlRegex.ReplaceAllString(text, ""))

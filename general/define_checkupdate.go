@@ -53,10 +53,11 @@ func RequestApi(url string) ([]byte, error) {
 	return body, nil
 }
 
-// ParseTagApiResponse 解析 API 响应体，根据 JSON 数据解析后的类型选择数据提取方式
+// GetLatestTagFromTagApi 解析 API 响应体，获取最新Tag
 //
-// 该函数解析的是和 https://api.github.com/repos/{OWNER}/{REPO}/tags 返回值结构相同的数据
-func ParseTagApiResponse(body []byte) (string, error) {
+//   - 该函数解析的是 https://api.github.com/repos/{OWNER}/{REPO}/tags 的返回值
+//   - 用于通过Source安装程序时获取最新版本的Tag
+func GetLatestTagFromTagApi(body []byte) (string, error) {
 	// 解码JSON格式的返回值
 	var datas interface{}
 	if err := json.Unmarshal(body, &datas); err != nil {
@@ -75,24 +76,16 @@ func ParseTagApiResponse(body []byte) (string, error) {
 		// 获取最新版本信息，适用于版本信息和Tag信息同步的
 		latestVersion := datas.([]interface{})[0].(map[string]interface{})["name"].(string)
 		return latestVersion, nil
-	} else if kind == reflect.Map { // '{}'结构
-		// 判断响应体长度
-		length := len(datas.(map[string]interface{}))
-		if length == 0 {
-			return "", fmt.Errorf("Response body is empty")
-		}
-		// 获取文件哈希值，适用于不带外部版本信息的
-		fileHash := datas.(map[string]interface{})["sha"].(string)
-		return fileHash, nil
 	} else {
 		return "", fmt.Errorf("Response body has unknown structure")
 	}
 }
 
-// ParseLatestApiResponse 解析 API 响应体，根据 JSON 数据解析后的类型选择数据提取方式
+// GetLatestHashFromTagApi 解析 API 响应体，获取最新提交的Hash
 //
-// 该函数解析的是和 https://api.github.com/repos/{OWNER}/{REPO}/releases/latest 返回值结构相同的数据
-func ParseLatestApiResponse(body []byte) (string, error) {
+//   - 该函数解析的是 https://api.github.com/repos/{OWNER}/{REPO}/tags 的返回值
+//   - 用于通过Source安装不带Tag的程序时获取最新版本的Hash
+func GetLatestHashFromTagApi(body []byte) (string, error) {
 	// 解码JSON格式的返回值
 	var datas interface{}
 	if err := json.Unmarshal(body, &datas); err != nil {
@@ -108,7 +101,35 @@ func ParseLatestApiResponse(body []byte) (string, error) {
 		if length == 0 {
 			return "", fmt.Errorf("Response body is empty")
 		}
-		// 获取最新Release对应的Tag名
+		// 获取文件哈希值，适用于不带外部版本信息的
+		fileHash := datas.(map[string]interface{})["sha"].(string)
+		return fileHash, nil
+	} else {
+		return "", fmt.Errorf("Response body has unknown structure")
+	}
+}
+
+// GetLatestTagFromLatestApi 解析 API 响应体，获取最新Tag
+//
+//   - 该函数解析的是 https://api.github.com/repos/{OWNER}/{REPO}/releases/latest 的返回值
+//   - 用于通过Release安装程序时获取最新版本的Tag
+func GetLatestTagFromLatestApi(body []byte) (string, error) {
+	// 解码JSON格式的返回值
+	var datas interface{}
+	if err := json.Unmarshal(body, &datas); err != nil {
+		return "", err
+	}
+
+	// 判断数据类型
+	kind := reflect.ValueOf(datas).Kind()
+
+	if kind == reflect.Map { // '{}'结构
+		// 判断响应体长度
+		length := len(datas.(map[string]interface{}))
+		if length == 0 {
+			return "", fmt.Errorf("Response body is empty")
+		}
+		// 获取最新Release对应的Tag
 		latestTag := datas.(map[string]interface{})["tag_name"].(string)
 		fmt.Println(latestTag)
 		return "Wait", nil
