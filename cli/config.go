@@ -77,31 +77,31 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"path":   installPath, // 安装路径
 			"temp":   installTemp, // 编译目录
 			"go": map[string]interface{}{ // 基于go编写的程序的管理配置
+				"names":                    goNames,                         // 可用的程序列表
 				"generate_path":            "build",                         // 编译结果存储文件夹
-				"source_url":               "https://git.yj1516.top",        // 首选安装源地址
-				"source_username":          "YJ",                            // 首选安装源的用户名
-				"source_api":               "https://git.yj1516.top/api/v1", // 首选安装源的API地址
-				"fallback_source_url":      "https://github.com",            // 备用安装源地址
-				"fallback_source_username": "YHYJ",                          // 备用安装源的用户名
-				"fallback_source_api":      "https://api.github.com",        // 备用安装源的API地址
-				"names":                    goNames,                         // 可用的程序
+				"source_url":               "https://github.com",            // 首选安装源地址
+				"source_username":          "YHYJ",                          // 首选安装源的用户名
+				"source_api":               "https://api.github.com",        // 首选安装源的API地址
+				"fallback_source_url":      "https://git.yj1516.top",        // 备用安装源地址
+				"fallback_source_username": "YJ",                            // 备用安装源的用户名
+				"fallback_source_api":      "https://git.yj1516.top/api/v1", // 备用安装源的API地址
 				"completion_dir": []string{ // zsh的自动补全文件夹
 					filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 					filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
 				},
 			},
 			"shell": map[string]interface{}{ // 基于shell编写的脚本的管理配置
-				"source_url":               "https://git.yj1516.top",              // 首选安装源地址
-				"source_username":          "YJ",                                  // 首选安装源的用户名
-				"source_api":               "https://git.yj1516.top/api/v1",       // 首选安装源的API地址
+				"source_url":               "https://github.com",                  // 首选安装源地址
+				"source_username":          "YHYJ",                                // 首选安装源的用户名
+				"source_api":               "https://api.github.com",              // 首选安装源的API地址
 				"source_branch":            "ArchLinux",                           // 首选安装源的分支名
-				"fallback_source_url":      "https://github.com",                  // 备用安装源地址
-				"fallback_source_username": "YHYJ",                                // 备用安装源的用户名
-				"fallback_source_api":      "https://api.github.com",              // 备用安装源的API地址
+				"fallback_source_url":      "https://git.yj1516.top",              // 备用安装源地址
+				"fallback_source_username": "YJ",                                  // 备用安装源的用户名
+				"fallback_source_api":      "https://git.yj1516.top/api/v1",       // 备用安装源的API地址
 				"fallback_source_branch":   "ArchLinux",                           // 备用安装源的分支名
 				"repo":                     "Program",                             // 存储脚本的仓库
 				"dir":                      filepath.Join("System-Script", "app"), // 存储脚本的文件夹
-				"names":                    shellNames,                            // 可用的脚本
+				"names":                    shellNames,                            // 可用的脚本列表
 			},
 		},
 	}
