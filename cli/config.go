@@ -99,12 +99,12 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				},
 			},
 			"shell": map[string]interface{}{ // 基于shell编写的脚本的管理配置
-				"source_url":               "https://github.com",                  // 首选安装源地址
 				"source_api":               "https://api.github.com",              // 首选安装的API地址
+				"source_raw":               "https://raw.githubusercontent.com",   // 首选安装的文件下载地址
 				"source_username":          "YHYJ",                                // 首选安装的用户名
 				"source_branch":            "ArchLinux",                           // 首选安装的分支名
-				"fallback_source_url":      "https://git.yj1516.top",              // 备用安装源地址
 				"fallback_source_api":      "https://git.yj1516.top/api/v1",       // 备用安装的API地址
+				"fallback_source_raw":      "https://git.yj1516.top",              // 备用安装的文件下载地址
 				"fallback_source_username": "YJ",                                  // 备用安装的用户名
 				"fallback_source_branch":   "ArchLinux",                           // 备用安装的分支名
 				"repo":                     "Program",                             // 存储脚本的仓库

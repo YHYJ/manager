@@ -40,20 +40,20 @@ var installCmd = &cobra.Command{
 			installSourceTemp           string
 			goGeneratePath              string
 			goSourceUrl                 string
-			goFallbackSourceUrl         string
 			goSourceApi                 string
-			goFallbackSourceApi         string
 			goSourceUsername            string
+			goFallbackSourceUrl         string
+			goFallbackSourceApi         string
 			goFallbackSourceUsername    string
 			goNames                     []interface{}
 			goCompletionDir             []interface{}
-			shellSourceUrl              string
-			shellFallbackSourceUrl      string
 			shellSourceApi              string
-			shellFallbackSourceApi      string
+			shellSourceRaw              string
 			shellSourceBranch           string
-			shellFallbackSourceBranch   string
 			shellSourceUsername         string
+			shellFallbackSourceApi      string
+			shellFallbackSourceRaw      string
+			shellFallbackSourceBranch   string
 			shellFallbackSourceUsername string
 			shellRepo                   string
 			shellDir                    string
@@ -71,9 +71,10 @@ var installCmd = &cobra.Command{
 		)
 
 		var (
-			shellSourceApiUrlFormat = "%s/repos/%s/%s/contents/%s/%s" // 请求远端仓库中脚本的Hash值的API
-			shellSourceFormat       = "%s/%s/%s/raw/branch/%s"        // 脚本远端仓库地址
-			goSourceApiUrlFormat    = "%s/repos/%s/%s/tags"           // 请求远端仓库最新Tag的API
+			shellSourceApiUrlFormat = "%s/repos/%s/%s/contents/%s/%s" // 请求远端仓库中脚本的 Hash 值的 API
+			shellGiteaSourceFormat  = "%s/%s/%s/raw/branch/%s"        // 脚本远端仓库地址 - Gitea 格式
+			shellGithubSourceFormat = "%s/%s/%s/%s"                   // 脚本远端仓库地址 - Github 格式
+			goSourceApiUrlFormat    = "%s/repos/%s/%s/tags"           // 请求远端仓库最新 Tag 的 API
 		)
 
 		// 检查配置文件是否存在
@@ -95,17 +96,17 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.go.source_url") {
 				goSourceUrl = configTree.Get("install.go.source_url").(string)
 			}
-			if configTree.Has("install.go.fallback_source_url") {
-				goFallbackSourceUrl = configTree.Get("install.go.fallback_source_url").(string)
-			}
 			if configTree.Has("install.go.source_api") {
 				goSourceApi = configTree.Get("install.go.source_api").(string)
 			}
-			if configTree.Has("install.go.fallback_source_api") {
-				goFallbackSourceApi = configTree.Get("install.go.fallback_source_api").(string)
-			}
 			if configTree.Has("install.go.source_username") {
 				goSourceUsername = configTree.Get("install.go.source_username").(string)
+			}
+			if configTree.Has("install.go.fallback_source_url") {
+				goFallbackSourceUrl = configTree.Get("install.go.fallback_source_url").(string)
+			}
+			if configTree.Has("install.go.fallback_source_api") {
+				goFallbackSourceApi = configTree.Get("install.go.fallback_source_api").(string)
 			}
 			if configTree.Has("install.go.fallback_source_username") {
 				goFallbackSourceUsername = configTree.Get("install.go.fallback_source_username").(string)
@@ -116,26 +117,26 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.go.completion_dir") {
 				goCompletionDir = configTree.Get("install.go.completion_dir").([]interface{})
 			}
-			if configTree.Has("install.shell.source_url") {
-				shellSourceUrl = configTree.Get("install.shell.source_url").(string)
-			}
-			if configTree.Has("install.shell.fallback_source_url") {
-				shellFallbackSourceUrl = configTree.Get("install.shell.fallback_source_url").(string)
-			}
 			if configTree.Has("install.shell.source_api") {
 				shellSourceApi = configTree.Get("install.shell.source_api").(string)
 			}
-			if configTree.Has("install.shell.fallback_source_api") {
-				shellFallbackSourceApi = configTree.Get("install.shell.fallback_source_api").(string)
+			if configTree.Has("install.shell.source_raw") {
+				shellSourceRaw = configTree.Get("install.shell.source_raw").(string)
 			}
 			if configTree.Has("install.shell.source_branch") {
 				shellSourceBranch = configTree.Get("install.shell.source_branch").(string)
 			}
-			if configTree.Has("install.shell.fallback_source_branch") {
-				shellFallbackSourceBranch = configTree.Get("install.shell.fallback_source_branch").(string)
-			}
 			if configTree.Has("install.shell.source_username") {
 				shellSourceUsername = configTree.Get("install.shell.source_username").(string)
+			}
+			if configTree.Has("install.shell.fallback_source_api") {
+				shellFallbackSourceApi = configTree.Get("install.shell.fallback_source_api").(string)
+			}
+			if configTree.Has("install.shell.fallback_source_raw") {
+				shellFallbackSourceRaw = configTree.Get("install.shell.fallback_source_raw").(string)
+			}
+			if configTree.Has("install.shell.fallback_source_branch") {
+				shellFallbackSourceBranch = configTree.Get("install.shell.fallback_source_branch").(string)
 			}
 			if configTree.Has("install.shell.fallback_source_username") {
 				shellFallbackSourceUsername = configTree.Get("install.shell.fallback_source_username").(string)
@@ -208,9 +209,9 @@ var installCmd = &cobra.Command{
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
 				} else { // Hash值不一致，则更新脚本，并输出已更新信息
 					// 下载远端脚本
-					shellSource := fmt.Sprintf(shellSourceFormat, shellSourceUrl, shellSourceUsername, shellRepo, shellSourceBranch)                                 // 脚本远端仓库地址
-					shellFallbackSource := fmt.Sprintf(shellSourceFormat, shellFallbackSourceUrl, shellFallbackSourceUsername, shellRepo, shellFallbackSourceBranch) // 脚本备用远端仓库地址
-					shellUrlFile := filepath.Join(shellDir, name.(string))                                                                                           // 脚本在仓库中的实际位置
+					shellSource := fmt.Sprintf(shellGithubSourceFormat, shellSourceRaw, shellSourceUsername, shellRepo, shellSourceBranch)                                // 脚本远端仓库地址
+					shellFallbackSource := fmt.Sprintf(shellGiteaSourceFormat, shellFallbackSourceRaw, shellFallbackSourceUsername, shellRepo, shellFallbackSourceBranch) // 脚本备用远端仓库地址
+					shellUrlFile := filepath.Join(shellDir, name.(string))                                                                                                // 脚本在仓库中的实际位置
 					fileUrl := fmt.Sprintf("%s/%s", shellSource, shellUrlFile)
 					_, err := cli.DownloadFile(fileUrl, scriptLocalPath)
 					if err != nil {
