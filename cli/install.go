@@ -74,7 +74,7 @@ func DownloadFile(url string, outputFile string) (string, error) {
 }
 
 // InstallFile 安装文件，如果文件存在则覆盖
-func InstallFile(sourceFile, targetFile string) error {
+func InstallFile(sourceFile, targetFile string, perm os.FileMode) error {
 	// 打开源文件
 	sFile, err := os.Open(sourceFile)
 	if err != nil {
@@ -83,7 +83,7 @@ func InstallFile(sourceFile, targetFile string) error {
 	defer sFile.Close()
 
 	// 创建或打开目标文件
-	tFile, err := os.OpenFile(targetFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	tFile, err := os.OpenFile(targetFile, os.O_RDWR|os.O_CREATE|os.O_TRUNC, perm)
 	if err != nil {
 		return err
 	}

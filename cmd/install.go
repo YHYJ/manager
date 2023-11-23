@@ -226,7 +226,7 @@ var installCmd = &cobra.Command{
 					if general.FileExist(scriptLocalPath) {
 						// 检测本地程序是否存在
 						if commandErr != nil { // 不存在，安装
-							if err := cli.InstallFile(scriptLocalPath, localProgram); err != nil {
+							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
 								fmt.Printf(general.ErrorBaseFormat, err)
 								continue
 							} else {
@@ -243,7 +243,7 @@ var installCmd = &cobra.Command{
 							if err := os.Remove(localProgram); err != nil {
 								fmt.Printf(general.ErrorBaseFormat, err)
 							}
-							if err := cli.InstallFile(scriptLocalPath, localProgram); err != nil {
+							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
 								fmt.Printf(general.ErrorBaseFormat, err)
 								continue
 							} else {
@@ -370,7 +370,7 @@ var installCmd = &cobra.Command{
 									continue
 								}
 							} else { // Makefile文件不存在则使用自定义函数安装
-								if err := cli.InstallFile(compileProgram, localProgram); err != nil {
+								if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
 									fmt.Printf(general.ErrorBaseFormat, err)
 									continue
 								} else {
@@ -395,7 +395,7 @@ var installCmd = &cobra.Command{
 								if err := os.Remove(localProgram); err != nil {
 									fmt.Printf(general.ErrorBaseFormat, err)
 								}
-								if err := cli.InstallFile(compileProgram, localProgram); err != nil {
+								if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
 									fmt.Printf(general.ErrorBaseFormat, err)
 									continue
 								} else {
