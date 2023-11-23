@@ -36,7 +36,9 @@ var installCmd = &cobra.Command{
 
 		// 配置文件项
 		var (
+			installMethod       string
 			installPath         string
+			installReleaseTemp  string
 			installSourceTemp   string
 			goGeneratePath      string
 			goGithubUrl         string
@@ -69,8 +71,14 @@ var installCmd = &cobra.Command{
 			return
 		} else {
 			// 获取配置项
+			if configTree.Has("install.method") {
+				installMethod = configTree.Get("install.method").(string)
+			}
 			if configTree.Has("install.path") {
 				installPath = configTree.Get("install.path").(string)
+			}
+			if configTree.Has("install.release_temp") {
+				installReleaseTemp = configTree.Get("install.release_temp").(string)
 			}
 			if configTree.Has("install.source_temp") {
 				installSourceTemp = configTree.Get("install.source_temp").(string)
@@ -278,167 +286,181 @@ var installCmd = &cobra.Command{
 			// 设置代理
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
-			// 创建临时目录
-			if err := general.CreateDir(installSourceTemp); err != nil {
-				fmt.Printf(general.ErrorBaseFormat, err)
-				return
-			}
-			// 遍历所有程序名
-			for _, name := range goNames {
-				textLength := 0                                                                                         // 输出文本的长度
-				compileProgram := filepath.Join(installSourceTemp, name.(string), goGeneratePath, name.(string))        // 编译生成的最新程序
-				goGithubLatestTagApi := fmt.Sprintf(goLatestTagApiFormat, goGithubApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
-				goGiteaLatestTagApi := fmt.Sprintf(goLatestTagApiFormat, goGiteaApi, goGiteaUsername, name.(string))    // 请求远端仓库最新 Tag 的 API
-				localProgram := filepath.Join(installPath, name.(string))                                               // 本地程序路径
-				// 请求API
-				body, err := general.RequestApi(goGithubLatestTagApi)
-				if err != nil {
+
+			// 使用配置的安装方式进行安装
+			if strings.ToLower(installMethod) == "release" {
+				// 创建临时目录
+				if err := general.CreateDir(installReleaseTemp); err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
-					body, err = general.RequestApi(goGiteaLatestTagApi)
+					return
+				}
+				// TODO: 待续 <23-11-23, YJ> //
+			} else if strings.ToLower(installMethod) == "source" {
+				// 创建临时目录
+				if err := general.CreateDir(installSourceTemp); err != nil {
+					fmt.Printf(general.ErrorBaseFormat, err)
+					return
+				}
+				// 遍历所有程序名
+				for _, name := range goNames {
+					textLength := 0                                                                                         // 输出文本的长度
+					compileProgram := filepath.Join(installSourceTemp, name.(string), goGeneratePath, name.(string))        // 编译生成的最新程序
+					goGithubLatestTagApi := fmt.Sprintf(goLatestTagApiFormat, goGithubApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
+					goGiteaLatestTagApi := fmt.Sprintf(goLatestTagApiFormat, goGiteaApi, goGiteaUsername, name.(string))    // 请求远端仓库最新 Tag 的 API
+					localProgram := filepath.Join(installPath, name.(string))                                               // 本地程序路径
+					// 请求API
+					body, err := general.RequestApi(goGithubLatestTagApi)
+					if err != nil {
+						fmt.Printf(general.ErrorBaseFormat, err)
+						body, err = general.RequestApi(goGiteaLatestTagApi)
+						if err != nil {
+							fmt.Printf(general.ErrorBaseFormat, err)
+							continue
+						}
+					}
+					// 获取远端版本（用于Source安装）
+					remoteTag, err := general.GetLatestSourceTag(body)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
 						continue
 					}
-				}
-				// 获取远端版本（用于Source安装）
-				remoteTag, err := general.GetLatestSourceTag(body)
-				if err != nil {
-					fmt.Printf(general.ErrorBaseFormat, err)
-					continue
-				}
-				// 获取本地版本
-				nameArgs := []string{"version", "--only"} // 本地程序参数
-				localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
-				// 比较远端和本地版本
-				if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-					text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, "==>", " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
-					fmt.Printf(text)
-					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
-					textLength = len(controlRegex.ReplaceAllString(text, ""))
-				} else { // 版本不一致，则更新程序，并输出已更新信息
-					// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
-					goSourceTempDir := filepath.Join(installSourceTemp, name.(string))
-					if general.FileExist(goSourceTempDir) {
-						if err := os.RemoveAll(goSourceTempDir); err != nil {
-							fmt.Printf(general.ErrorBaseFormat, err)
-						}
-					}
-					goGithubCloneBaseUrl := fmt.Sprintf("%s/%s", goGithubUrl, goGithubUsername) // 远端仓库基础克隆地址（除仓库名）
-					goGiteaCloneBaseUrl := fmt.Sprintf("%s/%s", goGiteaUrl, goGiteaUsername)    // 远端仓库基础克隆地址（除仓库名）
-					fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from GitHub ")
-					if err := cli.CloneRepoViaHTTP(installSourceTemp, goGithubCloneBaseUrl, name.(string)); err != nil {
-						fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
-						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from Gitea ")
-						if err := cli.CloneRepoViaHTTP(installSourceTemp, goGiteaCloneBaseUrl, name.(string)); err != nil {
-							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
-							continue
-						} else {
-							fmt.Printf(general.SuccessFormat, "success")
-						}
-					} else {
-						fmt.Printf(general.SuccessFormat, "success")
-					}
-					// 进到下载的远端文件目录
-					if err := general.GoToDir(goSourceTempDir); err != nil {
-						fmt.Printf(general.ErrorBaseFormat, err)
-						continue
-					}
-					// 编译生成程序
-					if general.FileExist("Makefile") { // Makefile文件存在则使用make编译
-						makeArgs := []string{}
-						if err := general.RunCommand("make", makeArgs); err != nil {
-							fmt.Printf(general.ErrorBaseFormat, err)
-							continue
-						}
-					} else if general.FileExist("main.go") { // Makefile文件不存在则使用go build编译
-						buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
-						if err := general.RunCommand("go", buildArgs); err != nil {
-							fmt.Printf(general.ErrorBaseFormat, err)
-							continue
-						}
-					} else {
-						fmt.Printf(general.ErrorBaseFormat, unableToCompileMessage)
-					}
-					// 检测编译生成的程序是否存在
-					if general.FileExist(compileProgram) {
-						// 检测本地程序是否存在
-						if commandErr != nil { // 不存在，安装
-							if general.FileExist("Makefile") { // Makefile文件存在则使用make install安装
-								makeArgs := []string{"install"}
-								if err := general.RunCommand("make", makeArgs); err != nil {
-									fmt.Printf(general.ErrorBaseFormat, err)
-									continue
-								}
-							} else { // Makefile文件不存在则使用自定义函数安装
-								if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
-									fmt.Printf(general.ErrorBaseFormat, err)
-									continue
-								} else {
-									// 为已安装的脚本设置可执行权限
-									if err := os.Chmod(localProgram, 0755); err != nil {
-										fmt.Printf(general.ErrorBaseFormat, err)
-									}
-								}
-							}
-							text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteTag, " ", "installed")
-							fmt.Printf(text)
-							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
-							textLength = len(controlRegex.ReplaceAllString(text, ""))
-						} else { // 存在，更新
-							if general.FileExist("Makefile") { // Makefile文件存在则使用make install更新
-								makeArgs := []string{"install"}
-								if err := general.RunCommand("make", makeArgs); err != nil {
-									fmt.Printf(general.ErrorBaseFormat, err)
-									continue
-								}
-							} else { // Makefile文件不存在则使用自定义函数更新
-								if err := os.Remove(localProgram); err != nil {
-									fmt.Printf(general.ErrorBaseFormat, err)
-								}
-								if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
-									fmt.Printf(general.ErrorBaseFormat, err)
-									continue
-								} else {
-									// 为已安装的脚本设置可执行权限
-									if err := os.Chmod(localProgram, 0755); err != nil {
-										fmt.Printf(general.ErrorBaseFormat, err)
-									}
-								}
-							}
-							text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
-							fmt.Printf(text)
-							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
-							textLength = len(controlRegex.ReplaceAllString(text, ""))
-						}
-						// 生成/更新自动补全脚本
-						for _, completionDir := range goCompletionDir {
-							if general.FileExist(completionDir.(string)) {
-								generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
-								if err := general.RunCommand("bash", generateArgs); err != nil {
-									text := fmt.Sprintf(general.ErrorSuffixFormat, "==>", " ", acsInstallFailedMessage)
-									fmt.Printf(text)
-									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
-									textLength = len(controlRegex.ReplaceAllString(text, ""))
-								} else {
-									text := fmt.Sprintf(general.SuccessSuffixFormat, "==>", " ", acsInstallSuccessMessage)
-									fmt.Printf(text)
-									controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
-									textLength = len(controlRegex.ReplaceAllString(text, ""))
-									break
-								}
-							}
-						}
-					} else {
-						text := fmt.Sprintf(general.ErrorBaseFormat, fmt.Sprintf("The source file %s does not exist", compileProgram))
+					// 获取本地版本
+					nameArgs := []string{"version", "--only"} // 本地程序参数
+					localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
+					// 比较远端和本地版本
+					if remoteTag == localVersion { // 版本一致，则输出无需更新信息
+						text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, "==>", " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
 						fmt.Printf(text)
 						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
+					} else { // 版本不一致，则更新程序，并输出已更新信息
+						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
+						goSourceTempDir := filepath.Join(installSourceTemp, name.(string))
+						if general.FileExist(goSourceTempDir) {
+							if err := os.RemoveAll(goSourceTempDir); err != nil {
+								fmt.Printf(general.ErrorBaseFormat, err)
+							}
+						}
+						goGithubCloneBaseUrl := fmt.Sprintf("%s/%s", goGithubUrl, goGithubUsername) // 远端仓库基础克隆地址（除仓库名）
+						goGiteaCloneBaseUrl := fmt.Sprintf("%s/%s", goGiteaUrl, goGiteaUsername)    // 远端仓库基础克隆地址（除仓库名）
+						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from GitHub ")
+						if err := cli.CloneRepoViaHTTP(installSourceTemp, goGithubCloneBaseUrl, name.(string)); err != nil {
+							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
+							fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from Gitea ")
+							if err := cli.CloneRepoViaHTTP(installSourceTemp, goGiteaCloneBaseUrl, name.(string)); err != nil {
+								fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
+								continue
+							} else {
+								fmt.Printf(general.SuccessFormat, "success")
+							}
+						} else {
+							fmt.Printf(general.SuccessFormat, "success")
+						}
+						// 进到下载的远端文件目录
+						if err := general.GoToDir(goSourceTempDir); err != nil {
+							fmt.Printf(general.ErrorBaseFormat, err)
+							continue
+						}
+						// 编译生成程序
+						if general.FileExist("Makefile") { // Makefile文件存在则使用make编译
+							makeArgs := []string{}
+							if err := general.RunCommand("make", makeArgs); err != nil {
+								fmt.Printf(general.ErrorBaseFormat, err)
+								continue
+							}
+						} else if general.FileExist("main.go") { // Makefile文件不存在则使用go build编译
+							buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
+							if err := general.RunCommand("go", buildArgs); err != nil {
+								fmt.Printf(general.ErrorBaseFormat, err)
+								continue
+							}
+						} else {
+							fmt.Printf(general.ErrorBaseFormat, unableToCompileMessage)
+						}
+						// 检测编译生成的程序是否存在
+						if general.FileExist(compileProgram) {
+							// 检测本地程序是否存在
+							if commandErr != nil { // 不存在，安装
+								if general.FileExist("Makefile") { // Makefile文件存在则使用make install安装
+									makeArgs := []string{"install"}
+									if err := general.RunCommand("make", makeArgs); err != nil {
+										fmt.Printf(general.ErrorBaseFormat, err)
+										continue
+									}
+								} else { // Makefile文件不存在则使用自定义函数安装
+									if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
+										fmt.Printf(general.ErrorBaseFormat, err)
+										continue
+									} else {
+										// 为已安装的脚本设置可执行权限
+										if err := os.Chmod(localProgram, 0755); err != nil {
+											fmt.Printf(general.ErrorBaseFormat, err)
+										}
+									}
+								}
+								text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteTag, " ", "installed")
+								fmt.Printf(text)
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
+							} else { // 存在，更新
+								if general.FileExist("Makefile") { // Makefile文件存在则使用make install更新
+									makeArgs := []string{"install"}
+									if err := general.RunCommand("make", makeArgs); err != nil {
+										fmt.Printf(general.ErrorBaseFormat, err)
+										continue
+									}
+								} else { // Makefile文件不存在则使用自定义函数更新
+									if err := os.Remove(localProgram); err != nil {
+										fmt.Printf(general.ErrorBaseFormat, err)
+									}
+									if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
+										fmt.Printf(general.ErrorBaseFormat, err)
+										continue
+									} else {
+										// 为已安装的脚本设置可执行权限
+										if err := os.Chmod(localProgram, 0755); err != nil {
+											fmt.Printf(general.ErrorBaseFormat, err)
+										}
+									}
+								}
+								text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
+								fmt.Printf(text)
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
+							}
+							// 生成/更新自动补全脚本
+							for _, completionDir := range goCompletionDir {
+								if general.FileExist(completionDir.(string)) {
+									generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
+									if err := general.RunCommand("bash", generateArgs); err != nil {
+										text := fmt.Sprintf(general.ErrorSuffixFormat, "==>", " ", acsInstallFailedMessage)
+										fmt.Printf(text)
+										controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+										textLength = len(controlRegex.ReplaceAllString(text, ""))
+									} else {
+										text := fmt.Sprintf(general.SuccessSuffixFormat, "==>", " ", acsInstallSuccessMessage)
+										fmt.Printf(text)
+										controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+										textLength = len(controlRegex.ReplaceAllString(text, ""))
+										break
+									}
+								}
+							}
+						} else {
+							text := fmt.Sprintf(general.ErrorBaseFormat, fmt.Sprintf("The source file %s does not exist", compileProgram))
+							fmt.Printf(text)
+							controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+							textLength = len(controlRegex.ReplaceAllString(text, ""))
+						}
 					}
+					dashes := strings.Repeat("-", textLength-1)  //组装分隔符（减去行尾换行符的一个长度）
+					fmt.Printf(general.LineHiddenFormat, dashes) // 美化输出
+					// 添加一个0.01秒的延时，使输出更加顺畅
+					time.Sleep(100 * time.Millisecond)
 				}
-				dashes := strings.Repeat("-", textLength-1)  //组装分隔符（减去行尾换行符的一个长度）
-				fmt.Printf(general.LineHiddenFormat, dashes) // 美化输出
-				// 添加一个0.01秒的延时，使输出更加顺畅
-				time.Sleep(100 * time.Millisecond)
+			} else {
+				text := fmt.Sprintf(general.ErrorSuffixFormat, fmt.Sprintf("Unsupported installation method '%s'", installMethod), ": ", "only 'release' and 'source' are supported")
+				fmt.Printf(text)
 			}
 		}
 	},
