@@ -193,7 +193,7 @@ var installCmd = &cobra.Command{
 					}
 				}
 				// 获取远端脚本Hash值
-				remoteHash, err := general.GetLatestHashFromTagApi(body)
+				remoteHash, err := general.GetLatestSourceHash(body)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
 					continue
@@ -302,7 +302,7 @@ var installCmd = &cobra.Command{
 					}
 				}
 				// 获取远端版本（用于Source安装）
-				remoteTag, err := general.GetLatestTagFromTagApi(body)
+				remoteTag, err := general.GetLatestSourceTag(body)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
 					continue

@@ -53,11 +53,11 @@ func RequestApi(url string) ([]byte, error) {
 	return body, nil
 }
 
-// GetLatestTagFromTagApi 解析 API 响应体，获取最新Tag
+// GetLatestSourceTag 解析 API 响应体，获取源代码的最新Tag
 //
 //   - 该函数解析的是 https://api.github.com/repos/{OWNER}/{REPO}/tags 的返回值
 //   - 用于通过Source安装程序时获取最新版本的Tag
-func GetLatestTagFromTagApi(body []byte) (string, error) {
+func GetLatestSourceTag(body []byte) (string, error) {
 	// 解码JSON格式的返回值
 	var datas interface{}
 	if err := json.Unmarshal(body, &datas); err != nil {
@@ -81,11 +81,11 @@ func GetLatestTagFromTagApi(body []byte) (string, error) {
 	}
 }
 
-// GetLatestHashFromTagApi 解析 API 响应体，获取最新提交的Hash
+// GetLatestSourceHash 解析 API 响应体，获取源代码的最新提交的Hash
 //
 //   - 该函数解析的是 https://api.github.com/repos/{OWNER}/{REPO}/tags 的返回值
 //   - 用于通过Source安装不带Tag的程序时获取最新版本的Hash
-func GetLatestHashFromTagApi(body []byte) (string, error) {
+func GetLatestSourceHash(body []byte) (string, error) {
 	// 解码JSON格式的返回值
 	var datas interface{}
 	if err := json.Unmarshal(body, &datas); err != nil {
@@ -109,11 +109,11 @@ func GetLatestHashFromTagApi(body []byte) (string, error) {
 	}
 }
 
-// GetLatestTagFromLatestApi 解析 API 响应体，获取最新Tag
+// GetLatestReleaseTag 解析 API 响应体，获取Release的最新Tag
 //
 //   - 该函数解析的是 https://api.github.com/repos/{OWNER}/{REPO}/releases/latest 的返回值
 //   - 用于通过Release安装程序时获取最新版本的Tag
-func GetLatestTagFromLatestApi(body []byte) (string, error) {
+func GetLatestReleaseTag(body []byte) (string, error) {
 	// 解码JSON格式的返回值
 	var datas interface{}
 	if err := json.Unmarshal(body, &datas); err != nil {
@@ -158,18 +158,20 @@ type singleFileInfo struct {
 	DownloadCount float64 `json:"download_count"`
 }
 
-// GetFileInfoFromLatestApi 解析 API 响应体，获取指定文件的信息
-func GetFileInfoFromLatestApi(body []byte, fileName FileName) (multipleFilesInfo, error) {
-	filesInfo := multipleFilesInfo{}
+// GetReleaseFileInfo 解析 API 响应体，获取Release文件的信息
+//
+//   - 该函数解析的是 https://api.github.com/repos/{OWNER}/{REPO}/releases/latest 的返回值
+//   - 用于通过Release安装程序时获取校验文件、压缩包等文件的信息
+func GetReleaseFileInfo(body []byte, fileName FileName) (multipleFilesInfo, error) {
+	filesInfo := multipleFilesInfo{}      // 存储多文件信息
+	checksumsFileInfo := singleFileInfo{} // 存储校验文件信息
+	archiveFileInfo := singleFileInfo{}   // 存储压缩包信息
 
 	// 解码JSON格式的返回值
 	var datas interface{}
 	if err := json.Unmarshal(body, &datas); err != nil {
 		return filesInfo, err
 	}
-
-	checksumsFileInfo := singleFileInfo{} // 存储校验文件信息
-	archiveFileInfo := singleFileInfo{}   // 存储压缩包信息
 
 	// 判断数据类型
 	kind := reflect.ValueOf(datas).Kind()
