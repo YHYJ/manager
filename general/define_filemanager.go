@@ -146,26 +146,25 @@ func CreateFile(filePath string) error {
 	if FileExist(filePath) {
 		return nil
 	}
-	// 截取filePath的父目录
-	parentPath := filePath[:strings.LastIndex(filePath, "/")]
+	// 创建父目录
+	parentPath := filepath.Dir(filePath)
 	if err := os.MkdirAll(parentPath, os.ModePerm); err != nil {
 		return err
 	}
-	_, err := os.Create(filePath)
-	return err
+	// 创建文件
+	if _, err := os.Create(filePath); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// CreateDir 创建文件夹，如果其父目录不存在则创建父目录
+// CreateDir 创建文件夹
 func CreateDir(dirPath string) error {
 	if FileExist(dirPath) {
 		return nil
 	}
-	// 截取dirPath的父目录
-	parentPath := dirPath[:strings.LastIndex(dirPath, "/")]
-	if err := os.MkdirAll(parentPath, os.ModePerm); err != nil {
-		return err
-	}
-	return os.Mkdir(dirPath, os.ModePerm)
+	return os.MkdirAll(dirPath, os.ModePerm)
 }
 
 // GoToDir 进到指定目录
