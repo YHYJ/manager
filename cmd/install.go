@@ -62,21 +62,6 @@ var installCmd = &cobra.Command{
 			httpsProxy          string
 		)
 
-		// 输出文本
-		var (
-			latestVersionMessage     = "is already the latest version"                 // 已安装的程序和脚本为最新版
-			unableToCompileMessage   = "Makefile or main.go file does not exist"       // 缺失编译文件无法完成编译
-			acsInstallSuccessMessage = "auto-completion script installed successfully" // 自动补全脚本安装成功
-			acsInstallFailedMessage  = "auto-completion script installation failed"    // 自动补全脚本安装失败
-		)
-
-		var (
-			goLatestTagApiFormat             = "%s/repos/%s/%s/tags"           // 请求远端仓库最新 Tag 的 API
-			shellLatestHashApiFormat         = "%s/repos/%s/%s/contents/%s/%s" // 请求远端仓库最新脚本的 Hash 值的 API
-			shellGithubBaseDownloadUrlFormat = "%s/%s/%s/%s"                   // 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Github 格式
-			shellGiteaBaseDownloadUrlFormat  = "%s/%s/%s/raw/branch/%s"        // 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Gitea 格式
-		)
-
 		// 检查配置文件是否存在
 		configTree, err := cli.GetTomlConfig(cfgFile)
 		if err != nil {
@@ -157,6 +142,22 @@ var installCmd = &cobra.Command{
 				httpsProxy = configTree.Get("variable.https_proxy").(string)
 			}
 		}
+
+		// 输出文本
+		var (
+			latestVersionMessage     = "is already the latest version"                 // 已安装的程序和脚本为最新版
+			unableToCompileMessage   = "Makefile or main.go file does not exist"       // 缺失编译文件无法完成编译
+			acsInstallSuccessMessage = "auto-completion script installed successfully" // 自动补全脚本安装成功
+			acsInstallFailedMessage  = "auto-completion script installation failed"    // 自动补全脚本安装失败
+		)
+
+		// 字符串格式
+		var (
+			goLatestTagApiFormat             = "%s/repos/%s/%s/tags"           // 请求远端仓库最新 Tag 的 API
+			shellLatestHashApiFormat         = "%s/repos/%s/%s/contents/%s/%s" // 请求远端仓库最新脚本的 Hash 值的 API
+			shellGithubBaseDownloadUrlFormat = "%s/%s/%s/%s"                   // 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Github 格式
+			shellGiteaBaseDownloadUrlFormat  = "%s/%s/%s/raw/branch/%s"        // 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Gitea 格式
+		)
 
 		// 根据参数执行操作
 		if allFlag {
