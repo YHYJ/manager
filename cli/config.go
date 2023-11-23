@@ -73,8 +73,8 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	// 定义一个map[string]interface{}类型的变量并赋值
 	exampleConf := map[string]interface{}{
 		"variable": map[string]interface{}{ // 环境变量设置
-			"http_proxy":  "http://<Domain or IP>:<Port>", // HTTP代理
-			"https_proxy": "http://<Domain or IP>:<Port>", // HTTPS代理
+			"http_proxy":  "", // HTTP代理
+			"https_proxy": "", // HTTPS代理
 		},
 		"install": map[string]interface{}{
 			"method":       "release",          // 安装方法，"release"或"source"代表安装预编译的二进制文件或自行从源码编译
