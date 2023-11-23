@@ -77,39 +77,39 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"https_proxy": "", // HTTPS代理
 		},
 		"install": map[string]interface{}{
-			"method":       "release",          // 安装方法，"release"或"source"代表安装预编译的二进制文件或自行从源码编译
+			"method":       "release",          // 安装方法，"release" 或 "source"代表安装预编译的二进制文件或自行从源码编译
 			"path":         installPath,        // 安装路径
-			"source_temp":  installSourceTemp,  // Source安装方式的基础存储目录
-			"release_temp": installReleaseTemp, // Release安装方式的基础存储目录
+			"source_temp":  installSourceTemp,  // Source 安装方式的基础存储目录
+			"release_temp": installReleaseTemp, // Release 安装方式的基础存储目录
 			"go": map[string]interface{}{ // 基于go编写的程序的管理配置
-				"names":                    goNames,                         // 可用的程序列表
-				"release_api":              "https://api.github.com",        // Release安装的API地址
-				"release_accept":           "application/vnd.github+json",   // Release安装的请求头参数
-				"source_url":               "https://github.com",            // 首选Source安装源地址
-				"source_api":               "https://api.github.com",        // 首选Source安装的API地址
-				"source_username":          "YHYJ",                          // 首选Source安装的用户名
-				"fallback_source_url":      "https://git.yj1516.top",        // 备用Source安装源地址
-				"fallback_source_api":      "https://git.yj1516.top/api/v1", // 备用Source安装的API地址
-				"fallback_source_username": "YJ",                            // 备用Source安装的用户名
-				"unzip_path":               "flowout",                       // 解压缩释出文件夹
-				"generate_path":            "build",                         // 编译结果存储文件夹
+				"names":           goNames,                         // 可用的程序列表
+				"release_api":     "https://api.github.com",        // Release 安装源API地址
+				"release_accept":  "application/vnd.github+json",   // Release 安装源请求头参数
+				"unzip_path":      "flowout",                       // Release 安装解压缩释出文件夹
+				"github_url":      "https://github.com",            // Source 安装 - GitHub 安装源地址
+				"github_api":      "https://api.github.com",        // Source 安装 - GitHub 安装源API地址
+				"github_username": "YHYJ",                          // Source 安装 - GitHub 安装源用户名
+				"gitea_url":       "https://git.yj1516.top",        // Source 安装 - Gitea 安装源地址
+				"gitea_api":       "https://git.yj1516.top/api/v1", // Source 安装 - Gitea 安装源API地址
+				"gitea_username":  "YJ",                            // Source 安装 - Gitea 安装源用户名
+				"generate_path":   "build",                         // Source 安装编译结果存储文件夹
 				"completion_dir": []string{ // zsh的自动补全文件夹
 					filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 					filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
 				},
 			},
 			"shell": map[string]interface{}{ // 基于shell编写的脚本的管理配置
-				"source_api":               "https://api.github.com",              // 首选安装的API地址
-				"source_raw":               "https://raw.githubusercontent.com",   // 首选安装的文件下载地址
-				"source_username":          "YHYJ",                                // 首选安装的用户名
-				"source_branch":            "ArchLinux",                           // 首选安装的分支名
-				"fallback_source_api":      "https://git.yj1516.top/api/v1",       // 备用安装的API地址
-				"fallback_source_raw":      "https://git.yj1516.top",              // 备用安装的文件下载地址
-				"fallback_source_username": "YJ",                                  // 备用安装的用户名
-				"fallback_source_branch":   "ArchLinux",                           // 备用安装的分支名
-				"repo":                     "Program",                             // 存储脚本的仓库
-				"dir":                      filepath.Join("System-Script", "app"), // 存储脚本的文件夹
-				"names":                    shellNames,                            // 可用的脚本列表
+				"github_api":      "https://api.github.com",              // GitHub 安装源API地址
+				"github_raw":      "https://raw.githubusercontent.com",   // GitHub 安装源文件下载地址
+				"github_username": "YHYJ",                                // GitHub 安装源用户名
+				"github_branch":   "ArchLinux",                           // GitHub 安装源分支名
+				"gitea_api":       "https://git.yj1516.top/api/v1",       // Gitea 安装源API地址
+				"gitea_raw":       "https://git.yj1516.top",              // Gitea 安装源文件下载地址
+				"gitea_username":  "YJ",                                  // Gitea 安装源用户名
+				"gitea_branch":    "ArchLinux",                           // Gitea 安装源分支名
+				"repo":            "Program",                             // 存储脚本的仓库
+				"dir":             filepath.Join("System-Script", "app"), // 脚本所在文件夹
+				"names":           shellNames,                            // 可用的脚本列表
 			},
 		},
 	}

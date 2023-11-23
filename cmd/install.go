@@ -36,30 +36,30 @@ var installCmd = &cobra.Command{
 
 		// 配置文件项
 		var (
-			installPath                 string
-			installSourceTemp           string
-			goGeneratePath              string
-			goSourceUrl                 string
-			goSourceApi                 string
-			goSourceUsername            string
-			goFallbackSourceUrl         string
-			goFallbackSourceApi         string
-			goFallbackSourceUsername    string
-			goNames                     []interface{}
-			goCompletionDir             []interface{}
-			shellSourceApi              string
-			shellSourceRaw              string
-			shellSourceBranch           string
-			shellSourceUsername         string
-			shellFallbackSourceApi      string
-			shellFallbackSourceRaw      string
-			shellFallbackSourceBranch   string
-			shellFallbackSourceUsername string
-			shellRepo                   string
-			shellDir                    string
-			shellNames                  []interface{}
-			httpProxy                   string
-			httpsProxy                  string
+			installPath         string
+			installSourceTemp   string
+			goGeneratePath      string
+			goGithubUrl         string
+			goGithubApi         string
+			goGithubUsername    string
+			goGiteaUrl          string
+			goGiteaApi          string
+			goGiteaUsername     string
+			goNames             []interface{}
+			goCompletionDir     []interface{}
+			shellGithubApi      string
+			shellGithubRaw      string
+			shellGithubBranch   string
+			shellGithubUsername string
+			shellGiteaApi       string
+			shellGiteaRaw       string
+			shellGiteaBranch    string
+			shellGiteaUsername  string
+			shellRepo           string
+			shellDir            string
+			shellNames          []interface{}
+			httpProxy           string
+			httpsProxy          string
 		)
 
 		// 输出文本
@@ -71,10 +71,10 @@ var installCmd = &cobra.Command{
 		)
 
 		var (
-			shellSourceApiUrlFormat = "%s/repos/%s/%s/contents/%s/%s" // 请求远端仓库中脚本的 Hash 值的 API
-			shellGiteaSourceFormat  = "%s/%s/%s/raw/branch/%s"        // 脚本远端仓库地址 - Gitea 格式
-			shellGithubSourceFormat = "%s/%s/%s/%s"                   // 脚本远端仓库地址 - Github 格式
-			goSourceApiUrlFormat    = "%s/repos/%s/%s/tags"           // 请求远端仓库最新 Tag 的 API
+			goLatestTagApiFormat             = "%s/repos/%s/%s/tags"           // 请求远端仓库最新 Tag 的 API
+			shellLatestHashApiFormat         = "%s/repos/%s/%s/contents/%s/%s" // 请求远端仓库最新脚本的 Hash 值的 API
+			shellGithubBaseDownloadUrlFormat = "%s/%s/%s/%s"                   // 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Github 格式
+			shellGiteaBaseDownloadUrlFormat  = "%s/%s/%s/raw/branch/%s"        // 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Gitea 格式
 		)
 
 		// 检查配置文件是否存在
@@ -93,23 +93,23 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.go.generate_path") {
 				goGeneratePath = configTree.Get("install.go.generate_path").(string)
 			}
-			if configTree.Has("install.go.source_url") {
-				goSourceUrl = configTree.Get("install.go.source_url").(string)
+			if configTree.Has("install.go.github_url") {
+				goGithubUrl = configTree.Get("install.go.github_url").(string)
 			}
-			if configTree.Has("install.go.source_api") {
-				goSourceApi = configTree.Get("install.go.source_api").(string)
+			if configTree.Has("install.go.github_api") {
+				goGithubApi = configTree.Get("install.go.github_api").(string)
 			}
-			if configTree.Has("install.go.source_username") {
-				goSourceUsername = configTree.Get("install.go.source_username").(string)
+			if configTree.Has("install.go.github_username") {
+				goGithubUsername = configTree.Get("install.go.github_username").(string)
 			}
-			if configTree.Has("install.go.fallback_source_url") {
-				goFallbackSourceUrl = configTree.Get("install.go.fallback_source_url").(string)
+			if configTree.Has("install.go.gitea_url") {
+				goGiteaUrl = configTree.Get("install.go.gitea_url").(string)
 			}
-			if configTree.Has("install.go.fallback_source_api") {
-				goFallbackSourceApi = configTree.Get("install.go.fallback_source_api").(string)
+			if configTree.Has("install.go.gitea_api") {
+				goGiteaApi = configTree.Get("install.go.gitea_api").(string)
 			}
-			if configTree.Has("install.go.fallback_source_username") {
-				goFallbackSourceUsername = configTree.Get("install.go.fallback_source_username").(string)
+			if configTree.Has("install.go.gitea_username") {
+				goGiteaUsername = configTree.Get("install.go.gitea_username").(string)
 			}
 			if configTree.Has("install.go.names") {
 				goNames = configTree.Get("install.go.names").([]interface{})
@@ -117,29 +117,29 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.go.completion_dir") {
 				goCompletionDir = configTree.Get("install.go.completion_dir").([]interface{})
 			}
-			if configTree.Has("install.shell.source_api") {
-				shellSourceApi = configTree.Get("install.shell.source_api").(string)
+			if configTree.Has("install.shell.github_api") {
+				shellGithubApi = configTree.Get("install.shell.github_api").(string)
 			}
-			if configTree.Has("install.shell.source_raw") {
-				shellSourceRaw = configTree.Get("install.shell.source_raw").(string)
+			if configTree.Has("install.shell.github_raw") {
+				shellGithubRaw = configTree.Get("install.shell.github_raw").(string)
 			}
-			if configTree.Has("install.shell.source_branch") {
-				shellSourceBranch = configTree.Get("install.shell.source_branch").(string)
+			if configTree.Has("install.shell.github_branch") {
+				shellGithubBranch = configTree.Get("install.shell.github_branch").(string)
 			}
-			if configTree.Has("install.shell.source_username") {
-				shellSourceUsername = configTree.Get("install.shell.source_username").(string)
+			if configTree.Has("install.shell.github_username") {
+				shellGithubUsername = configTree.Get("install.shell.github_username").(string)
 			}
-			if configTree.Has("install.shell.fallback_source_api") {
-				shellFallbackSourceApi = configTree.Get("install.shell.fallback_source_api").(string)
+			if configTree.Has("install.shell.gitea_api") {
+				shellGiteaApi = configTree.Get("install.shell.gitea_api").(string)
 			}
-			if configTree.Has("install.shell.fallback_source_raw") {
-				shellFallbackSourceRaw = configTree.Get("install.shell.fallback_source_raw").(string)
+			if configTree.Has("install.shell.gitea_raw") {
+				shellGiteaRaw = configTree.Get("install.shell.gitea_raw").(string)
 			}
-			if configTree.Has("install.shell.fallback_source_branch") {
-				shellFallbackSourceBranch = configTree.Get("install.shell.fallback_source_branch").(string)
+			if configTree.Has("install.shell.gitea_branch") {
+				shellGiteaBranch = configTree.Get("install.shell.gitea_branch").(string)
 			}
-			if configTree.Has("install.shell.fallback_source_username") {
-				shellFallbackSourceUsername = configTree.Get("install.shell.fallback_source_username").(string)
+			if configTree.Has("install.shell.gitea_username") {
+				shellGiteaUsername = configTree.Get("install.shell.gitea_username").(string)
 			}
 			if configTree.Has("install.shell.repo") {
 				shellRepo = configTree.Get("install.shell.repo").(string)
@@ -176,18 +176,16 @@ var installCmd = &cobra.Command{
 			}
 			// 遍历所有脚本名
 			for _, name := range shellNames {
-				// 组装变量
-				textLength := 0                                                                                                                                            // 输出文本的长度
-				scriptLocalPath := filepath.Join(installSourceTemp, shellRepo, name.(string))                                                                              // 脚本本地存储位置
-				shellSourceApiUrl := fmt.Sprintf(shellSourceApiUrlFormat, shellSourceApi, shellSourceUsername, shellRepo, shellDir, name.(string))                         // 请求远端仓库中脚本的Hash值的API
-				shellFallbackSourceApiUrl := fmt.Sprintf(shellSourceApiUrlFormat, shellFallbackSourceApi, shellFallbackSourceUsername, shellRepo, shellDir, name.(string)) // 请求远端仓库中脚本的Hash值的备用API
-				localProgram := filepath.Join(installPath, name.(string))                                                                                                  // 本地程序路径
-				gitHashObjectArgs := []string{"hash-object", localProgram}                                                                                                 // 本地程序参数
+				textLength := 0                                                                                                                            // 输出文本的长度
+				scriptLocalPath := filepath.Join(installSourceTemp, shellRepo, name.(string))                                                              // 脚本本地存储位置
+				shellGithubLatestHashApi := fmt.Sprintf(shellLatestHashApiFormat, shellGithubApi, shellGithubUsername, shellRepo, shellDir, name.(string)) // 请求远端仓库最新脚本的 Hash 值的 API
+				shellGiteaLatestHashApi := fmt.Sprintf(shellLatestHashApiFormat, shellGiteaApi, shellGiteaUsername, shellRepo, shellDir, name.(string))    // 请求远端仓库最新脚本的 Hash 值的 API
+				localProgram := filepath.Join(installPath, name.(string))                                                                                  // 本地程序路径
 				// 请求API
-				body, err := general.RequestApi(shellSourceApiUrl)
+				body, err := general.RequestApi(shellGithubLatestHashApi)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
-					body, err = general.RequestApi(shellFallbackSourceApiUrl)
+					body, err = general.RequestApi(shellGiteaLatestHashApi)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
 						continue
@@ -200,6 +198,7 @@ var installCmd = &cobra.Command{
 					continue
 				}
 				// 获取本地脚本Hash值
+				gitHashObjectArgs := []string{"hash-object", localProgram} // 本地程序参数
 				localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
 				// 比较远端和本地脚本Hash值
 				if remoteHash == localHash { // Hash值一致，则输出无需更新信息
@@ -209,14 +208,14 @@ var installCmd = &cobra.Command{
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
 				} else { // Hash值不一致，则更新脚本，并输出已更新信息
 					// 下载远端脚本
-					shellSource := fmt.Sprintf(shellGithubSourceFormat, shellSourceRaw, shellSourceUsername, shellRepo, shellSourceBranch)                                // 脚本远端仓库地址
-					shellFallbackSource := fmt.Sprintf(shellGiteaSourceFormat, shellFallbackSourceRaw, shellFallbackSourceUsername, shellRepo, shellFallbackSourceBranch) // 脚本备用远端仓库地址
-					shellUrlFile := filepath.Join(shellDir, name.(string))                                                                                                // 脚本在仓库中的实际位置
-					fileUrl := fmt.Sprintf("%s/%s", shellSource, shellUrlFile)
+					shellGithubBaseDownloadUrl := fmt.Sprintf(shellGithubBaseDownloadUrlFormat, shellGithubRaw, shellGithubUsername, shellRepo, shellGithubBranch) // 脚本远端仓库基础地址
+					shellGiteaBaseDownloadUrl := fmt.Sprintf(shellGiteaBaseDownloadUrlFormat, shellGiteaRaw, shellGiteaUsername, shellRepo, shellGiteaBranch)      // 脚本远端仓库基础地址
+					shellUrlFile := filepath.Join(shellDir, name.(string))                                                                                         // 脚本在仓库中的路径
+					fileUrl := fmt.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
 					_, err := cli.DownloadFile(fileUrl, scriptLocalPath)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
-						fileUrl := fmt.Sprintf("%s/%s", shellFallbackSource, shellUrlFile)
+						fileUrl := fmt.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
 						_, err = cli.DownloadFile(fileUrl, scriptLocalPath)
 						if err != nil {
 							fmt.Printf(general.ErrorBaseFormat, err)
@@ -285,18 +284,16 @@ var installCmd = &cobra.Command{
 			}
 			// 遍历所有程序名
 			for _, name := range goNames {
-				// 组装变量
-				textLength := 0                                                                                                           // 输出文本的长度
-				compileProgram := filepath.Join(installSourceTemp, name.(string), goGeneratePath, name.(string))                          // 编译生成的最新程序
-				goSourceApiUrl := fmt.Sprintf(goSourceApiUrlFormat, goSourceApi, goSourceUsername, name.(string))                         // 请求远端仓库最新Tag的API
-				goFallbackSourceApiUrl := fmt.Sprintf(goSourceApiUrlFormat, goFallbackSourceApi, goFallbackSourceUsername, name.(string)) // 请求远端仓库最新Tag的备用API
-				localProgram := filepath.Join(installPath, name.(string))                                                                 // 本地程序路径
-				nameArgs := []string{"version", "--only"}                                                                                 // 本地程序参数
+				textLength := 0                                                                                         // 输出文本的长度
+				compileProgram := filepath.Join(installSourceTemp, name.(string), goGeneratePath, name.(string))        // 编译生成的最新程序
+				goGithubLatestTagApi := fmt.Sprintf(goLatestTagApiFormat, goGithubApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
+				goGiteaLatestTagApi := fmt.Sprintf(goLatestTagApiFormat, goGiteaApi, goGiteaUsername, name.(string))    // 请求远端仓库最新 Tag 的 API
+				localProgram := filepath.Join(installPath, name.(string))                                               // 本地程序路径
 				// 请求API
-				body, err := general.RequestApi(goSourceApiUrl)
+				body, err := general.RequestApi(goGithubLatestTagApi)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
-					body, err = general.RequestApi(goFallbackSourceApiUrl)
+					body, err = general.RequestApi(goGiteaLatestTagApi)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
 						continue
@@ -309,6 +306,7 @@ var installCmd = &cobra.Command{
 					continue
 				}
 				// 获取本地版本
+				nameArgs := []string{"version", "--only"} // 本地程序参数
 				localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 				// 比较远端和本地版本
 				if remoteTag == localVersion { // 版本一致，则输出无需更新信息
@@ -324,13 +322,13 @@ var installCmd = &cobra.Command{
 							fmt.Printf(general.ErrorBaseFormat, err)
 						}
 					}
-					goSource := fmt.Sprintf("%s/%s", goSourceUrl, goSourceUsername)                         // 远端仓库克隆地址（除仓库名）
-					goFallbackSource := fmt.Sprintf("%s/%s", goFallbackSourceUrl, goFallbackSourceUsername) // 远端仓库备用克隆地址（除仓库名）
-					fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from source ")
-					if err := cli.CloneRepoViaHTTP(installSourceTemp, goSource, name.(string)); err != nil {
+					goGithubCloneBaseUrl := fmt.Sprintf("%s/%s", goGithubUrl, goGithubUsername) // 远端仓库基础克隆地址（除仓库名）
+					goGiteaCloneBaseUrl := fmt.Sprintf("%s/%s", goGiteaUrl, goGiteaUsername)    // 远端仓库基础克隆地址（除仓库名）
+					fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from GitHub ")
+					if err := cli.CloneRepoViaHTTP(installSourceTemp, goGithubCloneBaseUrl, name.(string)); err != nil {
 						fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
-						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from fallback source ")
-						if err := cli.CloneRepoViaHTTP(installSourceTemp, goFallbackSource, name.(string)); err != nil {
+						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Clone ", name.(string), " ", "from Gitea ")
+						if err := cli.CloneRepoViaHTTP(installSourceTemp, goGiteaCloneBaseUrl, name.(string)); err != nil {
 							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
 							continue
 						} else {
