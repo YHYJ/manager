@@ -10,13 +10,16 @@ Description: 子命令`install`的实现
 package cli
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/yhyj/manager/general"
 )
 
 // CloneRepoViaHTTP 通过 HTTP 协议克隆仓库
@@ -92,4 +95,61 @@ func InstallFile(sourceFile, targetFile string) error {
 		return err
 	}
 	return nil
+}
+
+// FileVerification 校验文件
+func FileVerification(checksumFile, filePath string) (bool, error) {
+	// 检查校验文件是否存在
+	if !general.FileExist(checksumFile) {
+		return false, fmt.Errorf("File %s does not exist", checksumFile)
+	}
+	// 检查待校验文件是否存在
+	if !general.FileExist(filePath) {
+		return false, fmt.Errorf("File %s does not exist", filePath)
+	}
+
+	// 打开校验文件
+	file, err := os.Open(checksumFile)
+	if err != nil {
+		return false, err
+	}
+	defer file.Close()
+
+	// 扫描处理校验文件
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		// 按行获取校验文件内容
+		line := scanner.Text()
+		// 以空格分割行
+		lineParts := strings.Fields(line)
+
+		if len(lineParts) == 2 {
+			expectedChecksum := lineParts[0] // 期望的校验和
+			filename := lineParts[1]         // 文件名
+
+			// 检测校验文件中是否记载了指定文件的校验和信息
+			if filename == filepath.Base(filePath) {
+				// 计算文件的实际校验和
+				actualChecksum, err := general.FileSHA256(filePath)
+				if err != nil {
+					return false, err
+				}
+
+				// 比对校验和
+				if actualChecksum == expectedChecksum {
+					return true, nil
+				} else {
+					return false, nil
+				}
+			}
+			return false, fmt.Errorf("There is no %s info in the checksum file", filePath)
+		}
+		return false, fmt.Errorf("Checksum file format error, it should be: <checksum> <filename>")
+	}
+
+	if err := scanner.Err(); err != nil {
+		return false, fmt.Errorf("Error reading checksum file: %s", err)
+	}
+
+	return false, nil
 }

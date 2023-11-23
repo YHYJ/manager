@@ -323,7 +323,7 @@ func bytesEqual(b1 []byte, b2 []byte) bool {
 	return true
 }
 
-// 计算文件的 SHA-256 校验和
+// FileSHA256 计算文件的 SHA-256 校验和
 func FileSHA256(fileName string) (string, error) {
 	file, err := os.Open(fileName)
 	if err != nil {
