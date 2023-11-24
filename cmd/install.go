@@ -40,6 +40,7 @@ var installCmd = &cobra.Command{
 			installPath         string
 			installReleaseTemp  string
 			installSourceTemp   string
+			goReleaseApi        string
 			goGeneratePath      string
 			goGithubUrl         string
 			goGithubApi         string
@@ -82,6 +83,9 @@ var installCmd = &cobra.Command{
 			}
 			if configTree.Has("install.source_temp") {
 				installSourceTemp = configTree.Get("install.source_temp").(string)
+			}
+			if configTree.Has("install.go.release_api") {
+				goReleaseApi = configTree.Get("install.go.release_api").(string)
 			}
 			if configTree.Has("install.go.generate_path") {
 				goGeneratePath = configTree.Get("install.go.generate_path").(string)
@@ -295,8 +299,8 @@ var installCmd = &cobra.Command{
 				}
 				// 遍历所有程序名
 				for _, name := range goNames {
-					textLength := 0                                                                                                       // 输出文本的长度
-					goGithubLatestReleaseTagApi := fmt.Sprintf(goLatestReleaseTagApiFormat, goGithubApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
+					textLength := 0                                                                                                        // 输出文本的长度
+					goGithubLatestReleaseTagApi := fmt.Sprintf(goLatestReleaseTagApiFormat, goReleaseApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
 					// 请求API
 					body, err := general.RequestApi(goGithubLatestReleaseTagApi)
 					if err != nil {
@@ -312,15 +316,14 @@ var installCmd = &cobra.Command{
 					// 获取本地版本
 					localProgram := filepath.Join(installPath, name.(string)) // 本地程序路径
 					nameArgs := []string{"version", "--only"}                 // 本地程序参数
-					// localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
-					localVersion, _ := general.RunCommandGetResult(localProgram, nameArgs)
+					localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteTag == localVersion { // 版本一致，则输出无需更新信息
 						text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, "==>", " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
 						fmt.Printf(text)
 						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
-					} else { // 版本不一致，则更新程序，并输出已更新信息
+					} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
 						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
 						goReleaseTempDir := filepath.Join(installReleaseTemp, name.(string))
 						if general.FileExist(goReleaseTempDir) {
@@ -330,14 +333,17 @@ var installCmd = &cobra.Command{
 						}
 						// 组装需要的文件的名称
 						fileName := general.FileName{}
+						// - checksums.txt
 						fileName.ChecksumsFile = "checksums.txt"
+						// - Archive File
 						fileType := func() string {
 							if general.Platform == "windows" {
 								return "zip"
 							}
 							return "tar.gz"
 						}()
-						fileName.ArchiveFile = fmt.Sprintf("%s_%s_%s_%s.%s", name.(string), remoteTag, general.Platform, general.Arch, fileType)
+						archiveFileNameWithoutFileType := fmt.Sprintf("%s_%s_%s_%s", name.(string), remoteTag, general.Platform, general.Arch)
+						fileName.ArchiveFile = fmt.Sprintf("%s.%s", archiveFileNameWithoutFileType, fileType)
 						// 获取 Release 文件信息
 						filesInfo, err := general.GetReleaseFileInfo(body, fileName)
 						if err != nil {
@@ -365,9 +371,75 @@ var installCmd = &cobra.Command{
 							fmt.Printf(general.ErrorBaseFormat, err)
 							continue
 						}
-						// TODO: 校验 <23-11-23, YJ> //
-						// TODO: 解压 <23-11-23, YJ> //
-						// TODO: 安装 <23-11-23, YJ> //
+						// 使用校验文件校验下载的压缩包
+						verificationResult, err := cli.FileVerification(checksumsLocalPath, archiveLocalPath)
+						if err != nil {
+							fmt.Printf(general.ErrorBaseFormat, err)
+							continue
+						}
+						if verificationResult { // 压缩包校验通过
+							// 解压压缩包
+							err := general.UnzipFile(archiveLocalPath, goReleaseTempDir)
+							if err != nil {
+								fmt.Printf(general.ErrorBaseFormat, err)
+								continue
+							}
+							archivedProgram := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, name.(string)) // 解压得到的程序
+							// 检测本地程序是否存在
+							if commandErr != nil { // 不存在，安装
+								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil {
+									fmt.Printf(general.ErrorBaseFormat, err)
+									continue
+								} else {
+									// 为已安装的脚本设置可执行权限
+									if err := os.Chmod(localProgram, 0755); err != nil {
+										fmt.Printf(general.ErrorBaseFormat, err)
+									}
+								}
+								text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteTag, " ", "installed")
+								fmt.Printf(text)
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
+							} else { // 存在，更新
+								if err := os.Remove(localProgram); err != nil {
+									fmt.Printf(general.ErrorBaseFormat, err)
+								}
+								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil {
+									fmt.Printf(general.ErrorBaseFormat, err)
+									continue
+								} else {
+									// 为已安装的脚本设置可执行权限
+									if err := os.Chmod(localProgram, 0755); err != nil {
+										fmt.Printf(general.ErrorBaseFormat, err)
+									}
+								}
+								text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
+								fmt.Printf(text)
+								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+								textLength = len(controlRegex.ReplaceAllString(text, ""))
+							}
+							// 生成/更新自动补全脚本
+							for _, completionDir := range goCompletionDir {
+								if general.FileExist(completionDir.(string)) {
+									generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
+									if err := general.RunCommand("bash", generateArgs); err != nil {
+										text := fmt.Sprintf(general.ErrorSuffixFormat, "==>", " ", acsInstallFailedMessage)
+										fmt.Printf(text)
+										controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+										textLength = len(controlRegex.ReplaceAllString(text, ""))
+									} else {
+										text := fmt.Sprintf(general.SuccessSuffixFormat, "==>", " ", acsInstallSuccessMessage)
+										fmt.Printf(text)
+										controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
+										textLength = len(controlRegex.ReplaceAllString(text, ""))
+										break
+									}
+								}
+							}
+						} else { // 压缩包校验失败
+							fmt.Printf(general.ErrorSuffixFormat, "Archive file verification failed", ": ", filesInfo.ArchiveFileInfo.Name)
+							continue
+						}
 					}
 					dashes := strings.Repeat("-", textLength-1)  //组装分隔符（减去行尾换行符的一个长度）
 					fmt.Printf(general.LineHiddenFormat, dashes) // 美化输出
@@ -411,7 +483,7 @@ var installCmd = &cobra.Command{
 						fmt.Printf(text)
 						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
-					} else { // 版本不一致，则更新程序，并输出已更新信息
+					} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
 						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
 						goSourceTempDir := filepath.Join(installSourceTemp, name.(string))
 						if general.FileExist(goSourceTempDir) {
