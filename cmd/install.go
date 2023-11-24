@@ -14,7 +14,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/yhyj/manager/cli"
@@ -206,7 +205,7 @@ var installCmd = &cobra.Command{
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
-						time.Sleep(100 * time.Millisecond)    // 0.1s
+						general.Delay(0.1)                    // 0.1s
 						continue
 					}
 				}
@@ -218,7 +217,7 @@ var installCmd = &cobra.Command{
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
 					general.PrintDelimiter(textLength)    // 分隔符
-					time.Sleep(100 * time.Millisecond)    // 0.1s
+					general.Delay(0.1)                    // 0.1s
 					continue
 				}
 				// 获取本地脚本 Hash
@@ -247,7 +246,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						}
 					}
@@ -261,7 +260,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							} else {
 								// 为已安装的脚本设置可执行权限
@@ -279,7 +278,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							}
 							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
@@ -288,7 +287,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							} else {
 								// 为已更新的脚本设置可执行权限
@@ -308,7 +307,7 @@ var installCmd = &cobra.Command{
 				}
 				// 分隔符和延时（延时使输出更加顺畅）
 				general.PrintDelimiter(textLength) // 分隔符
-				time.Sleep(100 * time.Millisecond) // 0.1s
+				general.Delay(0.1)                 // 0.1s
 			}
 		}
 
@@ -338,7 +337,7 @@ var installCmd = &cobra.Command{
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
-						time.Sleep(100 * time.Millisecond)    // 0.1s
+						general.Delay(0.1)                    // 0.1s
 						continue
 					}
 					// 获取远端版本（用于 release 安装方法）
@@ -349,7 +348,7 @@ var installCmd = &cobra.Command{
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
-						time.Sleep(100 * time.Millisecond)    // 0.1s
+						general.Delay(0.1)                    // 0.1s
 						continue
 					}
 					// 获取本地版本
@@ -371,7 +370,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							}
 						}
@@ -396,7 +395,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						}
 						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Download ", filesInfo.ChecksumsFileInfo.Name, " ", "from GitHub Release ")
@@ -407,7 +406,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						} else {
 							fmt.Printf(general.SuccessFormat, "success")
@@ -420,7 +419,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						} else {
 							fmt.Printf(general.SuccessFormat, "success")
@@ -432,7 +431,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						}
 						// 使用校验文件校验下载的压缩包
@@ -443,7 +442,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						}
 						if verificationResult { // 压缩包校验通过
@@ -455,7 +454,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							}
 							archivedProgram := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, name.(string)) // 解压得到的程序
@@ -467,7 +466,7 @@ var installCmd = &cobra.Command{
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
 									general.PrintDelimiter(textLength)    // 分隔符
-									time.Sleep(100 * time.Millisecond)    // 0.1s
+									general.Delay(0.1)                    // 0.1s
 									continue
 								} else {
 									// 为已安装的脚本设置可执行权限
@@ -477,7 +476,7 @@ var installCmd = &cobra.Command{
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
-										time.Sleep(100 * time.Millisecond)    // 0.1s
+										general.Delay(0.1)                    // 0.1s
 										continue
 									}
 								}
@@ -491,7 +490,7 @@ var installCmd = &cobra.Command{
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
 									general.PrintDelimiter(textLength)    // 分隔符
-									time.Sleep(100 * time.Millisecond)    // 0.1s
+									general.Delay(0.1)                    // 0.1s
 									continue
 								}
 								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil {
@@ -500,7 +499,7 @@ var installCmd = &cobra.Command{
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
 									general.PrintDelimiter(textLength)    // 分隔符
-									time.Sleep(100 * time.Millisecond)    // 0.1s
+									general.Delay(0.1)                    // 0.1s
 									continue
 								} else {
 									// 为已安装的脚本设置可执行权限
@@ -510,7 +509,7 @@ var installCmd = &cobra.Command{
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
-										time.Sleep(100 * time.Millisecond)    // 0.1s
+										general.Delay(0.1)                    // 0.1s
 										continue
 									}
 								}
@@ -543,7 +542,7 @@ var installCmd = &cobra.Command{
 					}
 					// 分隔符和延时（延时使输出更加顺畅）
 					general.PrintDelimiter(textLength) // 分隔符
-					time.Sleep(100 * time.Millisecond) // 0.01s
+					general.Delay(0.1)                 // 0.01s
 				}
 			} else if strings.ToLower(installMethod) == "source" {
 				// 创建临时目录
@@ -568,7 +567,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						}
 					}
@@ -580,7 +579,7 @@ var installCmd = &cobra.Command{
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
-						time.Sleep(100 * time.Millisecond)    // 0.1s
+						general.Delay(0.1)                    // 0.1s
 						continue
 					}
 					// 获取本地版本
@@ -602,7 +601,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							}
 						}
@@ -620,7 +619,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							} else {
 								fmt.Printf(general.SuccessFormat, "success")
@@ -635,7 +634,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						}
 						// 编译生成程序
@@ -647,7 +646,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							}
 						} else if general.FileExist("main.go") { // Makefile 文件不存在则使用 `go build` 命令编译
@@ -658,7 +657,7 @@ var installCmd = &cobra.Command{
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								time.Sleep(100 * time.Millisecond)    // 0.1s
+								general.Delay(0.1)                    // 0.1s
 								continue
 							}
 						} else {
@@ -667,7 +666,7 @@ var installCmd = &cobra.Command{
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							time.Sleep(100 * time.Millisecond)    // 0.1s
+							general.Delay(0.1)                    // 0.1s
 							continue
 						}
 						// 检测编译生成的程序是否存在
@@ -683,7 +682,7 @@ var installCmd = &cobra.Command{
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
-										time.Sleep(100 * time.Millisecond)    // 0.1s
+										general.Delay(0.1)                    // 0.1s
 										continue
 									}
 								} else { // Makefile 文件不存在则使用自定义函数安装
@@ -693,7 +692,7 @@ var installCmd = &cobra.Command{
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
-										time.Sleep(100 * time.Millisecond)    // 0.1s
+										general.Delay(0.1)                    // 0.1s
 										continue
 									} else {
 										// 为已安装的脚本设置可执行权限
@@ -703,7 +702,7 @@ var installCmd = &cobra.Command{
 											// 分隔符和延时（延时使输出更加顺畅）
 											textLength = general.RealLength(text) // 分隔符长度
 											general.PrintDelimiter(textLength)    // 分隔符
-											time.Sleep(100 * time.Millisecond)    // 0.1s
+											general.Delay(0.1)                    // 0.1s
 											continue
 										}
 									}
@@ -720,7 +719,7 @@ var installCmd = &cobra.Command{
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
-										time.Sleep(100 * time.Millisecond)    // 0.1s
+										general.Delay(0.1)                    // 0.1s
 										continue
 									}
 								} else { // Makefile 文件不存在则使用自定义函数更新
@@ -730,7 +729,7 @@ var installCmd = &cobra.Command{
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
-										time.Sleep(100 * time.Millisecond)    // 0.1s
+										general.Delay(0.1)                    // 0.1s
 										continue
 									}
 									if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
@@ -739,7 +738,7 @@ var installCmd = &cobra.Command{
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
-										time.Sleep(100 * time.Millisecond)    // 0.1s
+										general.Delay(0.1)                    // 0.1s
 										continue
 									} else {
 										// 为已安装的脚本设置可执行权限
@@ -749,7 +748,7 @@ var installCmd = &cobra.Command{
 											// 分隔符和延时（延时使输出更加顺畅）
 											textLength = general.RealLength(text) // 分隔符长度
 											general.PrintDelimiter(textLength)    // 分隔符
-											time.Sleep(100 * time.Millisecond)    // 0.1s
+											general.Delay(0.1)                    // 0.1s
 											continue
 										}
 									}
@@ -783,7 +782,7 @@ var installCmd = &cobra.Command{
 					}
 					// 分隔符和延时（延时使输出更加顺畅）
 					general.PrintDelimiter(textLength) // 分隔符
-					time.Sleep(100 * time.Millisecond) // 0.01s
+					general.Delay(0.1)                 // 0.01s
 				}
 			} else {
 				text := fmt.Sprintf(general.ErrorSuffixFormat, fmt.Sprintf("Unsupported installation method '%s'", installMethod), ": ", "only 'release' and 'source' are supported")
