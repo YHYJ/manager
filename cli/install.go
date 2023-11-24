@@ -172,7 +172,7 @@ func FileVerification(checksumFile, filePath string) (bool, error) {
 					return false, nil
 				}
 			}
-			return false, fmt.Errorf("There is no %s info in the checksum file", filePath)
+			continue
 		}
 		return false, fmt.Errorf("Checksum file format error, it should be: <checksum> <filename>")
 	}
