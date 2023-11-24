@@ -15,7 +15,7 @@ import (
 	"github.com/godbus/dbus/v5"
 )
 
-// PolicyKitAuthentication 使用D-Bus进行身份认证
+// PolicyKitAuthentication 使用 D-Bus 进行身份认证
 func PolicyKitAuthentication() {
 	// PolicyKit 认证，通过 D-Bus 总线通信
 	// 1. 连接到系统总线 SystemBus

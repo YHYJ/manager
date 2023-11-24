@@ -23,6 +23,14 @@ import (
 )
 
 // CloneRepoViaHTTP 通过 HTTP 协议克隆仓库
+//
+// 参数：
+//   - path: 本地仓库存储路径
+//   - url: 远程仓库地址（不包括仓库名，https://github.com/{UserName}）
+//   - repo: 仓库名
+//
+// 返回：
+//   - 错误信息
 func CloneRepoViaHTTP(path string, url string, repo string) error {
 	_, err := git.PlainClone(filepath.Join(path, repo), false, &git.CloneOptions{
 		URL:               url + "/" + repo,
@@ -35,45 +43,59 @@ func CloneRepoViaHTTP(path string, url string, repo string) error {
 }
 
 // DownloadFile 通过 HTTP 协议下载文件
-func DownloadFile(url string, outputFile string) (string, error) {
+//
+// 参数：
+//   - url: 文件下载地址
+//   - outputFile: 下载文件保存路径
+//
+// 返回：
+//   - 错误信息
+func DownloadFile(url string, outputFile string) error {
 	// 发送GET请求并获取响应
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("Error sending download request: %s", err)
+		return fmt.Errorf("Error sending download request: %s", err)
 	}
 	defer resp.Body.Close()
 
 	// 检查返回值状态码
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("Error downloading file: %s", resp.Status)
+		return fmt.Errorf("Error downloading file: %s", resp.Status)
 	}
 
 	// 创建下载文件夹
 	dir, filename := filepath.Split(outputFile)
 	if dir != "" {
 		if err := os.MkdirAll(dir, 0755); err != nil {
-			return "", fmt.Errorf("Error creating download folder: %s", err)
+			return fmt.Errorf("Error creating download folder: %s", err)
 		}
 	}
 
 	// 创建本地文件
-	outputFileFullname := filepath.Join(dir, filename)
-	file, err := os.Create(outputFileFullname)
+	file, err := os.Create(filename)
 	if err != nil {
-		return "", fmt.Errorf("Error creating download file: %s", err)
+		return fmt.Errorf("Error creating download file: %s", err)
 	}
 	defer file.Close()
 
 	// 将响应主体复制到文件
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("Error writing download file: %s", err)
+		return fmt.Errorf("Error writing download file: %s", err)
 	}
 
-	return outputFileFullname, nil
+	return nil
 }
 
-// InstallFile 安装文件，如果文件存在则覆盖
+// InstallFile 安装文件，覆盖已存在的同名文件
+//
+// 参数：
+//   - sourceFile: 源文件路径
+//   - targetFile: 目标文件路径
+//   - perm: 目标文件权限
+//
+// 返回：
+//   - 错误信息
 func InstallFile(sourceFile, targetFile string, perm os.FileMode) error {
 	// 打开源文件
 	sFile, err := os.Open(sourceFile)
@@ -97,7 +119,15 @@ func InstallFile(sourceFile, targetFile string, perm os.FileMode) error {
 	return nil
 }
 
-// FileVerification 校验文件
+// FileVerification 使用校验和文件校验文件的完整性
+//
+// 参数：
+//   - checksumFile: 校验和文件
+//   - filePath: 待校验文件
+//
+// 返回：
+//   - 校验结果
+//   - 错误信息
 func FileVerification(checksumFile, filePath string) (bool, error) {
 	// 检查校验文件是否存在
 	if !general.FileExist(checksumFile) {

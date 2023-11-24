@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-07 11:08:32
 
-Description: 子命令`version`功能函数
+Description: 由程序子命令 version 执行
 */
 
 package general
@@ -15,21 +15,25 @@ import (
 	"time"
 )
 
-// 程序信息
 const (
-	Name    string = "Manager"
-	Version string = "v1.0.6"
-	Project string = "github.com/yhyj/manager"
+	Name    string = "Manager"                 // 程序名
+	Version string = "v1.0.6"                  // 程序版本
+	Project string = "github.com/yhyj/manager" // 项目地址
 )
 
-// 编译信息
 var (
-	GitCommitHash string = "Unknown"
-	BuildTime     string = "Unknown"
-	BuildBy       string = "Unknown"
+	GitCommitHash string = "Unknown" // Git 提交 Hash
+	BuildTime     string = "Unknown" // 编译时间
+	BuildBy       string = "Unknown" // 编译者
 )
 
 // ProgramInfo 返回程序信息
+//
+// 参数：
+//   - only: 是否只返回程序版本
+//
+// 返回：
+//   - 程序信息
 func ProgramInfo(only bool) string {
 	programInfo := fmt.Sprintf("%s\n", Version)
 	if !only {

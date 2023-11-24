@@ -60,7 +60,7 @@ var setupCmd = &cobra.Command{
 		errorFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Error: \x1b[31m%s\x1b[0m\n\n"
 		successFormat := "\x1b[%dC\x1b[0m\x1b[32m-\x1b[0m Status: \x1b[33;7m%s\x1b[0m\n\n"
 
-		// 配置chezmoi
+		// 配置 chezmoi
 		if chezmoiFlag {
 			subjectName = "chezmoi"
 			descriptorText = "configuration file"
@@ -73,7 +73,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
-		// 配置cobra
+		// 配置 cobra
 		if cobraFlag {
 			subjectName = "cobra-cli"
 			descriptorText = "configuration file"
@@ -86,7 +86,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
-		// 配置docker
+		// 配置 docker
 		if dockerFlag {
 			subjectName = "docker"
 			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
@@ -115,7 +115,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 2, "Setup completed")
 			}
 		}
-		// 配置frpc
+		// 配置 frpc
 		if frpcFlag {
 			subjectName = "frpc"
 			descriptorText = "restart timing"
@@ -128,7 +128,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
-		// 配置git
+		// 配置 git
 		if gitFlag {
 			subjectName = "git"
 			descriptorText = "configuration file"
@@ -141,7 +141,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
-		// 配置golang
+		// 配置 golang
 		if goFlag {
 			subjectName = "go"
 			descriptorText = "environment file"
@@ -154,7 +154,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
-		// 配置npm
+		// 配置 npm
 		if npmFlag {
 			subjectName = "npm"
 			descriptorText = "registry"
@@ -167,7 +167,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
-		// 配置pip
+		// 配置 pip
 		if pipFlag {
 			subjectName = "pip"
 			descriptorText = "mirrors"
@@ -180,7 +180,7 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
-		// 配置system-checkupdates
+		// 配置 system-checkupdates
 		if systemcheckupdatesFlag {
 			subjectName = "system-checkupdates"
 			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)

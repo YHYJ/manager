@@ -23,9 +23,9 @@ var (
 	email    = "yj1516268@outlook.com"
 	sep      = strings.Repeat(" ", 4)
 
-	// chezmoi的依赖项
+	// chezmoi 的依赖项
 	ChezmoiDependencies = "/usr/bin/chezmoi"
-	// chezmoi
+	// chezmoi 配置
 	chezmoiConfigFormat = "sourceDir = %s\n[git]\n%sautoCommit = %v\n%sautoPush = %v\n"
 	chezmoiSourceDir    = `"~/Documents/Repos/System/Profile"`
 	chezmoiAutoCommit   = false
@@ -33,9 +33,9 @@ var (
 	ChezmoiConfig       = fmt.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
 	ChezmoiConfigFile   = filepath.Join(home, ".config", "chezmoi", "chezmoi.toml")
 
-	// cobra的依赖项
+	// cobra 的依赖项
 	CobraDependencies = filepath.Join(goGOBIN, "cobra-cli")
-	// cobra配置
+	// cobra 配置
 	cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
 	cobraAuthor       = "YJ"
 	cobraLicense      = "GPLv3"
@@ -43,31 +43,31 @@ var (
 	CobraConfig       = fmt.Sprintf(cobraConfigFormat, cobraAuthor, email, cobraLicense, cobraUseViper)
 	CobraConfigFile   = filepath.Join(home, ".cobra.yaml")
 
-	// docker service和mirrors的依赖项
+	// docker service 和 mirrors 的依赖项
 	DockerDependencies = "/usr/bin/dockerd"
-	// docker配置 - docker service
+	// docker 配置 - docker service
 	dockerServiceConfigFormat = "[Service]\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
 	dockerServiceExecStart    = "/usr/bin/dockerd"
 	dockerServiceDataRoot     = filepath.Join(home, "Documents", "Docker", "Root")
 	DockerServiceConfig       = fmt.Sprintf(dockerServiceConfigFormat, dockerServiceExecStart, dockerServiceDataRoot)
 	DockerServiceConfigFile   = "/etc/systemd/system/docker.service.d/override.conf"
-	// docker配置 - docker mirrors
+	// docker 配置 - docker mirrors
 	dockerMirrorsConfigFormat    = "{\n%s\"registry-mirrors\": %s\n}\n"
 	dockerMirrorsRegistryMirrors = []string{`"https://docker.mirrors.ustc.edu.cn"`}
 	DockerMirrorsConfig          = fmt.Sprintf(dockerMirrorsConfigFormat, sep, dockerMirrorsRegistryMirrors)
 	DockerMirrorsConfigFile      = "/etc/docker/daemon.json"
 
-	// frpc的依赖项
+	// frpc 的依赖项
 	FrpcDependencies = "/usr/bin/frpc"
-	// frpc配置
+	// frpc 配置
 	frpcConfigFormat = "[Service]\nRestart=\nRestart=%s\n"
 	frpcRestart      = "always"
 	FrpcConfig       = fmt.Sprintf(frpcConfigFormat, frpcRestart)
 	FrpcConfigFile   = "/etc/systemd/system/frpc.service.d/override.conf"
 
-	// git的依赖项
+	// git 的依赖项
 	GitDependencies = "/usr/bin/git"
-	// git配置
+	// git 配置
 	gitConfigFormat      = "[user]\n%sname = %s\n%semail = %s\n[core]\n%seditor = %s\n%sautocrlf = %s\n[merge]\n%stool = %s\n[color]\n%sui = %v\n[pull]\n%srebase = %v\n[filter \"lfs\"]\n%sclean = %s\n%ssmudge = %s\n%sprocess = %s\n%srequired = %v\n"
 	gitCoreEditor        = "vim"
 	gitCoreAutoCRLF      = "input"
@@ -81,9 +81,9 @@ var (
 	GitConfig            = fmt.Sprintf(gitConfigFormat, sep, hostname, sep, email, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
 	GitConfigFile        = filepath.Join(home, ".gitconfig")
 
-	// go的依赖项
+	// go 的依赖项
 	GoDependencies = "/usr/bin/go"
-	// go配置
+	// go 配置
 	goConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
 	goGO111MODULE  = "on"
 	goGOBIN        = filepath.Join(home, ".go", "bin")
@@ -93,26 +93,26 @@ var (
 	GoConfig       = fmt.Sprintf(goConfigFormat, goGO111MODULE, goGOBIN, goGOPATH, goGOCACHE, goGOMODCACHE)
 	GoConfigFile   = filepath.Join(home, ".config", "go", "env")
 
-	// npm的依赖项
+	// npm 的依赖项
 	NpmDependencies = "/usr/bin/npm"
-	// npm配置
+	// npm 配置
 	npmConfigFormat = "registry=%s\n"
 	npmRegistry     = "https://registry.npm.taobao.org"
 	NpmConfig       = fmt.Sprintf(npmConfigFormat, npmRegistry)
 	NpmConfigFile   = filepath.Join(home, ".npmrc")
 
-	// pip的依赖项
+	// pip 的依赖项
 	PipDependencies = "/usr/bin/pip"
-	// pip配置
+	// pip 配置
 	pipConfigFormat = "[global]\nindex-url = %s\ntrusted-host = %s\n"
 	pipIndexUrl     = "https://mirrors.aliyun.com/pypi/simple"
 	pipTrustedHost  = "mirrors.aliyun.com"
 	PipConfig       = fmt.Sprintf(pipConfigFormat, pipIndexUrl, pipTrustedHost)
 	PipConfigFile   = filepath.Join(home, ".config", "pip", "pip.conf")
 
-	// system-checkupdates timer和service的依赖项
+	// system-checkupdates timer 和 service 的依赖项
 	SystemCheckupdatesDependencies = "/usr/local/bin/system-checkupdates" // >= 3.0.0-20230313.1
-	// system-checkupdates配置 - system-checkupdates timer
+	// system-checkupdates 配置 - system-checkupdates timer
 	systemCheckupdatesTimerConfigFormat      = "[Unit]\nDescription=%s\n\n[Timer]\nOnBootSec=%s\nOnUnitInactiveSec=%s\nAccuracySec=%s\nPersistent=%v\n\n[Install]\nWantedBy=%s\n"
 	systemcheckupdatesTimerDescription       = "Timer for system-checkupdates"
 	systemcheckupdatesTimerOnBootSec         = "10min"
@@ -122,7 +122,7 @@ var (
 	systemcheckupdatesTimerWantedBy          = "timers.target"
 	SystemCheckupdatesTimerConfig            = fmt.Sprintf(systemCheckupdatesTimerConfigFormat, systemcheckupdatesTimerDescription, systemcheckupdatesTimerOnBootSec, systemcheckupdatesTimerOnUnitInactiveSec, systemcheckupdatesTimerAccuracySec, systemcheckupdatesTimerPersistent, systemcheckupdatesTimerWantedBy)
 	SystemCheckupdatesTimerConfigFile        = "/etc/systemd/system/system-checkupdates.timer"
-	// system-checkupdates配置 - system-checkupdates service
+	// system-checkupdates 配置 - system-checkupdates service
 	systemCheckupdatesServiceConfigFormat = "[Unit]\nDescription=%s\nAfter=%s\nWants=%s\n\n[Service]\nType=%s\nExecStart=%s\n"
 	systemcheckupdatesServiceDescription  = "System checkupdates"
 	systemcheckupdatesServiceAfter        = "network.target"

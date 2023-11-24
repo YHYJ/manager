@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-08 13:35:06
 
-Description: 程序子命令'install'时执行
+Description: 由程序子命令 install 执行
 */
 
 package cmd
@@ -34,35 +34,37 @@ var installCmd = &cobra.Command{
 		goFlag, _ := cmd.Flags().GetBool("go")
 		shellFlag, _ := cmd.Flags().GetBool("shell")
 
-		// 配置文件项
 		var (
-			installMethod       string
-			installPath         string
-			installReleaseTemp  string
-			installSourceTemp   string
-			goReleaseApi        string
-			goGeneratePath      string
-			goGithubUrl         string
-			goGithubApi         string
-			goGithubUsername    string
-			goGiteaUrl          string
-			goGiteaApi          string
-			goGiteaUsername     string
-			goNames             []interface{}
-			goCompletionDir     []interface{}
-			shellGithubApi      string
-			shellGithubRaw      string
-			shellGithubBranch   string
-			shellGithubUsername string
-			shellGiteaApi       string
-			shellGiteaRaw       string
-			shellGiteaBranch    string
-			shellGiteaUsername  string
-			shellRepo           string
-			shellDir            string
-			shellNames          []interface{}
-			httpProxy           string
-			httpsProxy          string
+			httpProxy  string // http 代理
+			httpsProxy string // https 代理
+
+			installMethod      string // 程序安装方法，目前支持 relrase 和 source
+			installPath        string // 程序安装路径
+			installReleaseTemp string // 使用 release 安装方法时下载文件的存储地址
+			installSourceTemp  string // 使用 source 安装方法时下载文件的存储地址
+
+			goNames          []interface{} // 要安装的基于 go 的程序名列表
+			goReleaseApi     string        // 基于 go 的程序的 release 安装方法的 API 地址
+			goGeneratePath   string        // 基于 go 的程序的 source 安装方法的编译生成路径
+			goGithubUrl      string        // 基于 go 的程序的 source 安装方法的 Github 地址
+			goGithubApi      string        // 基于 go 的程序的 source 安装方法的 Github API 地址
+			goGithubUsername string        // 基于 go 的程序的 source 安装方法的 Github 用户名
+			goGiteaUrl       string        // 基于 go 的程序的 source 安装方法的 Gitea 地址
+			goGiteaApi       string        // 基于 go 的程序的 source 安装方法的 Gitea API 地址
+			goGiteaUsername  string        // 基于 go 的程序的 source 安装方法的 Gitea 用户名
+			goCompletionDir  []interface{} // 基于 go 的程序的自动补全文件安装目录列表
+
+			shellNames          []interface{} // 要安装的 shell 脚本名列表
+			shellGithubApi      string        // shell 脚本的 source 安装方法的 Github 地址
+			shellGithubRaw      string        // shell 脚本的 source 安装方法的 Github 下载地址
+			shellGithubBranch   string        // shell 脚本的 source 安装方法的 Github 分支名
+			shellGithubUsername string        // shell 脚本的 source 安装方法的 Github 用户名
+			shellGiteaApi       string        // shell 脚本的 source 安装方法的 Gitea 地址
+			shellGiteaRaw       string        // shell 脚本的 source 安装方法的 Gitea 下载地址
+			shellGiteaBranch    string        // shell 脚本的 source 安装方法的 Gitea 分支名
+			shellGiteaUsername  string        // shell 脚本的 source 安装方法的 Gitea 用户名
+			shellRepo           string        // shell 脚本所在的仓库名
+			shellDir            string        // shell 脚本在仓库中的路径
 		)
 
 		// 检查配置文件是否存在
@@ -177,7 +179,7 @@ var installCmd = &cobra.Command{
 			goFlag, shellFlag = true, true
 		}
 
-		// 安装/更新shell脚本
+		// 安装/更新 shell 脚本
 		if shellFlag {
 			fmt.Printf(general.TitleH1Format, "Installing shell-based programs...")
 			// 设置代理
@@ -193,7 +195,7 @@ var installCmd = &cobra.Command{
 				textLength := 0                                                                                                                            // 输出文本的长度
 				shellGithubLatestHashApi := fmt.Sprintf(shellLatestHashApiFormat, shellGithubApi, shellGithubUsername, shellRepo, shellDir, name.(string)) // 请求远端仓库最新脚本的 Hash 值的 API
 				shellGiteaLatestHashApi := fmt.Sprintf(shellLatestHashApiFormat, shellGiteaApi, shellGiteaUsername, shellRepo, shellDir, name.(string))    // 请求远端仓库最新脚本的 Hash 值的 API
-				// 请求API
+				// 请求 API
 				body, err := general.RequestApi(shellGithubLatestHashApi)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
@@ -203,33 +205,33 @@ var installCmd = &cobra.Command{
 						continue
 					}
 				}
-				// 获取远端脚本Hash值
+				// 获取远端脚本 Hash
 				remoteHash, err := general.GetLatestSourceHash(body)
 				if err != nil {
 					fmt.Printf(general.ErrorBaseFormat, err)
 					continue
 				}
-				// 获取本地脚本Hash值
+				// 获取本地脚本 Hash
 				localProgram := filepath.Join(installPath, name.(string))  // 本地程序路径
 				gitHashObjectArgs := []string{"hash-object", localProgram} // 本地程序参数
 				localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
-				// 比较远端和本地脚本Hash值
-				if remoteHash == localHash { // Hash值一致，则输出无需更新信息
+				// 比较远端和本地脚本 Hash
+				if remoteHash == localHash { // Hash 一致，则输出无需更新信息
 					text := fmt.Sprintf(general.SliceTraverse2PSuffixFormat, "==>", " ", name.(string), " ", latestVersionMessage)
 					fmt.Printf(text)
 					controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 					textLength = len(controlRegex.ReplaceAllString(text, ""))
-				} else { // Hash值不一致，则更新脚本，并输出已更新信息
+				} else { // Hash 不一致，则更新脚本，并输出已更新信息
 					// 下载远端脚本
 					shellGithubBaseDownloadUrl := fmt.Sprintf(shellGithubBaseDownloadUrlFormat, shellGithubRaw, shellGithubUsername, shellRepo, shellGithubBranch) // 脚本远端仓库基础地址
 					shellGiteaBaseDownloadUrl := fmt.Sprintf(shellGiteaBaseDownloadUrlFormat, shellGiteaRaw, shellGiteaUsername, shellRepo, shellGiteaBranch)      // 脚本远端仓库基础地址
 					shellUrlFile := filepath.Join(shellDir, name.(string))                                                                                         // 脚本在仓库中的路径
 					scriptLocalPath := filepath.Join(installSourceTemp, shellRepo, name.(string))                                                                  // 脚本本地存储位置
 					fileUrl := fmt.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
-					if _, err := cli.DownloadFile(fileUrl, scriptLocalPath); err != nil {
+					if err := cli.DownloadFile(fileUrl, scriptLocalPath); err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
 						fileUrl := fmt.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
-						if _, err = cli.DownloadFile(fileUrl, scriptLocalPath); err != nil {
+						if err = cli.DownloadFile(fileUrl, scriptLocalPath); err != nil {
 							fmt.Printf(general.ErrorBaseFormat, err)
 							continue
 						}
@@ -276,14 +278,14 @@ var installCmd = &cobra.Command{
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
 					}
 				}
+				// 分隔符和延时
 				dashes := strings.Repeat("-", textLength-1)  //组装分隔符（减去行尾换行符的一个长度）
 				fmt.Printf(general.LineHiddenFormat, dashes) // 美化输出
-				// 添加一个0.01秒的延时，使输出更加顺畅
-				time.Sleep(100 * time.Millisecond)
+				time.Sleep(100 * time.Millisecond)           // 添加一个0.01秒的延时，使输出更加顺畅
 			}
 		}
 
-		// 安装/更新基于go开发的程序
+		// 安装/更新基于 go 的程序
 		if goFlag {
 			fmt.Printf(general.TitleH1Format, "Installing go-based programs...")
 			// 设置代理
@@ -301,13 +303,13 @@ var installCmd = &cobra.Command{
 				for _, name := range goNames {
 					textLength := 0                                                                                                        // 输出文本的长度
 					goGithubLatestReleaseTagApi := fmt.Sprintf(goLatestReleaseTagApiFormat, goReleaseApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
-					// 请求API
+					// 请求 API
 					body, err := general.RequestApi(goGithubLatestReleaseTagApi)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
 						continue
 					}
-					// 获取远端版本（用于Source安装）
+					// 获取远端版本（用于 release 安装方法）
 					remoteTag, err := general.GetLatestReleaseTag(body)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
@@ -324,7 +326,7 @@ var installCmd = &cobra.Command{
 						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
 					} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
-						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
+						// 下载远端文件（如果 Temp 中已有远端文件则删除重新下载）
 						goReleaseTempDir := filepath.Join(installReleaseTemp, name.(string))
 						if general.FileExist(goReleaseTempDir) {
 							if err := os.RemoveAll(goReleaseTempDir); err != nil {
@@ -352,7 +354,7 @@ var installCmd = &cobra.Command{
 						}
 						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Download ", filesInfo.ChecksumsFileInfo.Name, " ", "from GitHub Release ")
 						checksumsLocalPath := filepath.Join(installReleaseTemp, name.(string), filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
-						if _, err := cli.DownloadFile(filesInfo.ChecksumsFileInfo.DownloadUrl, checksumsLocalPath); err != nil {
+						if err := cli.DownloadFile(filesInfo.ChecksumsFileInfo.DownloadUrl, checksumsLocalPath); err != nil {
 							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
 							continue
 						} else {
@@ -360,7 +362,7 @@ var installCmd = &cobra.Command{
 						}
 						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Download ", filesInfo.ArchiveFileInfo.Name, " ", "from GitHub Release ")
 						archiveLocalPath := filepath.Join(installReleaseTemp, name.(string), filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
-						if _, err := cli.DownloadFile(filesInfo.ArchiveFileInfo.DownloadUrl, archiveLocalPath); err != nil {
+						if err := cli.DownloadFile(filesInfo.ArchiveFileInfo.DownloadUrl, archiveLocalPath); err != nil {
 							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
 							continue
 						} else {
@@ -441,10 +443,10 @@ var installCmd = &cobra.Command{
 							continue
 						}
 					}
+					// 分隔符和延时
 					dashes := strings.Repeat("-", textLength-1)  //组装分隔符（减去行尾换行符的一个长度）
 					fmt.Printf(general.LineHiddenFormat, dashes) // 美化输出
-					// 添加一个0.01秒的延时，使输出更加顺畅
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(100 * time.Millisecond)           // 添加一个0.01秒的延时，使输出更加顺畅
 				}
 			} else if strings.ToLower(installMethod) == "source" {
 				// 创建临时目录
@@ -457,7 +459,7 @@ var installCmd = &cobra.Command{
 					textLength := 0                                                                                                     // 输出文本的长度
 					goGithubLatestSourceTagApi := fmt.Sprintf(goLatestSourceTagApiFormat, goGithubApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
 					goGiteaLatestSourceTagApi := fmt.Sprintf(goLatestSourceTagApiFormat, goGiteaApi, goGiteaUsername, name.(string))    // 请求远端仓库最新 Tag 的 API
-					// 请求API
+					// 请求 API
 					body, err := general.RequestApi(goGithubLatestSourceTagApi)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
@@ -467,7 +469,7 @@ var installCmd = &cobra.Command{
 							continue
 						}
 					}
-					// 获取远端版本（用于Source安装）
+					// 获取远端版本（用于 source 安装方法）
 					remoteTag, err := general.GetLatestSourceTag(body)
 					if err != nil {
 						fmt.Printf(general.ErrorBaseFormat, err)
@@ -484,7 +486,7 @@ var installCmd = &cobra.Command{
 						controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 						textLength = len(controlRegex.ReplaceAllString(text, ""))
 					} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
-						// 下载远端文件（如果Temp中已有远端文件则删除重新下载）
+						// 下载远端文件（如果 Temp 中已有远端文件则删除重新下载）
 						goSourceTempDir := filepath.Join(installSourceTemp, name.(string))
 						if general.FileExist(goSourceTempDir) {
 							if err := os.RemoveAll(goSourceTempDir); err != nil {
@@ -512,13 +514,13 @@ var installCmd = &cobra.Command{
 							continue
 						}
 						// 编译生成程序
-						if general.FileExist("Makefile") { // Makefile文件存在则使用make编译
+						if general.FileExist("Makefile") { // Makefile 文件存在则使用 make 编译
 							makeArgs := []string{}
 							if err := general.RunCommand("make", makeArgs); err != nil {
 								fmt.Printf(general.ErrorBaseFormat, err)
 								continue
 							}
-						} else if general.FileExist("main.go") { // Makefile文件不存在则使用go build编译
+						} else if general.FileExist("main.go") { // Makefile 文件不存在则使用 `go build` 命令编译
 							buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
 							if err := general.RunCommand("go", buildArgs); err != nil {
 								fmt.Printf(general.ErrorBaseFormat, err)
@@ -532,13 +534,13 @@ var installCmd = &cobra.Command{
 						if general.FileExist(compileProgram) {
 							// 检测本地程序是否存在
 							if commandErr != nil { // 不存在，安装
-								if general.FileExist("Makefile") { // Makefile文件存在则使用make install安装
+								if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令安装
 									makeArgs := []string{"install"}
 									if err := general.RunCommand("make", makeArgs); err != nil {
 										fmt.Printf(general.ErrorBaseFormat, err)
 										continue
 									}
-								} else { // Makefile文件不存在则使用自定义函数安装
+								} else { // Makefile 文件不存在则使用自定义函数安装
 									if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
 										fmt.Printf(general.ErrorBaseFormat, err)
 										continue
@@ -554,13 +556,13 @@ var installCmd = &cobra.Command{
 								controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`) // 去除控制字符，获取文本实际长度
 								textLength = len(controlRegex.ReplaceAllString(text, ""))
 							} else { // 存在，更新
-								if general.FileExist("Makefile") { // Makefile文件存在则使用make install更新
+								if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令更新
 									makeArgs := []string{"install"}
 									if err := general.RunCommand("make", makeArgs); err != nil {
 										fmt.Printf(general.ErrorBaseFormat, err)
 										continue
 									}
-								} else { // Makefile文件不存在则使用自定义函数更新
+								} else { // Makefile 文件不存在则使用自定义函数更新
 									if err := os.Remove(localProgram); err != nil {
 										fmt.Printf(general.ErrorBaseFormat, err)
 									}
@@ -604,10 +606,10 @@ var installCmd = &cobra.Command{
 							textLength = len(controlRegex.ReplaceAllString(text, ""))
 						}
 					}
+					// 分隔符和延时
 					dashes := strings.Repeat("-", textLength-1)  //组装分隔符（减去行尾换行符的一个长度）
 					fmt.Printf(general.LineHiddenFormat, dashes) // 美化输出
-					// 添加一个0.01秒的延时，使输出更加顺畅
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(100 * time.Millisecond)           // 添加一个0.01秒的延时，使输出更加顺畅
 				}
 			} else {
 				text := fmt.Sprintf(general.ErrorSuffixFormat, fmt.Sprintf("Unsupported installation method '%s'", installMethod), ": ", "only 'release' and 'source' are supported")

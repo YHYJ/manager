@@ -19,7 +19,13 @@ import (
 	"github.com/yhyj/manager/general"
 )
 
-// isTomlFile 判断文件是不是 toml 文件
+// isTomlFile 检测文件是不是 toml 文件
+//
+// 参数：
+//   - filePath: 待检测文件路径
+//
+// 返回：
+//   - 是 toml 文件返回 true，否则返回 false
 func isTomlFile(filePath string) bool {
 	if strings.HasSuffix(filePath, ".toml") {
 		return true
@@ -28,6 +34,13 @@ func isTomlFile(filePath string) bool {
 }
 
 // GetTomlConfig 读取 toml 配置文件
+//
+// 参数：
+//   - filePath: toml 配置文件路径
+//
+// 返回：
+//   - toml 配置树
+//   - 错误信息
 func GetTomlConfig(filePath string) (*toml.Tree, error) {
 	if !general.FileExist(filePath) {
 		return nil, fmt.Errorf("Open %s: no such file or directory", filePath)
@@ -43,6 +56,13 @@ func GetTomlConfig(filePath string) (*toml.Tree, error) {
 }
 
 // WriteTomlConfig 写入 toml 配置文件
+//
+// 参数：
+//   - filePath: toml 配置文件路径
+//
+// 返回：
+//   - 写入的字节数
+//   - 错误信息
 func WriteTomlConfig(filePath string) (int64, error) {
 	// 根据系统不同决定某些参数
 	var (
@@ -70,39 +90,39 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		installReleaseTemp = filepath.Join(general.UserInfo.HomeDir, "AppData", "Local", "Temp", "manager", "release")
 		goNames = []string{"skynet"}
 	}
-	// 定义一个map[string]interface{}类型的变量并赋值
+	// 定义一个 map[string]interface{} 类型的变量并赋值
 	exampleConf := map[string]interface{}{
 		"variable": map[string]interface{}{ // 环境变量设置
-			"http_proxy":  "", // HTTP代理
-			"https_proxy": "", // HTTPS代理
+			"http_proxy":  "", // HTTP 代理
+			"https_proxy": "", // HTTPS 代理
 		},
 		"install": map[string]interface{}{
-			"method":       "release",          // 安装方法，"release" 或 "source"代表安装预编译的二进制文件或自行从源码编译
+			"method":       "release",          // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
 			"path":         installPath,        // 安装路径
 			"source_temp":  installSourceTemp,  // Source 安装方式的基础存储目录
 			"release_temp": installReleaseTemp, // Release 安装方式的基础存储目录
-			"go": map[string]interface{}{ // 基于go编写的程序的管理配置
+			"go": map[string]interface{}{ // 基于 go 编写的程序的管理配置
 				"names":           goNames,                         // 可用的程序列表
-				"release_api":     "https://api.github.com",        // Release 安装源API地址
+				"release_api":     "https://api.github.com",        // Release 安装源 API 地址
 				"release_accept":  "application/vnd.github+json",   // Release 安装源请求头参数
 				"generate_path":   "build",                         // Source 安装编译结果存储文件夹
 				"github_url":      "https://github.com",            // Source 安装 - GitHub 安装源地址
-				"github_api":      "https://api.github.com",        // Source 安装 - GitHub 安装源API地址
+				"github_api":      "https://api.github.com",        // Source 安装 - GitHub 安装源 API 地址
 				"github_username": "YHYJ",                          // Source 安装 - GitHub 安装源用户名
 				"gitea_url":       "https://git.yj1516.top",        // Source 安装 - Gitea 安装源地址
-				"gitea_api":       "https://git.yj1516.top/api/v1", // Source 安装 - Gitea 安装源API地址
+				"gitea_api":       "https://git.yj1516.top/api/v1", // Source 安装 - Gitea 安装源 API 地址
 				"gitea_username":  "YJ",                            // Source 安装 - Gitea 安装源用户名
-				"completion_dir": []string{ // zsh的自动补全文件夹
+				"completion_dir": []string{ // zsh 的自动补全文件夹
 					filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 					filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
 				},
 			},
-			"shell": map[string]interface{}{ // 基于shell编写的脚本的管理配置
-				"github_api":      "https://api.github.com",              // GitHub 安装源API地址
+			"shell": map[string]interface{}{ // 基于 shell 编写的脚本的管理配置
+				"github_api":      "https://api.github.com",              // GitHub 安装源 API 地址
 				"github_raw":      "https://raw.githubusercontent.com",   // GitHub 安装源文件下载地址
 				"github_username": "YHYJ",                                // GitHub 安装源用户名
 				"github_branch":   "ArchLinux",                           // GitHub 安装源分支名
-				"gitea_api":       "https://git.yj1516.top/api/v1",       // Gitea 安装源API地址
+				"gitea_api":       "https://git.yj1516.top/api/v1",       // Gitea 安装源 API 地址
 				"gitea_raw":       "https://git.yj1516.top",              // Gitea 安装源文件下载地址
 				"gitea_username":  "YJ",                                  // Gitea 安装源用户名
 				"gitea_branch":    "ArchLinux",                           // Gitea 安装源分支名
