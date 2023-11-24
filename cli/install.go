@@ -64,7 +64,7 @@ func DownloadFile(url string, outputFile string) error {
 	}
 
 	// 创建下载文件夹
-	dir, filename := filepath.Split(outputFile)
+	dir := filepath.Dir(outputFile)
 	if dir != "" {
 		if err := os.MkdirAll(dir, 0755); err != nil {
 			return fmt.Errorf("Error creating download folder: %s", err)
@@ -72,7 +72,7 @@ func DownloadFile(url string, outputFile string) error {
 	}
 
 	// 创建本地文件
-	file, err := os.Create(filename)
+	file, err := os.Create(outputFile)
 	if err != nil {
 		return fmt.Errorf("Error creating download file: %s", err)
 	}
