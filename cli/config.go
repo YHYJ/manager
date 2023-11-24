@@ -85,14 +85,13 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"names":           goNames,                         // 可用的程序列表
 				"release_api":     "https://api.github.com",        // Release 安装源API地址
 				"release_accept":  "application/vnd.github+json",   // Release 安装源请求头参数
-				"unzip_path":      "flowout",                       // Release 安装解压缩释出文件夹
+				"generate_path":   "build",                         // Source 安装编译结果存储文件夹
 				"github_url":      "https://github.com",            // Source 安装 - GitHub 安装源地址
 				"github_api":      "https://api.github.com",        // Source 安装 - GitHub 安装源API地址
 				"github_username": "YHYJ",                          // Source 安装 - GitHub 安装源用户名
 				"gitea_url":       "https://git.yj1516.top",        // Source 安装 - Gitea 安装源地址
 				"gitea_api":       "https://git.yj1516.top/api/v1", // Source 安装 - Gitea 安装源API地址
 				"gitea_username":  "YJ",                            // Source 安装 - Gitea 安装源用户名
-				"generate_path":   "build",                         // Source 安装编译结果存储文件夹
 				"completion_dir": []string{ // zsh的自动补全文件夹
 					filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 					filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
