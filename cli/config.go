@@ -70,6 +70,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		installSourceTemp  = ""         // 定义在不同平台的Source安装方式的存储目录
 		installReleaseTemp = ""         // 定义在不同平台的Release安装方式的存储目录
 		goNames            = []string{} // 定义在不同平台可用的程序
+		goCompletionDir    = []string{} // 定义在不同平台的自动补全文件路径（仅限oh-my-zsh）
 		shellNames         = []string{} // 定义在不同平台可用的脚本
 	)
 	if general.Platform == "linux" {
@@ -77,12 +78,31 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		installSourceTemp = "/tmp/manager/source"
 		installReleaseTemp = "/tmp/manager/release"
 		goNames = []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"}
-		shellNames = []string{"collect-system", "configure-dtags", "py-virtualenv-tool", "save-docker-images", "sfm", "spacevim-update", "spider", "system-checkupdates", "trash-manager", "usb-manager"}
+		goCompletionDir = []string{
+			filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
+			filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
+		}
+		shellNames = []string{
+			"collect-system",
+			"configure-dtags",
+			"py-virtualenv-tool",
+			"save-docker-images",
+			"sfm",
+			"spacevim-update",
+			"spider",
+			"system-checkupdates",
+			"trash-manager",
+			"usb-manager",
+		}
 	} else if general.Platform == "darwin" {
 		installPath = "/usr/local/bin"
 		installSourceTemp = "/tmp/manager/source"
 		installReleaseTemp = "/tmp/manager/release"
 		goNames = []string{"clone-repos", "manager", "skynet"}
+		goCompletionDir = []string{
+			filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
+			filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
+		}
 		shellNames = []string{"spacevim-update", "spider"}
 	} else if general.Platform == "windows" {
 		installPath = filepath.Join(general.GetVariable("ProgramFiles"), "Manager")
@@ -112,10 +132,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"gitea_url":       "https://git.yj1516.top",        // Source 安装 - Gitea 安装源地址
 				"gitea_api":       "https://git.yj1516.top/api/v1", // Source 安装 - Gitea 安装源 API 地址
 				"gitea_username":  "YJ",                            // Source 安装 - Gitea 安装源用户名
-				"completion_dir": []string{ // zsh 的自动补全文件夹
-					filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
-					filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
-				},
+				"completion_dir":  goCompletionDir,                 // 自动补全文件夹
 			},
 			"shell": map[string]interface{}{ // 基于 shell 编写的脚本的管理配置
 				"github_api":      "https://api.github.com",              // GitHub 安装源 API 地址
