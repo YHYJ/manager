@@ -91,7 +91,6 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"spacevim-update",
 			"spider",
 			"system-checkupdates",
-			"trash-manager",
 			"usb-manager",
 		}
 	} else if general.Platform == "darwin" {
