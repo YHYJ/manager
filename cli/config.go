@@ -77,7 +77,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		installPath = "/usr/local/bin"
 		installSourceTemp = "/tmp/manager/source"
 		installReleaseTemp = "/tmp/manager/release"
-		goNames = []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"}
+		goNames = []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet", "trash"}
 		goCompletionDir = []string{
 			filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 			filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
