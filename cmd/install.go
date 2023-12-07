@@ -501,18 +501,8 @@ var installCmd = &cobra.Command{
 								// 安装资源文件 - icon 文件
 								archivedResourcesIconFolder := filepath.Join(archivedResourcesFolder, "pixmaps") // 解压得到的资源文件 - icon 文件夹
 								localResourcesIconFolder := filepath.Join(installResourcesPath, "pixmaps")       // 本地资源文件 - icon 文件夹
-								files, err := general.ListFolderFiles(archivedResourcesIconFolder)
-								if err != nil {
-									text := fmt.Sprintf(general.ErrorBaseFormat, err)
-									fmt.Printf(text)
-									// 分隔符和延时（延时使输出更加顺畅）
-									textLength = general.RealLength(text) // 分隔符长度
-									general.PrintDelimiter(textLength)    // 分隔符
-									general.Delay(0.1)                    // 0.1s
-									continue
-								}
-								if !general.FileExist(localResourcesIconFolder) {
-									err := general.CreateDir(localResourcesIconFolder)
+								if general.FileExist(archivedResourcesIconFolder) {
+									files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 									if err != nil {
 										text := fmt.Sprintf(general.ErrorBaseFormat, err)
 										fmt.Printf(text)
@@ -522,18 +512,30 @@ var installCmd = &cobra.Command{
 										general.Delay(0.1)                    // 0.1s
 										continue
 									}
-								}
-								for _, file := range files {
-									archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
-									localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
-									if err := cli.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
-										// 分隔符和延时（延时使输出更加顺畅）
-										textLength = general.RealLength(text) // 分隔符长度
-										general.PrintDelimiter(textLength)    // 分隔符
-										general.Delay(0.1)                    // 0.1s
-										continue
+									if !general.FileExist(localResourcesIconFolder) {
+										err := general.CreateDir(localResourcesIconFolder)
+										if err != nil {
+											text := fmt.Sprintf(general.ErrorBaseFormat, err)
+											fmt.Printf(text)
+											// 分隔符和延时（延时使输出更加顺畅）
+											textLength = general.RealLength(text) // 分隔符长度
+											general.PrintDelimiter(textLength)    // 分隔符
+											general.Delay(0.1)                    // 0.1s
+											continue
+										}
+									}
+									for _, file := range files {
+										archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
+										localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
+										if err := cli.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
+											text := fmt.Sprintf(general.ErrorBaseFormat, err)
+											fmt.Printf(text)
+											// 分隔符和延时（延时使输出更加顺畅）
+											textLength = general.RealLength(text) // 分隔符长度
+											general.PrintDelimiter(textLength)    // 分隔符
+											general.Delay(0.1)                    // 0.1s
+											continue
+										}
 									}
 								}
 								// 本次安装结束分隔符
@@ -586,18 +588,8 @@ var installCmd = &cobra.Command{
 								// 安装资源文件 - icon 文件
 								archivedResourcesIconFolder := filepath.Join(archivedResourcesFolder, "pixmaps") // 解压得到的资源文件 - icon 文件夹
 								localResourcesIconFolder := filepath.Join(installResourcesPath, "pixmaps")       // 本地资源文件 - icon 文件夹
-								files, err := general.ListFolderFiles(archivedResourcesIconFolder)
-								if err != nil {
-									text := fmt.Sprintf(general.ErrorBaseFormat, err)
-									fmt.Printf(text)
-									// 分隔符和延时（延时使输出更加顺畅）
-									textLength = general.RealLength(text) // 分隔符长度
-									general.PrintDelimiter(textLength)    // 分隔符
-									general.Delay(0.1)                    // 0.1s
-									continue
-								}
-								if !general.FileExist(localResourcesIconFolder) {
-									err := general.CreateDir(localResourcesIconFolder)
+								if general.FileExist(archivedResourcesIconFolder) {
+									files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 									if err != nil {
 										text := fmt.Sprintf(general.ErrorBaseFormat, err)
 										fmt.Printf(text)
@@ -607,18 +599,30 @@ var installCmd = &cobra.Command{
 										general.Delay(0.1)                    // 0.1s
 										continue
 									}
-								}
-								for _, file := range files {
-									archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
-									localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
-									if err := cli.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
-										// 分隔符和延时（延时使输出更加顺畅）
-										textLength = general.RealLength(text) // 分隔符长度
-										general.PrintDelimiter(textLength)    // 分隔符
-										general.Delay(0.1)                    // 0.1s
-										continue
+									if !general.FileExist(localResourcesIconFolder) {
+										err := general.CreateDir(localResourcesIconFolder)
+										if err != nil {
+											text := fmt.Sprintf(general.ErrorBaseFormat, err)
+											fmt.Printf(text)
+											// 分隔符和延时（延时使输出更加顺畅）
+											textLength = general.RealLength(text) // 分隔符长度
+											general.PrintDelimiter(textLength)    // 分隔符
+											general.Delay(0.1)                    // 0.1s
+											continue
+										}
+									}
+									for _, file := range files {
+										archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
+										localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
+										if err := cli.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
+											text := fmt.Sprintf(general.ErrorBaseFormat, err)
+											fmt.Printf(text)
+											// 分隔符和延时（延时使输出更加顺畅）
+											textLength = general.RealLength(text) // 分隔符长度
+											general.PrintDelimiter(textLength)    // 分隔符
+											general.Delay(0.1)                    // 0.1s
+											continue
+										}
 									}
 								}
 								// 本次更新结束分隔符
