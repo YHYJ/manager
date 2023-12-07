@@ -66,15 +66,17 @@ func GetTomlConfig(filePath string) (*toml.Tree, error) {
 func WriteTomlConfig(filePath string) (int64, error) {
 	// 根据系统不同决定某些参数
 	var (
-		installPath        = ""         // 定义在不同平台的安装路径
-		installSourceTemp  = ""         // 定义在不同平台的Source安装方式的存储目录
-		installReleaseTemp = ""         // 定义在不同平台的Release安装方式的存储目录
-		goNames            = []string{} // 定义在不同平台可用的程序
-		goCompletionDir    = []string{} // 定义在不同平台的自动补全文件路径（仅限oh-my-zsh）
-		shellNames         = []string{} // 定义在不同平台可用的脚本
+		installProgramPath   = ""         // 定义在不同平台的程序安装路径
+		installResourcesPath = ""         // 定义在不同平台的资源安装路径
+		installSourceTemp    = ""         // 定义在不同平台的Source安装方式的存储目录
+		installReleaseTemp   = ""         // 定义在不同平台的Release安装方式的存储目录
+		goNames              = []string{} // 定义在不同平台可用的程序
+		goCompletionDir      = []string{} // 定义在不同平台的自动补全文件路径（仅限oh-my-zsh）
+		shellNames           = []string{} // 定义在不同平台可用的脚本
 	)
 	if general.Platform == "linux" {
-		installPath = "/usr/local/bin"
+		installProgramPath = "/usr/local/bin"
+		installResourcesPath = "/usr/local/share"
 		installSourceTemp = "/tmp/manager/source"
 		installReleaseTemp = "/tmp/manager/release"
 		goNames = []string{"checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet", "trash"}
@@ -94,7 +96,8 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"usb-manager",
 		}
 	} else if general.Platform == "darwin" {
-		installPath = "/usr/local/bin"
+		installProgramPath = "/usr/local/bin"
+		installResourcesPath = "/usr/local/share"
 		installSourceTemp = "/tmp/manager/source"
 		installReleaseTemp = "/tmp/manager/release"
 		goNames = []string{"clone-repos", "manager", "skynet"}
@@ -104,7 +107,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		}
 		shellNames = []string{"spacevim-update", "spider"}
 	} else if general.Platform == "windows" {
-		installPath = filepath.Join(general.GetVariable("ProgramFiles"), "Manager")
+		installProgramPath = filepath.Join(general.GetVariable("ProgramFiles"), "Manager")
 		installSourceTemp = filepath.Join(general.UserInfo.HomeDir, "AppData", "Local", "Temp", "manager", "source")
 		installReleaseTemp = filepath.Join(general.UserInfo.HomeDir, "AppData", "Local", "Temp", "manager", "release")
 		goNames = []string{"skynet"}
@@ -116,10 +119,11 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"https_proxy": "", // HTTPS 代理
 		},
 		"install": map[string]interface{}{
-			"method":       "release",          // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
-			"path":         installPath,        // 安装路径
-			"source_temp":  installSourceTemp,  // Source 安装方式的基础存储目录
-			"release_temp": installReleaseTemp, // Release 安装方式的基础存储目录
+			"method":         "release",            // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
+			"program_path":   installProgramPath,   // 程序安装路径
+			"resources_path": installResourcesPath, // 资源安装路径
+			"source_temp":    installSourceTemp,    // Source 安装方式的基础存储目录
+			"release_temp":   installReleaseTemp,   // Release 安装方式的基础存储目录
 			"go": map[string]interface{}{ // 基于 go 编写的程序的管理配置
 				"names":           goNames,                         // 可用的程序列表
 				"release_api":     "https://api.github.com",        // Release 安装源 API 地址
