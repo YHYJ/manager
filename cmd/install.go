@@ -36,10 +36,11 @@ var installCmd = &cobra.Command{
 			httpProxy  string // http 代理
 			httpsProxy string // https 代理
 
-			installMethod      string // 程序安装方法，目前支持 relrase 和 source
-			installPath        string // 程序安装路径
-			installReleaseTemp string // 使用 release 安装方法时下载文件的存储地址
-			installSourceTemp  string // 使用 source 安装方法时下载文件的存储地址
+			installMethod        string // 程序安装方法，目前支持 relrase 和 source
+			installProgramPath   string // 程序安装路径
+			installResourcesPath string // 资源安装路径
+			installReleaseTemp   string // 使用 release 安装方法时下载文件的存储地址
+			installSourceTemp    string // 使用 source 安装方法时下载文件的存储地址
 
 			goNames          []interface{} // 要安装的基于 go 的程序名列表
 			goReleaseApi     string        // 基于 go 的程序的 release 安装方法的 API 地址
@@ -75,8 +76,11 @@ var installCmd = &cobra.Command{
 			if configTree.Has("install.method") {
 				installMethod = configTree.Get("install.method").(string)
 			}
-			if configTree.Has("install.path") {
-				installPath = configTree.Get("install.path").(string)
+			if configTree.Has("install.program_path") {
+				installProgramPath = configTree.Get("install.program_path").(string)
+			}
+			if configTree.Has("install.resources_path") {
+				installResourcesPath = configTree.Get("install.resources_path").(string)
 			}
 			if configTree.Has("install.release_temp") {
 				installReleaseTemp = configTree.Get("install.release_temp").(string)
@@ -221,8 +225,8 @@ var installCmd = &cobra.Command{
 					continue
 				}
 				// 获取本地脚本 Hash
-				localProgram := filepath.Join(installPath, name.(string))  // 本地程序路径
-				gitHashObjectArgs := []string{"hash-object", localProgram} // 本地程序参数
+				localProgram := filepath.Join(installProgramPath, name.(string)) // 本地程序路径
+				gitHashObjectArgs := []string{"hash-object", localProgram}       // 本地程序参数
 				localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
 				// 比较远端和本地脚本 Hash
 				if remoteHash == localHash { // Hash 一致，则输出无需更新信息
@@ -352,8 +356,8 @@ var installCmd = &cobra.Command{
 						continue
 					}
 					// 获取本地版本
-					localProgram := filepath.Join(installPath, name.(string)) // 本地程序路径
-					nameArgs := []string{"version", "--only"}                 // 本地程序参数
+					localProgram := filepath.Join(installProgramPath, name.(string)) // 本地程序路径
+					nameArgs := []string{"version", "--only"}                        // 本地程序参数
 					localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteTag == localVersion { // 版本一致，则输出无需更新信息
@@ -457,10 +461,11 @@ var installCmd = &cobra.Command{
 								general.Delay(0.1)                    // 0.1s
 								continue
 							}
-							archivedProgram := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, name.(string)) // 解压得到的程序
+							archivedProgram := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, name.(string))       // 解压得到的程序
+							archivedResourcesFolder := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, "resources") // 解压得到的资源文件夹
 							// 检测本地程序是否存在
 							if commandErr != nil { // 不存在，安装
-								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil {
+								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil { // 安装程序
 									text := fmt.Sprintf(general.ErrorBaseFormat, err)
 									fmt.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
@@ -468,8 +473,7 @@ var installCmd = &cobra.Command{
 									general.PrintDelimiter(textLength)    // 分隔符
 									general.Delay(0.1)                    // 0.1s
 									continue
-								} else {
-									// 为已安装的脚本设置可执行权限
+								} else { // 为已安装的程序设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
 										text := fmt.Sprintf(general.ErrorBaseFormat, err)
 										fmt.Printf(text)
@@ -480,11 +484,64 @@ var installCmd = &cobra.Command{
 										continue
 									}
 								}
+								// 安装资源文件 - desktop 文件
+								archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", fmt.Sprintf("%s.desktop", name.(string))) // 解压得到的资源文件 - desktop 文件
+								localResourcesDesktopFile := filepath.Join(installResourcesPath, "applications", fmt.Sprintf("%s.desktop", name.(string)))       // 本地资源文件 - desktop 文件
+								if general.FileExist(archivedResourcesDesktopFile) {
+									if err := cli.InstallFile(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
+										text := fmt.Sprintf(general.ErrorBaseFormat, err)
+										fmt.Printf(text)
+										// 分隔符和延时（延时使输出更加顺畅）
+										textLength = general.RealLength(text) // 分隔符长度
+										general.PrintDelimiter(textLength)    // 分隔符
+										general.Delay(0.1)                    // 0.1s
+										continue
+									}
+								}
+								// 安装资源文件 - icon 文件
+								archivedResourcesIconFolder := filepath.Join(archivedResourcesFolder, "pixmaps") // 解压得到的资源文件 - icon 文件夹
+								localResourcesIconFolder := filepath.Join(installResourcesPath, "pixmaps")       // 本地资源文件 - icon 文件夹
+								files, err := general.ListFolderFiles(archivedResourcesIconFolder)
+								if err != nil {
+									text := fmt.Sprintf(general.ErrorBaseFormat, err)
+									fmt.Printf(text)
+									// 分隔符和延时（延时使输出更加顺畅）
+									textLength = general.RealLength(text) // 分隔符长度
+									general.PrintDelimiter(textLength)    // 分隔符
+									general.Delay(0.1)                    // 0.1s
+									continue
+								}
+								if !general.FileExist(localResourcesIconFolder) {
+									err := general.CreateDir(localResourcesIconFolder)
+									if err != nil {
+										text := fmt.Sprintf(general.ErrorBaseFormat, err)
+										fmt.Printf(text)
+										// 分隔符和延时（延时使输出更加顺畅）
+										textLength = general.RealLength(text) // 分隔符长度
+										general.PrintDelimiter(textLength)    // 分隔符
+										general.Delay(0.1)                    // 0.1s
+										continue
+									}
+								}
+								for _, file := range files {
+									archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
+									localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
+									if err := cli.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
+										text := fmt.Sprintf(general.ErrorBaseFormat, err)
+										fmt.Printf(text)
+										// 分隔符和延时（延时使输出更加顺畅）
+										textLength = general.RealLength(text) // 分隔符长度
+										general.PrintDelimiter(textLength)    // 分隔符
+										general.Delay(0.1)                    // 0.1s
+										continue
+									}
+								}
+								// 本次安装结束分隔符
 								text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteTag, " ", "installed")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							} else { // 存在，更新
-								if err := os.Remove(localProgram); err != nil {
+								if err := os.Remove(localProgram); err != nil { // 删除已安装的旧程序
 									text := fmt.Sprintf(general.ErrorBaseFormat, err)
 									fmt.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
@@ -493,7 +550,7 @@ var installCmd = &cobra.Command{
 									general.Delay(0.1)                    // 0.1s
 									continue
 								}
-								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil {
+								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil { // 安装新程序
 									text := fmt.Sprintf(general.ErrorBaseFormat, err)
 									fmt.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
@@ -501,8 +558,7 @@ var installCmd = &cobra.Command{
 									general.PrintDelimiter(textLength)    // 分隔符
 									general.Delay(0.1)                    // 0.1s
 									continue
-								} else {
-									// 为已安装的脚本设置可执行权限
+								} else { // 为已安装的程序设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
 										text := fmt.Sprintf(general.ErrorBaseFormat, err)
 										fmt.Printf(text)
@@ -513,6 +569,59 @@ var installCmd = &cobra.Command{
 										continue
 									}
 								}
+								// 安装资源文件 - desktop 文件
+								archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", fmt.Sprintf("%s.desktop", name.(string))) // 解压得到的资源文件 - desktop 文件
+								localResourcesDesktopFile := filepath.Join(installResourcesPath, "applications", fmt.Sprintf("%s.desktop", name.(string)))       // 本地资源文件 - desktop 文件
+								if general.FileExist(archivedResourcesDesktopFile) {
+									if err := cli.InstallFile(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
+										text := fmt.Sprintf(general.ErrorBaseFormat, err)
+										fmt.Printf(text)
+										// 分隔符和延时（延时使输出更加顺畅）
+										textLength = general.RealLength(text) // 分隔符长度
+										general.PrintDelimiter(textLength)    // 分隔符
+										general.Delay(0.1)                    // 0.1s
+										continue
+									}
+								}
+								// 安装资源文件 - icon 文件
+								archivedResourcesIconFolder := filepath.Join(archivedResourcesFolder, "pixmaps") // 解压得到的资源文件 - icon 文件夹
+								localResourcesIconFolder := filepath.Join(installResourcesPath, "pixmaps")       // 本地资源文件 - icon 文件夹
+								files, err := general.ListFolderFiles(archivedResourcesIconFolder)
+								if err != nil {
+									text := fmt.Sprintf(general.ErrorBaseFormat, err)
+									fmt.Printf(text)
+									// 分隔符和延时（延时使输出更加顺畅）
+									textLength = general.RealLength(text) // 分隔符长度
+									general.PrintDelimiter(textLength)    // 分隔符
+									general.Delay(0.1)                    // 0.1s
+									continue
+								}
+								if !general.FileExist(localResourcesIconFolder) {
+									err := general.CreateDir(localResourcesIconFolder)
+									if err != nil {
+										text := fmt.Sprintf(general.ErrorBaseFormat, err)
+										fmt.Printf(text)
+										// 分隔符和延时（延时使输出更加顺畅）
+										textLength = general.RealLength(text) // 分隔符长度
+										general.PrintDelimiter(textLength)    // 分隔符
+										general.Delay(0.1)                    // 0.1s
+										continue
+									}
+								}
+								for _, file := range files {
+									archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
+									localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
+									if err := cli.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
+										text := fmt.Sprintf(general.ErrorBaseFormat, err)
+										fmt.Printf(text)
+										// 分隔符和延时（延时使输出更加顺畅）
+										textLength = general.RealLength(text) // 分隔符长度
+										general.PrintDelimiter(textLength)    // 分隔符
+										general.Delay(0.1)                    // 0.1s
+										continue
+									}
+								}
+								// 本次更新结束分隔符
 								text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
@@ -583,8 +692,8 @@ var installCmd = &cobra.Command{
 						continue
 					}
 					// 获取本地版本
-					localProgram := filepath.Join(installPath, name.(string)) // 本地程序路径
-					nameArgs := []string{"version", "--only"}                 // 本地程序参数
+					localProgram := filepath.Join(installProgramPath, name.(string)) // 本地程序路径
+					nameArgs := []string{"version", "--only"}                        // 本地程序参数
 					localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteTag == localVersion { // 版本一致，则输出无需更新信息
@@ -695,7 +804,7 @@ var installCmd = &cobra.Command{
 										general.Delay(0.1)                    // 0.1s
 										continue
 									} else {
-										// 为已安装的脚本设置可执行权限
+										// 为已安装的程序设置可执行权限
 										if err := os.Chmod(localProgram, 0755); err != nil {
 											text := fmt.Sprintf(general.ErrorBaseFormat, err)
 											fmt.Printf(text)
@@ -707,6 +816,7 @@ var installCmd = &cobra.Command{
 										}
 									}
 								}
+								// 本次安装结束分隔符
 								text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteTag, " ", "installed")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
@@ -741,7 +851,7 @@ var installCmd = &cobra.Command{
 										general.Delay(0.1)                    // 0.1s
 										continue
 									} else {
-										// 为已安装的脚本设置可执行权限
+										// 为已安装的程序设置可执行权限
 										if err := os.Chmod(localProgram, 0755); err != nil {
 											text := fmt.Sprintf(general.ErrorBaseFormat, err)
 											fmt.Printf(text)
@@ -753,6 +863,7 @@ var installCmd = &cobra.Command{
 										}
 									}
 								}
+								// 本次更新结束分隔符
 								text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
