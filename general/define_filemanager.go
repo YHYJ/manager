@@ -170,12 +170,12 @@ func FileEmpty(filePath string) bool {
 //   - 包括隐藏文件
 //
 // 参数：
-//   - filePath: 文件夹路径
+//   - dirPath: 文件夹路径
 //
 // 返回：
 //   - 文件夹为空返回 true，否则返回 false
-func FolderEmpty(filePath string) bool {
-	file, err := os.Open(filePath)
+func FolderEmpty(dirPath string) bool {
+	file, err := os.Open(dirPath)
 	if err != nil {
 		return true
 	}
@@ -186,6 +186,41 @@ func FolderEmpty(filePath string) bool {
 		return true
 	}
 	return false
+}
+
+// ListFolderFiles 列出指定文件夹下的所有文件
+//
+// 参数：
+//   - dirPath: 文件夹路径
+//
+// 返回：
+//   - 文件列表
+//   - 错误信息
+func ListFolderFiles(dirPath string) ([]string, error) {
+	files := []string{}
+
+	// 打开文件夹
+	dir, err := os.Open(dirPath)
+	if err != nil {
+		return files, err
+	}
+	defer dir.Close()
+
+	// 读取文件夹中的文件
+	fileInfos, err := dir.ReadDir(-1)
+	if err != nil {
+		return files, err
+	}
+
+	// 遍历文件夹中的文件
+	for _, fileInfo := range fileInfos {
+		// 判断是否为文件
+		if !fileInfo.IsDir() {
+			files = append(files, fileInfo.Name())
+		}
+	}
+
+	return files, nil
 }
 
 // CreateFile 创建文件，包括其父目录
