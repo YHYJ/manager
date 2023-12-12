@@ -402,7 +402,7 @@ var installCmd = &cobra.Command{
 							general.Delay(0.1)                    // 0.1s
 							continue
 						}
-						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Download ", filesInfo.ChecksumsFileInfo.Name, " ", "from GitHub Release ")
+						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Download ", fmt.Sprintf("[%s] - %s", name, filesInfo.ChecksumsFileInfo.Name), " ", "from GitHub Release ")
 						checksumsLocalPath := filepath.Join(installReleaseTemp, name.(string), filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
 						if err := cli.DownloadFile(filesInfo.ChecksumsFileInfo.DownloadUrl, checksumsLocalPath); err != nil {
 							text := fmt.Sprintf(general.ErrorSuffixFormat, "error", " -> ", err)
@@ -415,7 +415,7 @@ var installCmd = &cobra.Command{
 						} else {
 							fmt.Printf(general.SuccessFormat, "success")
 						}
-						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Download ", filesInfo.ArchiveFileInfo.Name, " ", "from GitHub Release ")
+						fmt.Printf(general.SliceTraverse2PSuffixNoNewLineFormat, "==>", " Download ", fmt.Sprintf("[%s] - %s", name, filesInfo.ArchiveFileInfo.Name), " ", "from GitHub Release ")
 						archiveLocalPath := filepath.Join(installReleaseTemp, name.(string), filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
 						if err := cli.DownloadFile(filesInfo.ArchiveFileInfo.DownloadUrl, archiveLocalPath); err != nil {
 							text := fmt.Sprintf(general.ErrorSuffixFormat, "error", " -> ", err)
