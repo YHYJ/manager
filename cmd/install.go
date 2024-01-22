@@ -271,7 +271,7 @@ var installCmd = &cobra.Command{
 								if err := os.Chmod(localProgram, 0755); err != nil {
 									fmt.Printf(general.ErrorBaseFormat, err)
 								}
-								text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteHash[:4], " ", "installed")
+								text := fmt.Sprintf(general.SliceTraverse4PFormat, "==>", " ", name.(string), " ", remoteHash[:6], " ", "installed")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
@@ -298,7 +298,7 @@ var installCmd = &cobra.Command{
 								if err := os.Chmod(localProgram, 0755); err != nil {
 									fmt.Printf(general.ErrorBaseFormat, err)
 								}
-								text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localHash, " -> ", remoteHash[:4], " ", "updated")
+								text := fmt.Sprintf(general.SliceTraverse5PFormat, "==>", " ", name.(string), " ", localHash[:6], " -> ", remoteHash[:6], " ", "updated")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
