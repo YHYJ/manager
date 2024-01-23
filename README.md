@@ -78,7 +78,6 @@ curl -fsSL https://raw.githubusercontent.com/YHYJ/manager/main/install.sh | sudo
 
   - 'all'：配置以下所有程序/脚本
   - 'pip'：配置 pip 使用的镜像源
-  - 'npm'：配置 npm 使用的镜像源
   - 'docker'：配置 Docker Root Directory
   - 'git'：配置 git 用户信息等并生成 SSH 密钥
 

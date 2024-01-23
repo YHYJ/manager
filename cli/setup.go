@@ -93,14 +93,6 @@ var (
 	GoConfig       = fmt.Sprintf(goConfigFormat, goGO111MODULE, goGOBIN, goGOPATH, goGOCACHE, goGOMODCACHE)
 	GoConfigFile   = filepath.Join(home, ".config", "go", "env")
 
-	// npm 的依赖项
-	NpmDependencies = "/usr/bin/npm"
-	// npm 配置
-	npmConfigFormat = "registry=%s\n"
-	npmRegistry     = "https://registry.npm.taobao.org"
-	NpmConfig       = fmt.Sprintf(npmConfigFormat, npmRegistry)
-	NpmConfigFile   = filepath.Join(home, ".npmrc")
-
 	// pip 的依赖项
 	PipDependencies = "/usr/bin/pip"
 	// pip 配置
