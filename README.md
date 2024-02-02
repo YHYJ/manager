@@ -77,9 +77,10 @@ curl -fsSL https://raw.githubusercontent.com/YHYJ/manager/main/install.sh | sudo
   该子命令用于配置安装的程序/脚本，有以下参数：
 
   - 'all'：配置以下所有程序/脚本
-  - 'pip'：配置 pip 使用的镜像源
   - 'docker'：配置 Docker Root Directory
   - 'git'：配置 git 用户信息等并生成 SSH 密钥
+  - 'npm'：配置 npm 使用的镜像源
+  - 'pip'：配置 pip 使用的镜像源
 
 - `config`子命令
 

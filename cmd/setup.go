@@ -37,12 +37,13 @@ var setupCmd = &cobra.Command{
 		frpcFlag, _ := cmd.Flags().GetBool("frpc")
 		gitFlag, _ := cmd.Flags().GetBool("git")
 		goFlag, _ := cmd.Flags().GetBool("go")
+		npmFlag, _ := cmd.Flags().GetBool("npm")
 		pipFlag, _ := cmd.Flags().GetBool("pip")
 		systemcheckupdatesFlag, _ := cmd.Flags().GetBool("system-checkupdates")
 
 		// 根据参数执行操作
 		if allFlag {
-			chezmoiFlag, cobraFlag, dockerFlag, frpcFlag, gitFlag, goFlag, pipFlag, systemcheckupdatesFlag = true, true, true, true, true, true, true, true
+			chezmoiFlag, cobraFlag, dockerFlag, frpcFlag, gitFlag, goFlag, npmFlag, pipFlag, systemcheckupdatesFlag = true, true, true, true, true, true, true, true, true
 		}
 
 		// 预定义变量
@@ -153,6 +154,19 @@ var setupCmd = &cobra.Command{
 				fmt.Printf(successFormat, 1, "Setup completed")
 			}
 		}
+		// 配置 npm
+		if npmFlag {
+			subjectName = "npm"
+			descriptorText = "registry"
+			fmt.Printf(general.SliceTraverse2PFormat, "==>", " ", subjectName)
+			fmt.Printf(descriptorFormat, 1, subjectName, descriptorText)
+			fmt.Printf(configFileFormat, 1, cli.NpmConfigFile)
+			if err := general.WriteFile(cli.NpmConfigFile, cli.NpmConfig); err != nil {
+				fmt.Printf(errorFormat, 1, err.Error())
+			} else {
+				fmt.Printf(successFormat, 1, "Setup completed")
+			}
+		}
 		// 配置 pip
 		if pipFlag {
 			subjectName = "pip"
@@ -206,6 +220,7 @@ func init() {
 	setupCmd.Flags().BoolP("frpc", "", false, "Set up frpc restart timing (need to be root)")
 	setupCmd.Flags().BoolP("git", "", false, "Set up git and generate SSH keys")
 	setupCmd.Flags().BoolP("go", "", false, "Set up golang")
+	setupCmd.Flags().BoolP("npm", "", false, "Set up the mirror source used by npm")
 	setupCmd.Flags().BoolP("pip", "", false, "Set up the mirror source used by pip")
 	setupCmd.Flags().BoolP("system-checkupdates", "", false, "Set up system-checkupdates (need to be root)")
 
