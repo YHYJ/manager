@@ -105,7 +105,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			filepath.Join(general.UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 			filepath.Join(general.UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
 		}
-		shellNames = []string{"spacevim-update", "spider"}
+		shellNames = []string{"spacevim-update"}
 	} else if general.Platform == "windows" {
 		installProgramPath = filepath.Join(general.GetVariable("ProgramFiles"), "Manager")
 		installSourceTemp = filepath.Join(general.UserInfo.HomeDir, "AppData", "Local", "Temp", "manager", "source")
