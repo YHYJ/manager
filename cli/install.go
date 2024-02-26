@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/cheggaaa/pb/v3"
 	"github.com/go-git/go-git/v5"
 	"github.com/yhyj/manager/general"
 )
@@ -78,8 +79,16 @@ func DownloadFile(url string, outputFile string) error {
 	}
 	defer file.Close()
 
+	// 创建进度条模板
+	barTemplate := `{{blue "Downloading:"}} {{bar . "[" "-" ">" " " "]"}} {{percent . "%.01f%%" "?"}} {{counters . "%s/%s" "%s/?" | green}} {{speed . | yellow}}`
+	// 使用自定义模板创建进度条
+	bar := pb.ProgressBarTemplate(barTemplate).Start64(resp.ContentLength)
+	bar.Set(pb.Bytes, true)
+	// 使用代理读取响应主体
+	reader := bar.NewProxyReader(resp.Body)
+
 	// 将响应主体复制到文件
-	_, err = io.Copy(file, resp.Body)
+	_, err = io.Copy(file, reader)
 	if err != nil {
 		return fmt.Errorf("Error writing download file: %s", err)
 	}
