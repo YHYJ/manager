@@ -230,7 +230,7 @@ var installCmd = &cobra.Command{
 				localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
 				// 比较远端和本地脚本 Hash
 				if remoteHash == localHash { // Hash 一致，则输出无需更新信息
-					text := fmt.Sprintf(general.SliceTraverse2PSuffixFormat, "-->", " ", name.(string), " ", latestVersionMessage)
+					text := fmt.Sprintf(general.SliceTraverse2PSuffixFormat, general.Dot, " ", name.(string), " ", latestVersionMessage)
 					fmt.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				} else { // Hash 不一致，则更新脚本，并输出已更新信息
@@ -271,7 +271,7 @@ var installCmd = &cobra.Command{
 								if err := os.Chmod(localProgram, 0755); err != nil {
 									fmt.Printf(general.ErrorBaseFormat, err)
 								}
-								text := fmt.Sprintf(general.SliceTraverse4PFormat, "-->", " ", name.(string), " ", remoteHash[:6], " ", "installed")
+								text := fmt.Sprintf(general.SliceTraverse4PFormat, general.Yes, " ", name.(string), " ", remoteHash[:6], " ", "installed")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
@@ -298,7 +298,7 @@ var installCmd = &cobra.Command{
 								if err := os.Chmod(localProgram, 0755); err != nil {
 									fmt.Printf(general.ErrorBaseFormat, err)
 								}
-								text := fmt.Sprintf(general.SliceTraverse5PFormat, "-->", " ", name.(string), " ", localHash[:6], " -> ", remoteHash[:6], " ", "updated")
+								text := fmt.Sprintf(general.SliceTraverse5PFormat, general.Yes, " ", name.(string), " ", localHash[:6], " -> ", remoteHash[:6], " ", "updated")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
@@ -324,7 +324,6 @@ var installCmd = &cobra.Command{
 
 			// 设置进度条参数
 			general.ProgressParameters["view"] = "1"
-			general.ProgressParameters["action"] = "-->"
 			general.ProgressParameters["sep"] = "-"
 
 			// 使用配置的安装方式进行安装
@@ -366,7 +365,7 @@ var installCmd = &cobra.Command{
 					localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-						text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, "-->", " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
+						text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, general.Dot, " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
 						fmt.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -407,7 +406,8 @@ var installCmd = &cobra.Command{
 							general.Delay(0.1)                    // 0.1s
 							continue
 						}
-						// fmt.Printf(general.SliceTraverse2PSuffixFormat, "-->", " Download ", fmt.Sprintf("[%s] - %s", name, filesInfo.ChecksumsFileInfo.Name), " ", "from GitHub Release ")
+						// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", fmt.Sprintf("[%s] - %s", name, filesInfo.ChecksumsFileInfo.Name), " ", "from GitHub Release ")
+						general.ProgressParameters["action"] = general.Run
 						general.ProgressParameters["prefix"] = "Download"
 						general.ProgressParameters["project"] = fmt.Sprintf("[%s]", name)
 						general.ProgressParameters["fileName"] = fmt.Sprintf("[%s]", filesInfo.ChecksumsFileInfo.Name)
@@ -422,7 +422,8 @@ var installCmd = &cobra.Command{
 							general.Delay(0.1)                    // 0.1s
 							continue
 						}
-						// fmt.Printf(general.SliceTraverse2PSuffixFormat, "-->", " Download ", fmt.Sprintf("[%s] - %s", name, filesInfo.ArchiveFileInfo.Name), " ", "from GitHub Release ")
+						// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", fmt.Sprintf("[%s] - %s", name, filesInfo.ArchiveFileInfo.Name), " ", "from GitHub Release ")
+						general.ProgressParameters["action"] = general.Run
 						general.ProgressParameters["prefix"] = "Download"
 						general.ProgressParameters["project"] = fmt.Sprintf("[%s]", name)
 						general.ProgressParameters["fileName"] = fmt.Sprintf("[%s]", filesInfo.ArchiveFileInfo.Name)
@@ -548,7 +549,7 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 本次安装结束分隔符
-								text := fmt.Sprintf(general.SliceTraverse4PFormat, "-->", " ", name.(string), " ", remoteTag, " ", "installed")
+								text := fmt.Sprintf(general.SliceTraverse4PFormat, general.Yes, " ", name.(string), " ", remoteTag, " ", "installed")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							} else { // 存在，更新
@@ -635,7 +636,7 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 本次更新结束分隔符
-								text := fmt.Sprintf(general.SliceTraverse5PFormat, "-->", " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
+								text := fmt.Sprintf(general.SliceTraverse5PFormat, general.Yes, " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
@@ -644,12 +645,12 @@ var installCmd = &cobra.Command{
 								if general.FileExist(completionDir.(string)) {
 									generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
 									if err := general.RunCommand("bash", generateArgs); err != nil {
-										text := fmt.Sprintf(general.ErrorSuffixFormat, "-->", " ", acsInstallFailedMessage)
+										text := fmt.Sprintf(general.ErrorSuffixFormat, general.No, " ", acsInstallFailedMessage)
 										fmt.Printf(text)
 										textLength = general.RealLength(text) // 分隔符长度
 										continue
 									} else {
-										text := fmt.Sprintf(general.SuccessSuffixFormat, "-->", " ", acsInstallSuccessMessage)
+										text := fmt.Sprintf(general.SuccessSuffixFormat, general.Yes, " ", acsInstallSuccessMessage)
 										fmt.Printf(text)
 										textLength = general.RealLength(text) // 分隔符长度
 										break
@@ -710,7 +711,7 @@ var installCmd = &cobra.Command{
 					localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-						text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, "-->", " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
+						text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, general.Dot, " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
 						fmt.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -729,12 +730,12 @@ var installCmd = &cobra.Command{
 						}
 						// 克隆远端仓库 - GitHub
 						goGithubCloneBaseUrl := fmt.Sprintf("%s/%s", goGithubUrl, goGithubUsername) // 远端仓库基础克隆地址（除仓库名）
-						fmt.Printf(general.SliceTraverse2PSuffixFormat, "-->", " Clone ", name.(string), " ", "from GitHub ")
+						fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Clone ", name.(string), " ", "from GitHub ")
 						if err := cli.CloneRepoViaHTTP(installSourceTemp, goGithubCloneBaseUrl, name.(string)); err != nil {
 							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
 							// 克隆远端仓库 - Gitea
 							goGiteaCloneBaseUrl := fmt.Sprintf("%s/%s", goGiteaUrl, goGiteaUsername) // 远端仓库基础克隆地址（除仓库名）
-							fmt.Printf(general.SliceTraverse2PSuffixFormat, "-->", " Clone ", name.(string), " ", "from Gitea ")
+							fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Clone ", name.(string), " ", "from Gitea ")
 							if err := cli.CloneRepoViaHTTP(installSourceTemp, goGiteaCloneBaseUrl, name.(string)); err != nil {
 								text := fmt.Sprintf(general.ErrorSuffixFormat, "error", " -> ", err)
 								fmt.Printf(text)
@@ -830,7 +831,7 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 本次安装结束分隔符
-								text := fmt.Sprintf(general.SliceTraverse4PFormat, "-->", " ", name.(string), " ", remoteTag, " ", "installed")
+								text := fmt.Sprintf(general.SliceTraverse4PFormat, general.Yes, " ", name.(string), " ", remoteTag, " ", "installed")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							} else { // 存在，更新
@@ -877,7 +878,7 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 本次更新结束分隔符
-								text := fmt.Sprintf(general.SliceTraverse5PFormat, "-->", " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
+								text := fmt.Sprintf(general.SliceTraverse5PFormat, general.Yes, " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
 								fmt.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
@@ -886,12 +887,12 @@ var installCmd = &cobra.Command{
 								if general.FileExist(completionDir.(string)) {
 									generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
 									if err := general.RunCommand("bash", generateArgs); err != nil {
-										text := fmt.Sprintf(general.ErrorSuffixFormat, "-->", " ", acsInstallFailedMessage)
+										text := fmt.Sprintf(general.ErrorSuffixFormat, general.No, " ", acsInstallFailedMessage)
 										fmt.Printf(text)
 										textLength = general.RealLength(text) // 分隔符长度
 										continue
 									} else {
-										text := fmt.Sprintf(general.SuccessSuffixFormat, "-->", " ", acsInstallSuccessMessage)
+										text := fmt.Sprintf(general.SuccessSuffixFormat, general.Yes, " ", acsInstallSuccessMessage)
 										fmt.Printf(text)
 										textLength = general.RealLength(text) // 分隔符长度
 										break

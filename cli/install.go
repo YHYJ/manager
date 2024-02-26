@@ -88,7 +88,7 @@ func DownloadFile(url string, outputFile string, progressParameters map[string]s
 		}
 	} else {
 		// 创建进度条模板
-		barTemplate := `{{string . "action" | green}} {{string . "prefix"}} {{string . "project" | blue}} {{string . "sep" | blue}} {{string . "fileName" | blue}} {{string . "suffix"}} {{bar . "[" "-" ">" " " "]"}} {{percent . "%.01f%%" "?"}} {{counters . "%s/%s" "%s/?" | green}}`
+		barTemplate := `{{string . "action" | green}} {{string . "prefix"}} {{string . "project" | blue}} {{string . "sep" | blue}} {{string . "fileName" | blue}} {{string . "suffix"}} {{bar . "[" "-" ">" " " "]"}} {{percent . "%.01f%%" "?"}} {{counters . "%s/%s" "%s/?" | green}} {{speed . | yellow}}`
 		// 使用自定义模板创建进度条
 		bar := pb.ProgressBarTemplate(barTemplate).Start64(resp.ContentLength)
 		bar.Set(pb.Bytes, true)
