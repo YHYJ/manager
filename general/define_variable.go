@@ -60,6 +60,10 @@ var (
 	ErrorSuffixFormat = "\x1b[31m%s\x1b[0m%s%s\n" // 错误信息输出格式 带后缀的错误: <错误信息><分隔符><后缀>
 )
 
+var ProgressParameters = map[string]string{
+	"view": "0", // 是否显示进度条 0: 不显示 1: 显示
+}
+
 // ---------- 环境变量
 
 var Platform = runtime.GOOS                   // 操作系统

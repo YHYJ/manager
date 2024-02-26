@@ -48,10 +48,11 @@ func CloneRepoViaHTTP(path string, url string, repo string) error {
 // 参数：
 //   - url: 文件下载地址
 //   - outputFile: 下载文件保存路径
+//   - progressParameters: 进度条参数
 //
 // 返回：
 //   - 错误信息
-func DownloadFile(url string, outputFile string) error {
+func DownloadFile(url string, outputFile string, progressParameters map[string]string) error {
 	// 发送GET请求并获取响应
 	resp, err := http.Get(url)
 	if err != nil {
@@ -79,22 +80,31 @@ func DownloadFile(url string, outputFile string) error {
 	}
 	defer file.Close()
 
-	// 创建进度条模板
-	barTemplate := `{{blue "Downloading:"}} {{bar . "[" "-" ">" " " "]"}} {{percent . "%.01f%%" "?"}} {{counters . "%s/%s" "%s/?" | green}} {{speed . | yellow}}`
-	// 使用自定义模板创建进度条
-	bar := pb.ProgressBarTemplate(barTemplate).Start64(resp.ContentLength)
-	bar.Set(pb.Bytes, true)
-	// 使用代理读取响应主体
-	reader := bar.NewProxyReader(resp.Body)
+	if progressParameters["view"] == "0" {
+		// 将响应主体复制到文件
+		_, err = io.Copy(file, resp.Body)
+		if err != nil {
+			return fmt.Errorf("Error writing download file: %s", err)
+		}
+	} else {
+		// 创建进度条模板
+		barTemplate := `{{string . "action" | green}} {{string . "prefix"}} {{string . "project" | blue}} {{string . "sep" | blue}} {{string . "fileName" | blue}} {{string . "suffix"}} {{bar . "[" "-" ">" " " "]"}} {{percent . "%.01f%%" "?"}} {{counters . "%s/%s" "%s/?" | green}}`
+		// 使用自定义模板创建进度条
+		bar := pb.ProgressBarTemplate(barTemplate).Start64(resp.ContentLength)
+		bar.Set(pb.Bytes, true)
+		// 使用代理读取响应主体
+		reader := bar.NewProxyReader(resp.Body)
 
-	// 将响应主体复制到文件
-	_, err = io.Copy(file, reader)
-	if err != nil {
-		return fmt.Errorf("Error writing download file: %s", err)
+		// 将响应主体复制到文件
+		bar.Set("action", progressParameters["action"]).Set("prefix", progressParameters["prefix"]).Set("project", progressParameters["project"]).Set("sep", progressParameters["sep"]).Set("fileName", progressParameters["fileName"]).Set("suffix", progressParameters["suffix"])
+		_, err = io.Copy(file, reader)
+		if err != nil {
+			return fmt.Errorf("Error writing download file: %s", err)
+		}
+
+		// 完成进度条
+		bar.Finish()
 	}
-
-	// 完成进度条
-	bar.Finish()
 
 	return nil
 }
