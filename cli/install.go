@@ -93,6 +93,9 @@ func DownloadFile(url string, outputFile string) error {
 		return fmt.Errorf("Error writing download file: %s", err)
 	}
 
+	// 完成进度条
+	bar.Finish()
+
 	return nil
 }
 
