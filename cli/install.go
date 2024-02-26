@@ -92,11 +92,11 @@ func DownloadFile(url string, outputFile string, progressParameters map[string]s
 		// 使用自定义模板创建进度条
 		bar := pb.ProgressBarTemplate(barTemplate).Start64(resp.ContentLength)
 		bar.Set(pb.Bytes, true)
+		bar.Set("action", progressParameters["action"]).Set("prefix", progressParameters["prefix"]).Set("project", progressParameters["project"]).Set("sep", progressParameters["sep"]).Set("fileName", progressParameters["fileName"]).Set("suffix", progressParameters["suffix"])
 		// 使用代理读取响应主体
 		reader := bar.NewProxyReader(resp.Body)
 
 		// 将响应主体复制到文件
-		bar.Set("action", progressParameters["action"]).Set("prefix", progressParameters["prefix"]).Set("project", progressParameters["project"]).Set("sep", progressParameters["sep"]).Set("fileName", progressParameters["fileName"]).Set("suffix", progressParameters["suffix"])
 		_, err = io.Copy(file, reader)
 		if err != nil {
 			return fmt.Errorf("Error writing download file: %s", err)
