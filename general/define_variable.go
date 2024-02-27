@@ -66,7 +66,7 @@ var ProgressParameters = map[string]string{
 
 var (
 	Run = "➤"
-	Dot = "●"
+	Dot = "•"
 	Yes = "✔"
 	No  = "✘"
 )
