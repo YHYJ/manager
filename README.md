@@ -119,7 +119,7 @@ curl -fsSL https://raw.githubusercontent.com/YHYJ/manager/main/install.sh | sudo
     github_api = "https://api.github.com"                                                               # source 安装方法 - Github 安装源 API 地址
     github_url = "https://github.com"                                                                   # source 安装方法 - Github 安装源地址
     github_username = "YHYJ"                                                                            # source 安装方法 - Github 安装源用户名
-    names = ["checker", "clone-repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"] # 要安装的程序列表
+    names = ["checker", "repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"]       # 要安装的程序列表
     release_accept = "application/vnd.github+json"                                                      # release 安装方法 - API 请求头参数
     release_api = "https://api.github.com"                                                              # release 安装方法 - API 地址
 
