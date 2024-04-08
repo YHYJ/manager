@@ -10,10 +10,11 @@ Description: 处理一些杂事
 package general
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/gookit/color"
 )
 
 // RealLength 去除转义字符，获取文本实际长度
@@ -34,7 +35,7 @@ func RealLength(text string) int {
 //   - length: 分隔符长度
 func PrintDelimiter(length int) {
 	dashes := strings.Repeat("-", length-1) // 组装分隔符（减去行尾换行符的一个长度）
-	fmt.Printf(LineHiddenFormat, dashes)    // 美化输出
+	color.Printf("%s\n", FgBlack(dashes))   // 美化输出
 }
 
 // Delay 延时
