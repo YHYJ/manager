@@ -10,11 +10,11 @@ Description: 执行子命令 'install'
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/gookit/color"
 	"github.com/spf13/cobra"
 	"github.com/yhyj/manager/cli"
 	"github.com/yhyj/manager/general"
@@ -69,7 +69,7 @@ var installCmd = &cobra.Command{
 		// 检查配置文件是否存在
 		configTree, err := cli.GetTomlConfig(cfgFile)
 		if err != nil {
-			fmt.Printf(general.ErrorBaseFormat, err)
+			color.Error.Println(err)
 			return
 		} else {
 			// 获取配置项
@@ -183,29 +183,29 @@ var installCmd = &cobra.Command{
 
 		// 安装/更新 shell 脚本
 		if shellFlag {
-			fmt.Printf(general.TitleH1Format, "Installing shell-based programs...")
+			color.Printf("\n\x1b[3m%s\x1b[0m\n\n", general.FgCyan("Installing shell-based programs..."))
 			// 设置代理
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
 			// 创建临时目录
 			if err := general.CreateDir(installSourceTemp); err != nil {
-				fmt.Printf(general.ErrorBaseFormat, err)
+				color.Error.Println(err)
 				return
 			}
 			// 遍历所有脚本名
 			for _, name := range shellNames {
-				textLength := 0                                                                                                                            // 输出文本的长度
-				shellGithubLatestHashApi := fmt.Sprintf(shellLatestHashApiFormat, shellGithubApi, shellGithubUsername, shellRepo, shellDir, name.(string)) // 请求远端仓库最新脚本的 Hash 值的 API
-				shellGiteaLatestHashApi := fmt.Sprintf(shellLatestHashApiFormat, shellGiteaApi, shellGiteaUsername, shellRepo, shellDir, name.(string))    // 请求远端仓库最新脚本的 Hash 值的 API
+				textLength := 0                                                                                                                              // 输出文本的长度
+				shellGithubLatestHashApi := color.Sprintf(shellLatestHashApiFormat, shellGithubApi, shellGithubUsername, shellRepo, shellDir, name.(string)) // 请求远端仓库最新脚本的 Hash 值的 API
+				shellGiteaLatestHashApi := color.Sprintf(shellLatestHashApiFormat, shellGiteaApi, shellGiteaUsername, shellRepo, shellDir, name.(string))    // 请求远端仓库最新脚本的 Hash 值的 API
 				// 请求 API - GitHub
 				body, err := general.RequestApi(shellGithubLatestHashApi)
 				if err != nil {
-					fmt.Printf(general.ErrorBaseFormat, err)
+					color.Error.Println(err)
 					// 请求 API - Gitea
 					body, err = general.RequestApi(shellGiteaLatestHashApi)
 					if err != nil {
-						text := fmt.Sprintf(general.ErrorBaseFormat, err)
-						fmt.Printf(text)
+						text := color.Sprintf("%s\n", general.ErrorText(err))
+						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
@@ -216,8 +216,8 @@ var installCmd = &cobra.Command{
 				// 获取远端脚本 Hash
 				remoteHash, err := general.GetLatestSourceHash(body)
 				if err != nil {
-					text := fmt.Sprintf(general.ErrorBaseFormat, err)
-					fmt.Printf(text)
+					text := color.Sprintf("%s\n", general.ErrorText(err))
+					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
 					general.PrintDelimiter(textLength)    // 分隔符
@@ -230,23 +230,23 @@ var installCmd = &cobra.Command{
 				localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
 				// 比较远端和本地脚本 Hash
 				if remoteHash == localHash { // Hash 一致，则输出无需更新信息
-					text := fmt.Sprintf(general.SliceTraverse2PSuffixFormat, general.Dot, " ", name.(string), " ", latestVersionMessage)
-					fmt.Printf(text)
+					text := color.Sprintf("%s %s %s\n", general.LatestFlag, general.FgGreen(name.(string)), latestVersionMessage)
+					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				} else { // Hash 不一致，则更新脚本，并输出已更新信息
 					shellUrlFile := filepath.Join(shellDir, name.(string))                        // 脚本在仓库中的路径
 					scriptLocalPath := filepath.Join(installSourceTemp, shellRepo, name.(string)) // 脚本本地存储位置
 					// 下载远端脚本 - GitHub
-					shellGithubBaseDownloadUrl := fmt.Sprintf(shellGithubBaseDownloadUrlFormat, shellGithubRaw, shellGithubUsername, shellRepo, shellGithubBranch) // 脚本远端仓库基础地址
-					fileUrl := fmt.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
+					shellGithubBaseDownloadUrl := color.Sprintf(shellGithubBaseDownloadUrlFormat, shellGithubRaw, shellGithubUsername, shellRepo, shellGithubBranch) // 脚本远端仓库基础地址
+					fileUrl := color.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
 					if err := cli.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
-						fmt.Printf(general.ErrorBaseFormat, err)
+						color.Error.Println(err)
 						// 下载远端脚本 - Gitea
-						shellGiteaBaseDownloadUrl := fmt.Sprintf(shellGiteaBaseDownloadUrlFormat, shellGiteaRaw, shellGiteaUsername, shellRepo, shellGiteaBranch) // 脚本远端仓库基础地址
-						fileUrl := fmt.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
+						shellGiteaBaseDownloadUrl := color.Sprintf(shellGiteaBaseDownloadUrlFormat, shellGiteaRaw, shellGiteaUsername, shellRepo, shellGiteaBranch) // 脚本远端仓库基础地址
+						fileUrl := color.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
 						if err = cli.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
-							text := fmt.Sprintf(general.ErrorBaseFormat, err)
-							fmt.Printf(text)
+							text := color.Sprintf("%s\n", general.ErrorText(err))
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
@@ -259,8 +259,8 @@ var installCmd = &cobra.Command{
 						// 检测本地程序是否存在
 						if commandErr != nil { // 不存在，安装
 							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
-								text := fmt.Sprintf(general.ErrorBaseFormat, err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
@@ -269,16 +269,16 @@ var installCmd = &cobra.Command{
 							} else {
 								// 为已安装的脚本设置可执行权限
 								if err := os.Chmod(localProgram, 0755); err != nil {
-									fmt.Printf(general.ErrorBaseFormat, err)
+									color.Error.Println(err)
 								}
-								text := fmt.Sprintf(general.SliceTraverse4PFormat, general.Yes, " ", name.(string), " ", remoteHash[:6], " ", "installed")
-								fmt.Printf(text)
+								text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(remoteHash[:6]), general.FgMagenta("installed"))
+								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
 						} else { // 存在，更新
 							if err := os.Remove(localProgram); err != nil {
-								text := fmt.Sprintf(general.ErrorBaseFormat, err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
@@ -286,8 +286,8 @@ var installCmd = &cobra.Command{
 								continue
 							}
 							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
-								text := fmt.Sprintf(general.ErrorBaseFormat, err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
@@ -296,16 +296,16 @@ var installCmd = &cobra.Command{
 							} else {
 								// 为已更新的脚本设置可执行权限
 								if err := os.Chmod(localProgram, 0755); err != nil {
-									fmt.Printf(general.ErrorBaseFormat, err)
+									color.Error.Println(err)
 								}
-								text := fmt.Sprintf(general.SliceTraverse5PFormat, general.Yes, " ", name.(string), " ", localHash[:6], " -> ", remoteHash[:6], " ", "updated")
-								fmt.Printf(text)
+								text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(localHash[:6]), general.LightText("->"), general.NoteText(remoteHash[:6]), general.FgMagenta("updated"))
+								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
 						}
 					} else {
-						text := fmt.Sprintf(general.ErrorBaseFormat, fmt.Sprintf("The source file %s does not exist", scriptLocalPath))
-						fmt.Printf(text)
+						text := color.Error.Sprintf("The source file %s does not exist\n", scriptLocalPath)
+						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
 				}
@@ -317,7 +317,7 @@ var installCmd = &cobra.Command{
 
 		// 安装/更新基于 go 的程序
 		if goFlag {
-			fmt.Printf(general.TitleH1Format, "Installing go-based programs...")
+			color.Printf("\n\x1b[3m%s\x1b[0m\n\n", general.FgCyan("Installing go-based programs..."))
 			// 设置代理
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
@@ -330,18 +330,18 @@ var installCmd = &cobra.Command{
 			if strings.ToLower(installMethod) == "release" {
 				// 创建临时目录
 				if err := general.CreateDir(installReleaseTemp); err != nil {
-					fmt.Printf(general.ErrorBaseFormat, err)
+					color.Error.Println(err)
 					return
 				}
 				// 遍历所有程序名
 				for _, name := range goNames {
-					textLength := 0                                                                                                        // 输出文本的长度
-					goGithubLatestReleaseTagApi := fmt.Sprintf(goLatestReleaseTagApiFormat, goReleaseApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
+					textLength := 0                                                                                                          // 输出文本的长度
+					goGithubLatestReleaseTagApi := color.Sprintf(goLatestReleaseTagApiFormat, goReleaseApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
 					// 请求 API - GitHub
 					body, err := general.RequestApi(goGithubLatestReleaseTagApi)
 					if err != nil {
-						text := fmt.Sprintf(general.ErrorBaseFormat, err)
-						fmt.Printf(text)
+						text := color.Sprintf("%s\n", general.ErrorText(err))
+						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
@@ -351,8 +351,8 @@ var installCmd = &cobra.Command{
 					// 获取远端版本（用于 release 安装方法）
 					remoteTag, err := general.GetLatestReleaseTag(body)
 					if err != nil {
-						text := fmt.Sprintf(general.ErrorBaseFormat, err)
-						fmt.Printf(text)
+						text := color.Sprintf("%s\n", general.ErrorText(err))
+						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
@@ -365,16 +365,16 @@ var installCmd = &cobra.Command{
 					localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-						text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, general.Dot, " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
-						fmt.Printf(text)
+						text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreen(name.(string)), general.FgYellow(remoteTag), general.LightText(latestVersionMessage))
+						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
 						// 下载远端文件（如果 Temp 中已有远端文件则删除重新下载）
 						goReleaseTempDir := filepath.Join(installReleaseTemp, name.(string))
 						if general.FileExist(goReleaseTempDir) {
 							if err := os.RemoveAll(goReleaseTempDir); err != nil {
-								text := fmt.Sprintf(general.ErrorBaseFormat, err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
@@ -393,45 +393,45 @@ var installCmd = &cobra.Command{
 							}
 							return "tar.gz"
 						}()
-						archiveFileNameWithoutFileType := fmt.Sprintf("%s_%s_%s_%s", name.(string), remoteTag, general.Platform, general.Arch)
-						fileName.ArchiveFile = fmt.Sprintf("%s.%s", archiveFileNameWithoutFileType, fileType)
+						archiveFileNameWithoutFileType := color.Sprintf("%s_%s_%s_%s", name.(string), remoteTag, general.Platform, general.Arch)
+						fileName.ArchiveFile = color.Sprintf("%s.%s", archiveFileNameWithoutFileType, fileType)
 						// 获取 Release 文件信息
 						filesInfo, err := general.GetReleaseFileInfo(body, fileName)
 						if err != nil {
-							text := fmt.Sprintf(general.ErrorBaseFormat, err)
-							fmt.Printf(text)
+							text := color.Sprintf("%s\n", general.ErrorText(err))
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
 							general.Delay(0.1)                    // 0.1s
 							continue
 						}
-						// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", fmt.Sprintf("[%s] - %s", name, filesInfo.ChecksumsFileInfo.Name), " ", "from GitHub Release ")
-						general.ProgressParameters["action"] = general.Run
+						// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", color.Sprintf("[%s] - %s", name, filesInfo.ChecksumsFileInfo.Name), " ", "from GitHub Release ")
+						general.ProgressParameters["action"] = general.DownloadFlag
 						general.ProgressParameters["prefix"] = "Download"
-						general.ProgressParameters["project"] = fmt.Sprintf("[%s]", name)
-						general.ProgressParameters["fileName"] = fmt.Sprintf("[%s]", filesInfo.ChecksumsFileInfo.Name)
+						general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
+						general.ProgressParameters["fileName"] = color.Sprintf("[%s]", filesInfo.ChecksumsFileInfo.Name)
 						general.ProgressParameters["suffix"] = "from Github release:"
 						checksumsLocalPath := filepath.Join(installReleaseTemp, name.(string), filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
 						if err := cli.DownloadFile(filesInfo.ChecksumsFileInfo.DownloadUrl, checksumsLocalPath, general.ProgressParameters); err != nil {
-							text := fmt.Sprintf(general.ErrorSuffixFormat, "error", " -> ", err)
-							fmt.Printf(text)
+							text := color.Error.Sprintf("error -> %s\n", err)
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
 							general.Delay(0.1)                    // 0.1s
 							continue
 						}
-						// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", fmt.Sprintf("[%s] - %s", name, filesInfo.ArchiveFileInfo.Name), " ", "from GitHub Release ")
-						general.ProgressParameters["action"] = general.Run
+						// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", color.Sprintf("[%s] - %s", name, filesInfo.ArchiveFileInfo.Name), " ", "from GitHub Release ")
+						general.ProgressParameters["action"] = general.DownloadFlag
 						general.ProgressParameters["prefix"] = "Download"
-						general.ProgressParameters["project"] = fmt.Sprintf("[%s]", name)
-						general.ProgressParameters["fileName"] = fmt.Sprintf("[%s]", filesInfo.ArchiveFileInfo.Name)
+						general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
+						general.ProgressParameters["fileName"] = color.Sprintf("[%s]", filesInfo.ArchiveFileInfo.Name)
 						general.ProgressParameters["suffix"] = "from Github release:"
 						archiveLocalPath := filepath.Join(installReleaseTemp, name.(string), filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
 						if err := cli.DownloadFile(filesInfo.ArchiveFileInfo.DownloadUrl, archiveLocalPath, general.ProgressParameters); err != nil {
-							text := fmt.Sprintf(general.ErrorSuffixFormat, "error", " -> ", err)
-							fmt.Printf(text)
+							text := color.Error.Sprintf("error -> %s\n", err)
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
@@ -440,8 +440,8 @@ var installCmd = &cobra.Command{
 						}
 						// 进到下载的远端文件目录
 						if err := general.GoToDir(goReleaseTempDir); err != nil {
-							text := fmt.Sprintf(general.ErrorBaseFormat, err)
-							fmt.Printf(text)
+							text := color.Sprintf("%s\n", general.ErrorText(err))
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
@@ -451,8 +451,8 @@ var installCmd = &cobra.Command{
 						// 使用校验文件校验下载的压缩包
 						verificationResult, err := cli.FileVerification(checksumsLocalPath, archiveLocalPath)
 						if err != nil {
-							text := fmt.Sprintf(general.ErrorBaseFormat, err)
-							fmt.Printf(text)
+							text := color.Sprintf("%s\n", general.ErrorText(err))
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
@@ -463,8 +463,8 @@ var installCmd = &cobra.Command{
 							// 解压压缩包
 							err := general.UnzipFile(archiveLocalPath, goReleaseTempDir)
 							if err != nil {
-								text := fmt.Sprintf(general.ErrorBaseFormat, err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
@@ -476,8 +476,8 @@ var installCmd = &cobra.Command{
 							// 检测本地程序是否存在
 							if commandErr != nil { // 不存在，安装
 								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil { // 安装程序
-									text := fmt.Sprintf(general.ErrorBaseFormat, err)
-									fmt.Printf(text)
+									text := color.Sprintf("%s\n", general.ErrorText(err))
+									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
 									general.PrintDelimiter(textLength)    // 分隔符
@@ -485,8 +485,8 @@ var installCmd = &cobra.Command{
 									continue
 								} else { // 为已安装的程序设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -495,12 +495,12 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 安装资源文件 - desktop 文件
-								archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", fmt.Sprintf("%s.desktop", name.(string))) // 解压得到的资源文件 - desktop 文件
-								localResourcesDesktopFile := filepath.Join(installResourcesPath, "applications", fmt.Sprintf("%s.desktop", name.(string)))       // 本地资源文件 - desktop 文件
+								archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", color.Sprintf("%s.desktop", name.(string))) // 解压得到的资源文件 - desktop 文件
+								localResourcesDesktopFile := filepath.Join(installResourcesPath, "applications", color.Sprintf("%s.desktop", name.(string)))       // 本地资源文件 - desktop 文件
 								if general.FileExist(archivedResourcesDesktopFile) {
 									if err := cli.InstallFile(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -514,8 +514,8 @@ var installCmd = &cobra.Command{
 								if general.FileExist(archivedResourcesIconFolder) {
 									files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 									if err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -525,8 +525,8 @@ var installCmd = &cobra.Command{
 									if !general.FileExist(localResourcesIconFolder) {
 										err := general.CreateDir(localResourcesIconFolder)
 										if err != nil {
-											text := fmt.Sprintf(general.ErrorBaseFormat, err)
-											fmt.Printf(text)
+											text := color.Sprintf("%s\n", general.ErrorText(err))
+											color.Printf(text)
 											// 分隔符和延时（延时使输出更加顺畅）
 											textLength = general.RealLength(text) // 分隔符长度
 											general.PrintDelimiter(textLength)    // 分隔符
@@ -538,8 +538,8 @@ var installCmd = &cobra.Command{
 										archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 										localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
 										if err := cli.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
-											text := fmt.Sprintf(general.ErrorBaseFormat, err)
-											fmt.Printf(text)
+											text := color.Sprintf("%s\n", general.ErrorText(err))
+											color.Printf(text)
 											// 分隔符和延时（延时使输出更加顺畅）
 											textLength = general.RealLength(text) // 分隔符长度
 											general.PrintDelimiter(textLength)    // 分隔符
@@ -549,13 +549,13 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 本次安装结束分隔符
-								text := fmt.Sprintf(general.SliceTraverse4PFormat, general.Yes, " ", name.(string), " ", remoteTag, " ", "installed")
-								fmt.Printf(text)
+								text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(remoteTag), general.FgMagenta("installed"))
+								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							} else { // 存在，更新
 								if err := os.Remove(localProgram); err != nil { // 删除已安装的旧程序
-									text := fmt.Sprintf(general.ErrorBaseFormat, err)
-									fmt.Printf(text)
+									text := color.Sprintf("%s\n", general.ErrorText(err))
+									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
 									general.PrintDelimiter(textLength)    // 分隔符
@@ -563,8 +563,8 @@ var installCmd = &cobra.Command{
 									continue
 								}
 								if err := cli.InstallFile(archivedProgram, localProgram, 0755); err != nil { // 安装新程序
-									text := fmt.Sprintf(general.ErrorBaseFormat, err)
-									fmt.Printf(text)
+									text := color.Sprintf("%s\n", general.ErrorText(err))
+									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
 									general.PrintDelimiter(textLength)    // 分隔符
@@ -572,8 +572,8 @@ var installCmd = &cobra.Command{
 									continue
 								} else { // 为已安装的程序设置可执行权限
 									if err := os.Chmod(localProgram, 0755); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -582,12 +582,12 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 安装资源文件 - desktop 文件
-								archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", fmt.Sprintf("%s.desktop", name.(string))) // 解压得到的资源文件 - desktop 文件
-								localResourcesDesktopFile := filepath.Join(installResourcesPath, "applications", fmt.Sprintf("%s.desktop", name.(string)))       // 本地资源文件 - desktop 文件
+								archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", color.Sprintf("%s.desktop", name.(string))) // 解压得到的资源文件 - desktop 文件
+								localResourcesDesktopFile := filepath.Join(installResourcesPath, "applications", color.Sprintf("%s.desktop", name.(string)))       // 本地资源文件 - desktop 文件
 								if general.FileExist(archivedResourcesDesktopFile) {
 									if err := cli.InstallFile(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -601,8 +601,8 @@ var installCmd = &cobra.Command{
 								if general.FileExist(archivedResourcesIconFolder) {
 									files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 									if err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -612,8 +612,8 @@ var installCmd = &cobra.Command{
 									if !general.FileExist(localResourcesIconFolder) {
 										err := general.CreateDir(localResourcesIconFolder)
 										if err != nil {
-											text := fmt.Sprintf(general.ErrorBaseFormat, err)
-											fmt.Printf(text)
+											text := color.Sprintf("%s\n", general.ErrorText(err))
+											color.Printf(text)
 											// 分隔符和延时（延时使输出更加顺畅）
 											textLength = general.RealLength(text) // 分隔符长度
 											general.PrintDelimiter(textLength)    // 分隔符
@@ -625,8 +625,8 @@ var installCmd = &cobra.Command{
 										archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 										localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
 										if err := cli.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
-											text := fmt.Sprintf(general.ErrorBaseFormat, err)
-											fmt.Printf(text)
+											text := color.Sprintf("%s\n", general.ErrorText(err))
+											color.Printf(text)
 											// 分隔符和延时（延时使输出更加顺畅）
 											textLength = general.RealLength(text) // 分隔符长度
 											general.PrintDelimiter(textLength)    // 分隔符
@@ -636,30 +636,30 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 本次更新结束分隔符
-								text := fmt.Sprintf(general.SliceTraverse5PFormat, general.Yes, " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
-								fmt.Printf(text)
+								text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagenta("updated"))
+								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
 							// 生成/更新自动补全脚本
 							for _, completionDir := range goCompletionDir {
 								if general.FileExist(completionDir.(string)) {
-									generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
+									generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
 									if err := general.RunCommand("bash", generateArgs); err != nil {
-										text := fmt.Sprintf(general.ErrorSuffixFormat, general.No, " ", acsInstallFailedMessage)
-										fmt.Printf(text)
+										text := color.Sprintf("%s %s\n", general.ErrorFlag, general.ErrorText(acsInstallFailedMessage))
+										color.Printf(text)
 										textLength = general.RealLength(text) // 分隔符长度
 										continue
 									} else {
-										text := fmt.Sprintf(general.SuccessSuffixFormat, general.Yes, " ", acsInstallSuccessMessage)
-										fmt.Printf(text)
+										text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(acsInstallSuccessMessage))
+										color.Printf(text)
 										textLength = general.RealLength(text) // 分隔符长度
 										break
 									}
 								}
 							}
 						} else { // 压缩包校验失败
-							text := fmt.Sprintf(general.ErrorSuffixFormat, "Archive file verification failed", ": ", filesInfo.ArchiveFileInfo.Name)
-							fmt.Printf(text)
+							text := color.Error.Sprintf("Archive file verification failed: %s\n", filesInfo.ArchiveFileInfo.Name)
+							color.Printf(text)
 							textLength = general.RealLength(text) // 分隔符长度
 						}
 					}
@@ -670,23 +670,23 @@ var installCmd = &cobra.Command{
 			} else if strings.ToLower(installMethod) == "source" {
 				// 创建临时目录
 				if err := general.CreateDir(installSourceTemp); err != nil {
-					fmt.Printf(general.ErrorBaseFormat, err)
+					color.Error.Println(err)
 					return
 				}
 				// 遍历所有程序名
 				for _, name := range goNames {
-					textLength := 0                                                                                                     // 输出文本的长度
-					goGithubLatestSourceTagApi := fmt.Sprintf(goLatestSourceTagApiFormat, goGithubApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
-					goGiteaLatestSourceTagApi := fmt.Sprintf(goLatestSourceTagApiFormat, goGiteaApi, goGiteaUsername, name.(string))    // 请求远端仓库最新 Tag 的 API
+					textLength := 0                                                                                                       // 输出文本的长度
+					goGithubLatestSourceTagApi := color.Sprintf(goLatestSourceTagApiFormat, goGithubApi, goGithubUsername, name.(string)) // 请求远端仓库最新 Tag 的 API
+					goGiteaLatestSourceTagApi := color.Sprintf(goLatestSourceTagApiFormat, goGiteaApi, goGiteaUsername, name.(string))    // 请求远端仓库最新 Tag 的 API
 					// 请求 API - GitHub
 					body, err := general.RequestApi(goGithubLatestSourceTagApi)
 					if err != nil {
-						fmt.Printf(general.ErrorBaseFormat, err)
+						color.Error.Println(err)
 						// 请求 API - Gitea
 						body, err = general.RequestApi(goGiteaLatestSourceTagApi)
 						if err != nil {
-							text := fmt.Sprintf(general.ErrorBaseFormat, err)
-							fmt.Printf(text)
+							text := color.Sprintf("%s\n", general.ErrorText(err))
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
@@ -697,8 +697,8 @@ var installCmd = &cobra.Command{
 					// 获取远端版本（用于 source 安装方法）
 					remoteTag, err := general.GetLatestSourceTag(body)
 					if err != nil {
-						text := fmt.Sprintf(general.ErrorBaseFormat, err)
-						fmt.Printf(text)
+						text := color.Sprintf("%s\n", general.ErrorText(err))
+						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
@@ -711,16 +711,16 @@ var installCmd = &cobra.Command{
 					localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 					// 比较远端和本地版本
 					if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-						text := fmt.Sprintf(general.SliceTraverse3PSuffixFormat, general.Dot, " ", name.(string), " ", remoteTag, " ", latestVersionMessage)
-						fmt.Printf(text)
+						text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreen(name.(string)), general.FgYellow(remoteTag), general.LightText(latestVersionMessage))
+						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
 						// 如果 Temp 中已有远端仓库则删除重新克隆
 						goSourceTempDir := filepath.Join(installSourceTemp, name.(string))
 						if general.FileExist(goSourceTempDir) {
 							if err := os.RemoveAll(goSourceTempDir); err != nil {
-								text := fmt.Sprintf(general.ErrorBaseFormat, err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
@@ -729,31 +729,31 @@ var installCmd = &cobra.Command{
 							}
 						}
 						// 克隆远端仓库 - GitHub
-						goGithubCloneBaseUrl := fmt.Sprintf("%s/%s", goGithubUrl, goGithubUsername) // 远端仓库基础克隆地址（除仓库名）
-						fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Clone ", name.(string), " ", "from GitHub ")
+						goGithubCloneBaseUrl := color.Sprintf("%s/%s", goGithubUrl, goGithubUsername) // 远端仓库基础克隆地址（除仓库名）
+						color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreen(name.(string)), "from GitHub")
 						if err := cli.CloneRepoViaHTTP(installSourceTemp, goGithubCloneBaseUrl, name.(string)); err != nil {
-							fmt.Printf(general.ErrorSuffixFormat, "error", " -> ", err)
+							color.Printf("%s\n", general.ErrorText("error -> ", err))
 							// 克隆远端仓库 - Gitea
-							goGiteaCloneBaseUrl := fmt.Sprintf("%s/%s", goGiteaUrl, goGiteaUsername) // 远端仓库基础克隆地址（除仓库名）
-							fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Clone ", name.(string), " ", "from Gitea ")
+							goGiteaCloneBaseUrl := color.Sprintf("%s/%s", goGiteaUrl, goGiteaUsername) // 远端仓库基础克隆地址（除仓库名）
+							color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreen(name.(string)), "from Gitea")
 							if err := cli.CloneRepoViaHTTP(installSourceTemp, goGiteaCloneBaseUrl, name.(string)); err != nil {
-								text := fmt.Sprintf(general.ErrorSuffixFormat, "error", " -> ", err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText("error -> ", err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
 								general.Delay(0.1)                    // 0.1s
 								continue
 							} else {
-								fmt.Printf(general.SuccessFormat, "success")
+								color.Println(general.SuccessText("success"))
 							}
 						} else {
-							fmt.Printf(general.SuccessFormat, "success")
+							color.Println(general.SuccessText("success"))
 						}
 						// 进到下载的远端文件目录
 						if err := general.GoToDir(goSourceTempDir); err != nil {
-							text := fmt.Sprintf(general.ErrorBaseFormat, err)
-							fmt.Printf(text)
+							text := color.Sprintf("%s\n", general.ErrorText(err))
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
@@ -764,8 +764,8 @@ var installCmd = &cobra.Command{
 						if general.FileExist("Makefile") { // Makefile 文件存在则使用 make 编译
 							makeArgs := []string{}
 							if err := general.RunCommand("make", makeArgs); err != nil {
-								text := fmt.Sprintf(general.ErrorBaseFormat, err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
@@ -775,8 +775,8 @@ var installCmd = &cobra.Command{
 						} else if general.FileExist("main.go") { // Makefile 文件不存在则使用 `go build` 命令编译
 							buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name.(string)}
 							if err := general.RunCommand("go", buildArgs); err != nil {
-								text := fmt.Sprintf(general.ErrorBaseFormat, err)
-								fmt.Printf(text)
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
@@ -784,8 +784,8 @@ var installCmd = &cobra.Command{
 								continue
 							}
 						} else {
-							text := fmt.Sprintf(general.ErrorBaseFormat, unableToCompileMessage)
-							fmt.Printf(text)
+							text := color.Error.Sprintf(unableToCompileMessage)
+							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
@@ -800,8 +800,8 @@ var installCmd = &cobra.Command{
 								if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令安装
 									makeArgs := []string{"install"}
 									if err := general.RunCommand("make", makeArgs); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -810,8 +810,8 @@ var installCmd = &cobra.Command{
 									}
 								} else { // Makefile 文件不存在则使用自定义函数安装
 									if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -820,8 +820,8 @@ var installCmd = &cobra.Command{
 									} else {
 										// 为已安装的程序设置可执行权限
 										if err := os.Chmod(localProgram, 0755); err != nil {
-											text := fmt.Sprintf(general.ErrorBaseFormat, err)
-											fmt.Printf(text)
+											text := color.Sprintf("%s\n", general.ErrorText(err))
+											color.Printf(text)
 											// 分隔符和延时（延时使输出更加顺畅）
 											textLength = general.RealLength(text) // 分隔符长度
 											general.PrintDelimiter(textLength)    // 分隔符
@@ -831,15 +831,15 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 本次安装结束分隔符
-								text := fmt.Sprintf(general.SliceTraverse4PFormat, general.Yes, " ", name.(string), " ", remoteTag, " ", "installed")
-								fmt.Printf(text)
+								text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(remoteTag), general.FgMagenta("installed"))
+								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							} else { // 存在，更新
 								if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令更新
 									makeArgs := []string{"install"}
 									if err := general.RunCommand("make", makeArgs); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -848,8 +848,8 @@ var installCmd = &cobra.Command{
 									}
 								} else { // Makefile 文件不存在则使用自定义函数更新
 									if err := os.Remove(localProgram); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -857,8 +857,8 @@ var installCmd = &cobra.Command{
 										continue
 									}
 									if err := cli.InstallFile(compileProgram, localProgram, 0755); err != nil {
-										text := fmt.Sprintf(general.ErrorBaseFormat, err)
-										fmt.Printf(text)
+										text := color.Sprintf("%s\n", general.ErrorText(err))
+										color.Printf(text)
 										// 分隔符和延时（延时使输出更加顺畅）
 										textLength = general.RealLength(text) // 分隔符长度
 										general.PrintDelimiter(textLength)    // 分隔符
@@ -867,8 +867,8 @@ var installCmd = &cobra.Command{
 									} else {
 										// 为已安装的程序设置可执行权限
 										if err := os.Chmod(localProgram, 0755); err != nil {
-											text := fmt.Sprintf(general.ErrorBaseFormat, err)
-											fmt.Printf(text)
+											text := color.Sprintf("%s\n", general.ErrorText(err))
+											color.Printf(text)
 											// 分隔符和延时（延时使输出更加顺畅）
 											textLength = general.RealLength(text) // 分隔符长度
 											general.PrintDelimiter(textLength)    // 分隔符
@@ -878,30 +878,30 @@ var installCmd = &cobra.Command{
 									}
 								}
 								// 本次更新结束分隔符
-								text := fmt.Sprintf(general.SliceTraverse5PFormat, general.Yes, " ", name.(string), " ", localVersion, " -> ", remoteTag, " ", "updated")
-								fmt.Printf(text)
+								text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagenta("updated"))
+								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 							}
 							// 生成/更新自动补全脚本
 							for _, completionDir := range goCompletionDir {
 								if general.FileExist(completionDir.(string)) {
-									generateArgs := []string{"-c", fmt.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
+									generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir.(string), name.(string))}
 									if err := general.RunCommand("bash", generateArgs); err != nil {
-										text := fmt.Sprintf(general.ErrorSuffixFormat, general.No, " ", acsInstallFailedMessage)
-										fmt.Printf(text)
+										text := color.Sprintf("%s %s\n", general.ErrorFlag, general.ErrorText(acsInstallFailedMessage))
+										color.Printf(text)
 										textLength = general.RealLength(text) // 分隔符长度
 										continue
 									} else {
-										text := fmt.Sprintf(general.SuccessSuffixFormat, general.Yes, " ", acsInstallSuccessMessage)
-										fmt.Printf(text)
+										text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(acsInstallSuccessMessage))
+										color.Printf(text)
 										textLength = general.RealLength(text) // 分隔符长度
 										break
 									}
 								}
 							}
 						} else {
-							text := fmt.Sprintf(general.ErrorBaseFormat, fmt.Sprintf("The source file %s does not exist", compileProgram))
-							fmt.Printf(text)
+							text := color.Error.Sprintf("The source file %s does not exist", compileProgram)
+							color.Printf(text)
 							textLength = general.RealLength(text) // 分隔符长度
 						}
 					}
@@ -910,8 +910,8 @@ var installCmd = &cobra.Command{
 					general.Delay(0.1)                 // 0.01s
 				}
 			} else {
-				text := fmt.Sprintf(general.ErrorSuffixFormat, fmt.Sprintf("Unsupported installation method '%s'", installMethod), ": ", "only 'release' and 'source' are supported")
-				fmt.Printf(text)
+				text := color.Error.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", installMethod)
+				color.Printf(text)
 			}
 		}
 	},

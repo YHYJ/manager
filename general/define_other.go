@@ -26,7 +26,7 @@ import (
 //   - 实际长度
 func RealLength(text string) int {
 	controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-	return len(controlRegex.ReplaceAllString(text, ""))
+	return len(controlRegex.ReplaceAllString(text, ""))-2
 }
 
 // PrintDelimiter 打印分隔符

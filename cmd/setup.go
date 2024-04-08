@@ -10,8 +10,6 @@ Description: 执行子命令 'setup'
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
 	"github.com/yhyj/manager/cli"
@@ -70,7 +68,7 @@ var setupCmd = &cobra.Command{
 			if err := general.WriteFile(cli.ChezmoiConfigFile, cli.ChezmoiConfig); err != nil {
 				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				fmt.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 		}
 		// 配置 cobra
@@ -83,7 +81,7 @@ var setupCmd = &cobra.Command{
 			if err := general.WriteFile(cli.CobraConfigFile, cli.CobraConfig); err != nil {
 				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				fmt.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 		}
 		// 配置 docker
@@ -101,7 +99,7 @@ var setupCmd = &cobra.Command{
 				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
 				successFormat = "%*s%s %s: %s\n"
-				fmt.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 			// docker mirrors
 			subjectMinorName = "docker mirrors"
@@ -112,7 +110,7 @@ var setupCmd = &cobra.Command{
 			if err := general.WriteFile(cli.DockerMirrorsConfigFile, cli.DockerMirrorsConfig); err != nil {
 				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				fmt.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 		}
 		// 配置 frpc
@@ -125,7 +123,7 @@ var setupCmd = &cobra.Command{
 			if err := general.WriteFile(cli.FrpcConfigFile, cli.FrpcConfig); err != nil {
 				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				fmt.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 		}
 		// 配置 git
@@ -138,7 +136,7 @@ var setupCmd = &cobra.Command{
 			if err := general.WriteFile(cli.GitConfigFile, cli.GitConfig); err != nil {
 				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				fmt.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 		}
 		// 配置 golang
@@ -151,7 +149,7 @@ var setupCmd = &cobra.Command{
 			if err := general.WriteFile(cli.GoConfigFile, cli.GoConfig); err != nil {
 				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				fmt.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 		}
 		// 配置 pip
@@ -164,7 +162,7 @@ var setupCmd = &cobra.Command{
 			if err := general.WriteFile(cli.PipConfigFile, cli.PipConfig); err != nil {
 				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				fmt.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 		}
 		// 配置 system-checkupdates
@@ -182,7 +180,7 @@ var setupCmd = &cobra.Command{
 				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
 				successFormat = "%*s%s %s: %s\n"
-				fmt.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 			// system-checkupdates service
 			subjectMinorName = "system-checkupdates service"
@@ -193,7 +191,7 @@ var setupCmd = &cobra.Command{
 			if err := general.WriteFile(cli.SystemCheckupdatesServiceConfigFile, cli.SystemCheckupdatesServiceConfig); err != nil {
 				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				fmt.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))
 			}
 		}
 	},
