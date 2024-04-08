@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-08 13:35:06
 
-Description: 由程序子命令 install 执行
+Description: 执行子命令 'install'
 */
 
 package cmd

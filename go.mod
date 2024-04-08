@@ -6,6 +6,7 @@ require (
 	github.com/cheggaaa/pb/v3 v3.1.5
 	github.com/go-git/go-git/v5 v5.7.0
 	github.com/godbus/dbus/v5 v5.1.0
+	github.com/gookit/color v1.5.4
 	github.com/pelletier/go-toml v1.9.5
 	github.com/spf13/cobra v1.7.0
 )
@@ -34,8 +35,9 @@ require (
 	github.com/skeema/knownhosts v1.1.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
+	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 )

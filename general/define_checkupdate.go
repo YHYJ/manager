@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-09-19 14:30:34
 
-Description: 执行检查程序更新操作
+Description: 检查程序更新
 */
 
 package general

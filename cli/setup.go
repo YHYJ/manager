@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-09 14:13:47
 
-Description: 子命令`setup`功能函数
+Description: 子命令 'setup' 的实现
 */
 
 package cli

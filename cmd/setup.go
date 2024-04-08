@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023]-06-08 13:43:59
 
-Description: 程序子命令'setup'时执行
+Description: 执行子命令 'setup'
 */
 
 package cmd

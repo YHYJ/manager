@@ -4,13 +4,12 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-07 11:08:32
 
-Description: 由程序子命令 version 执行
+Description: 版本信息
 */
 
 package general
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -29,20 +28,24 @@ var (
 
 // ProgramInfo 返回程序信息
 //
-// 参数：
-//   - only: 是否只返回程序版本
-//
 // 返回：
 //   - 程序信息
-func ProgramInfo(only bool) string {
-	programInfo := fmt.Sprintf("%s\n", Version)
-	if !only {
-		BuildTimeConverted := "Unknown"
-		timestamp, err := strconv.ParseInt(BuildTime, 10, 64)
-		if err == nil {
-			BuildTimeConverted = time.Unix(timestamp, 0).String()
-		}
-		programInfo = fmt.Sprintf("%s %s - Build rev %s\nBuilt on: %s\nBuilt by: %s\n", Name, Version, GitCommitHash, BuildTimeConverted, BuildBy)
+func ProgramInfo() map[string]string {
+	programInfo := make(map[string]string)
+
+	// 解析构建时间
+	BuildTimeConverted := "Unknown"
+	timestamp, err := strconv.ParseInt(BuildTime, 10, 64)
+	if err == nil {
+		BuildTimeConverted = time.Unix(timestamp, 0).String()
 	}
+
+	programInfo["Name"] = Name
+	programInfo["Version"] = Version
+	programInfo["Project"] = Project
+	programInfo["GitCommitHash"] = GitCommitHash
+	programInfo["BuildTime"] = BuildTimeConverted
+	programInfo["BuildBy"] = BuildBy
+
 	return programInfo
 }

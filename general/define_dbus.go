@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-13 13:10:41
 
-Description: D-Bus总线通信
+Description: D-Bus 总线通信
 */
 
 package general

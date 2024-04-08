@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023]-06-07 16:41:43
 
-Description: 由程序子命令 config 执行
+Description: 执行子命令 'config'
 */
 
 package cmd

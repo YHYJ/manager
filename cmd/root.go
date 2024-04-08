@@ -4,7 +4,7 @@ Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-06-07 16:06:45
 
-Description: 程序未带子命令或参数时执行
+Description: 执行程序
 */
 
 package cmd
