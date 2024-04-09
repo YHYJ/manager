@@ -13,11 +13,12 @@ import (
 	"regexp"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/gookit/color"
 )
 
-// RealLength 去除转义字符，获取文本实际长度
+// RealLength 去除控制字符和图标的附加字符，获取文本实际长度
 //
 // 参数：
 //   - text: 文本
@@ -25,8 +26,8 @@ import (
 // 返回：
 //   - 实际长度
 func RealLength(text string) int {
-	controlRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-	return len(controlRegex.ReplaceAllString(text, ""))-2
+	combinedRegex := regexp.MustCompile(`\x1b\[[0-9;]*m|\x{FE0E}|\x{FE0F}`)
+	return utf8.RuneCountInString(combinedRegex.ReplaceAllString(text, ""))
 }
 
 // PrintDelimiter 打印分隔符
