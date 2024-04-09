@@ -55,6 +55,7 @@ var (
 	SecondaryText = color.Secondary.Render // Secondary 文本
 )
 
+// 进度条变量
 var ProgressParameters = map[string]string{
 	"view": "0", // 是否显示进度条 0: 不显示 1: 显示
 }
@@ -67,21 +68,19 @@ var (
 	ErrorFlag    = "❌"  // 运行状态符号 - 失败
 )
 
-// 输出文本
 var (
-	LatestVersionMessage     = "is already the latest version"                 // 已安装的程序和脚本为最新版
-	UnableToCompileMessage   = "Makefile or main.go file does not exist"       // 缺失编译文件无法完成编译
-	AcsInstallSuccessMessage = "auto-completion script installed successfully" // 自动补全脚本安装成功
-	AcsInstallFailedMessage  = "auto-completion script installation failed"    // 自动补全脚本安装失败
+	LatestVersionMessage     = "is already the latest version"                 // 输出文本 - 已安装的程序和脚本为最新版
+	UnableToCompileMessage   = "Makefile or main.go file does not exist"       // 输出文本 - 缺失编译文件无法完成编译
+	AcsInstallSuccessMessage = "auto-completion script installed successfully" // 输出文本 - 自动补全脚本安装成功
+	AcsInstallFailedMessage  = "auto-completion script installation failed"    // 输出文本 - 自动补全脚本安装失败
 )
 
-// 字符串格式
 var (
-	GoLatestReleaseTagApiFormat      = "%s/repos/%s/%s/releases/latest" // 请求远端仓库最新 Tag 的 API - Release
-	GoLatestSourceTagApiFormat       = "%s/repos/%s/%s/tags"            // 请求远端仓库最新 Tag 的 API - Source
-	ShellLatestHashApiFormat         = "%s/repos/%s/%s/contents/%s/%s"  // 请求远端仓库最新脚本的 Hash 值的 API
-	ShellGithubBaseDownloadUrlFormat = "%s/%s/%s/%s"                    // 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - GitHub 格式
-	ShellGiteaBaseDownloadUrlFormat  = "%s/%s/%s/raw/branch/%s"         // 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Gitea 格式
+	GoLatestReleaseTagApiFormat      = "%s/repos/%s/%s/releases/latest" // API 和下载地址 - 请求远端仓库最新 Tag 的 API - Release
+	GoLatestSourceTagApiFormat       = "%s/repos/%s/%s/tags"            // API 和下载地址 - 请求远端仓库最新 Tag 的 API - Source
+	ShellLatestHashApiFormat         = "%s/repos/%s/%s/contents/%s/%s"  // API 和下载地址 - 请求远端仓库最新脚本的 Hash 值的 API
+	ShellGithubBaseDownloadUrlFormat = "%s/%s/%s/%s"                    // API 和下载地址 - 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - GitHub 格式
+	ShellGiteaBaseDownloadUrlFormat  = "%s/%s/%s/raw/branch/%s"         // API 和下载地址 - 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Gitea 格式
 )
 
 // ---------- 环境变量
