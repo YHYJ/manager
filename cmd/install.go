@@ -181,140 +181,6 @@ var installCmd = &cobra.Command{
 			goFlag, shellFlag = true, true
 		}
 
-		// 安装/更新 shell 脚本
-		if shellFlag {
-			color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyan("shell-based"))
-			// 设置代理
-			general.SetVariable("http_proxy", httpProxy)
-			general.SetVariable("https_proxy", httpsProxy)
-			// 创建临时目录
-			if err := general.CreateDir(installSourceTemp); err != nil {
-				color.Error.Println(err)
-				return
-			}
-			// 遍历所有脚本名
-			for _, name := range shellNames {
-				textLength := 0                                                                                                                              // 输出文本的长度
-				shellGithubLatestHashApi := color.Sprintf(shellLatestHashApiFormat, shellGithubApi, shellGithubUsername, shellRepo, shellDir, name.(string)) // 请求远端仓库最新脚本的 Hash 值的 API
-				shellGiteaLatestHashApi := color.Sprintf(shellLatestHashApiFormat, shellGiteaApi, shellGiteaUsername, shellRepo, shellDir, name.(string))    // 请求远端仓库最新脚本的 Hash 值的 API
-				// 请求 API - GitHub
-				body, err := general.RequestApi(shellGithubLatestHashApi)
-				if err != nil {
-					color.Error.Println(err)
-					// 请求 API - Gitea
-					body, err = general.RequestApi(shellGiteaLatestHashApi)
-					if err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
-						color.Printf(text)
-						// 分隔符和延时（延时使输出更加顺畅）
-						textLength = general.RealLength(text) // 分隔符长度
-						general.PrintDelimiter(textLength)    // 分隔符
-						general.Delay(0.1)                    // 0.1s
-						continue
-					}
-				}
-				// 获取远端脚本 Hash
-				remoteHash, err := general.GetLatestSourceHash(body)
-				if err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
-					color.Printf(text)
-					// 分隔符和延时（延时使输出更加顺畅）
-					textLength = general.RealLength(text) // 分隔符长度
-					general.PrintDelimiter(textLength)    // 分隔符
-					general.Delay(0.1)                    // 0.1s
-					continue
-				}
-				// 获取本地脚本 Hash
-				localProgram := filepath.Join(installProgramPath, name.(string)) // 本地程序路径
-				gitHashObjectArgs := []string{"hash-object", localProgram}       // 本地程序参数
-				localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
-				// 比较远端和本地脚本 Hash
-				if remoteHash == localHash { // Hash 一致，则输出无需更新信息
-					text := color.Sprintf("%s %s %s\n", general.LatestFlag, general.FgGreen(name.(string)), latestVersionMessage)
-					color.Printf(text)
-					textLength = general.RealLength(text) // 分隔符长度
-				} else { // Hash 不一致，则更新脚本，并输出已更新信息
-					shellUrlFile := filepath.Join(shellDir, name.(string))                        // 脚本在仓库中的路径
-					scriptLocalPath := filepath.Join(installSourceTemp, shellRepo, name.(string)) // 脚本本地存储位置
-					// 下载远端脚本 - GitHub
-					shellGithubBaseDownloadUrl := color.Sprintf(shellGithubBaseDownloadUrlFormat, shellGithubRaw, shellGithubUsername, shellRepo, shellGithubBranch) // 脚本远端仓库基础地址
-					fileUrl := color.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
-					if err := cli.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
-						color.Error.Println(err)
-						// 下载远端脚本 - Gitea
-						shellGiteaBaseDownloadUrl := color.Sprintf(shellGiteaBaseDownloadUrlFormat, shellGiteaRaw, shellGiteaUsername, shellRepo, shellGiteaBranch) // 脚本远端仓库基础地址
-						fileUrl := color.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
-						if err = cli.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
-							color.Printf(text)
-							// 分隔符和延时（延时使输出更加顺畅）
-							textLength = general.RealLength(text) // 分隔符长度
-							general.PrintDelimiter(textLength)    // 分隔符
-							general.Delay(0.1)                    // 0.1s
-							continue
-						}
-					}
-					// 检测脚本文件是否存在
-					if general.FileExist(scriptLocalPath) {
-						// 检测本地程序是否存在
-						if commandErr != nil { // 不存在，安装
-							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
-								color.Printf(text)
-								// 分隔符和延时（延时使输出更加顺畅）
-								textLength = general.RealLength(text) // 分隔符长度
-								general.PrintDelimiter(textLength)    // 分隔符
-								general.Delay(0.1)                    // 0.1s
-								continue
-							} else {
-								// 为已安装的脚本设置可执行权限
-								if err := os.Chmod(localProgram, 0755); err != nil {
-									color.Error.Println(err)
-								}
-								text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(remoteHash[:6]), general.FgMagenta("installed"))
-								color.Printf(text)
-								textLength = general.RealLength(text) // 分隔符长度
-							}
-						} else { // 存在，更新
-							if err := os.Remove(localProgram); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
-								color.Printf(text)
-								// 分隔符和延时（延时使输出更加顺畅）
-								textLength = general.RealLength(text) // 分隔符长度
-								general.PrintDelimiter(textLength)    // 分隔符
-								general.Delay(0.1)                    // 0.1s
-								continue
-							}
-							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
-								color.Printf(text)
-								// 分隔符和延时（延时使输出更加顺畅）
-								textLength = general.RealLength(text) // 分隔符长度
-								general.PrintDelimiter(textLength)    // 分隔符
-								general.Delay(0.1)                    // 0.1s
-								continue
-							} else {
-								// 为已更新的脚本设置可执行权限
-								if err := os.Chmod(localProgram, 0755); err != nil {
-									color.Error.Println(err)
-								}
-								text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(localHash[:6]), general.LightText("->"), general.NoteText(remoteHash[:6]), general.FgMagenta("updated"))
-								color.Printf(text)
-								textLength = general.RealLength(text) // 分隔符长度
-							}
-						}
-					} else {
-						text := color.Error.Sprintf("The source file %s does not exist\n", scriptLocalPath)
-						color.Printf(text)
-						textLength = general.RealLength(text) // 分隔符长度
-					}
-				}
-				// 分隔符和延时（延时使输出更加顺畅）
-				general.PrintDelimiter(textLength) // 分隔符
-				general.Delay(0.1)                 // 0.1s
-			}
-		}
-
 		color.Println()
 
 		// 安装/更新基于 go 的程序
@@ -329,7 +195,8 @@ var installCmd = &cobra.Command{
 			general.ProgressParameters["sep"] = "-"
 
 			// 使用配置的安装方式进行安装
-			if strings.ToLower(installMethod) == "release" {
+			switch strings.ToLower(installMethod) {
+			case "release":
 				// 创建临时目录
 				if err := general.CreateDir(installReleaseTemp); err != nil {
 					color.Error.Println(err)
@@ -669,7 +536,7 @@ var installCmd = &cobra.Command{
 					general.PrintDelimiter(textLength) // 分隔符
 					general.Delay(0.1)                 // 0.01s
 				}
-			} else if strings.ToLower(installMethod) == "source" {
+			case "source":
 				// 创建临时目录
 				if err := general.CreateDir(installSourceTemp); err != nil {
 					color.Error.Println(err)
@@ -911,9 +778,145 @@ var installCmd = &cobra.Command{
 					general.PrintDelimiter(textLength) // 分隔符
 					general.Delay(0.1)                 // 0.01s
 				}
-			} else {
+			default:
 				text := color.Error.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", installMethod)
 				color.Printf(text)
+			}
+		}
+
+		color.Println()
+
+		// 安装/更新 shell 脚本
+		if shellFlag {
+			color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyan("shell-based"))
+			// 设置代理
+			general.SetVariable("http_proxy", httpProxy)
+			general.SetVariable("https_proxy", httpsProxy)
+			// 创建临时目录
+			if err := general.CreateDir(installSourceTemp); err != nil {
+				color.Error.Println(err)
+				return
+			}
+			// 遍历所有脚本名
+			for _, name := range shellNames {
+				textLength := 0                                                                                                                              // 输出文本的长度
+				shellGithubLatestHashApi := color.Sprintf(shellLatestHashApiFormat, shellGithubApi, shellGithubUsername, shellRepo, shellDir, name.(string)) // 请求远端仓库最新脚本的 Hash 值的 API
+				shellGiteaLatestHashApi := color.Sprintf(shellLatestHashApiFormat, shellGiteaApi, shellGiteaUsername, shellRepo, shellDir, name.(string))    // 请求远端仓库最新脚本的 Hash 值的 API
+				// 请求 API - GitHub
+				body, err := general.RequestApi(shellGithubLatestHashApi)
+				if err != nil {
+					color.Error.Println(err)
+					// 请求 API - Gitea
+					body, err = general.RequestApi(shellGiteaLatestHashApi)
+					if err != nil {
+						text := color.Sprintf("%s\n", general.ErrorText(err))
+						color.Printf(text)
+						// 分隔符和延时（延时使输出更加顺畅）
+						textLength = general.RealLength(text) // 分隔符长度
+						general.PrintDelimiter(textLength)    // 分隔符
+						general.Delay(0.1)                    // 0.1s
+						continue
+					}
+				}
+				// 获取远端脚本 Hash
+				remoteHash, err := general.GetLatestSourceHash(body)
+				if err != nil {
+					text := color.Sprintf("%s\n", general.ErrorText(err))
+					color.Printf(text)
+					// 分隔符和延时（延时使输出更加顺畅）
+					textLength = general.RealLength(text) // 分隔符长度
+					general.PrintDelimiter(textLength)    // 分隔符
+					general.Delay(0.1)                    // 0.1s
+					continue
+				}
+				// 获取本地脚本 Hash
+				localProgram := filepath.Join(installProgramPath, name.(string)) // 本地程序路径
+				gitHashObjectArgs := []string{"hash-object", localProgram}       // 本地程序参数
+				localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
+				// 比较远端和本地脚本 Hash
+				if remoteHash == localHash { // Hash 一致，则输出无需更新信息
+					text := color.Sprintf("%s %s %s\n", general.LatestFlag, general.FgGreen(name.(string)), latestVersionMessage)
+					color.Printf(text)
+					textLength = general.RealLength(text) // 分隔符长度
+				} else { // Hash 不一致，则更新脚本，并输出已更新信息
+					shellUrlFile := filepath.Join(shellDir, name.(string))                        // 脚本在仓库中的路径
+					scriptLocalPath := filepath.Join(installSourceTemp, shellRepo, name.(string)) // 脚本本地存储位置
+					// 下载远端脚本 - GitHub
+					shellGithubBaseDownloadUrl := color.Sprintf(shellGithubBaseDownloadUrlFormat, shellGithubRaw, shellGithubUsername, shellRepo, shellGithubBranch) // 脚本远端仓库基础地址
+					fileUrl := color.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
+					if err := cli.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
+						color.Error.Println(err)
+						// 下载远端脚本 - Gitea
+						shellGiteaBaseDownloadUrl := color.Sprintf(shellGiteaBaseDownloadUrlFormat, shellGiteaRaw, shellGiteaUsername, shellRepo, shellGiteaBranch) // 脚本远端仓库基础地址
+						fileUrl := color.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
+						if err = cli.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
+							text := color.Sprintf("%s\n", general.ErrorText(err))
+							color.Printf(text)
+							// 分隔符和延时（延时使输出更加顺畅）
+							textLength = general.RealLength(text) // 分隔符长度
+							general.PrintDelimiter(textLength)    // 分隔符
+							general.Delay(0.1)                    // 0.1s
+							continue
+						}
+					}
+					// 检测脚本文件是否存在
+					if general.FileExist(scriptLocalPath) {
+						// 检测本地程序是否存在
+						if commandErr != nil { // 不存在，安装
+							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
+								// 分隔符和延时（延时使输出更加顺畅）
+								textLength = general.RealLength(text) // 分隔符长度
+								general.PrintDelimiter(textLength)    // 分隔符
+								general.Delay(0.1)                    // 0.1s
+								continue
+							} else {
+								// 为已安装的脚本设置可执行权限
+								if err := os.Chmod(localProgram, 0755); err != nil {
+									color.Error.Println(err)
+								}
+								text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(remoteHash[:6]), general.FgMagenta("installed"))
+								color.Printf(text)
+								textLength = general.RealLength(text) // 分隔符长度
+							}
+						} else { // 存在，更新
+							if err := os.Remove(localProgram); err != nil {
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
+								// 分隔符和延时（延时使输出更加顺畅）
+								textLength = general.RealLength(text) // 分隔符长度
+								general.PrintDelimiter(textLength)    // 分隔符
+								general.Delay(0.1)                    // 0.1s
+								continue
+							}
+							if err := cli.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
+								text := color.Sprintf("%s\n", general.ErrorText(err))
+								color.Printf(text)
+								// 分隔符和延时（延时使输出更加顺畅）
+								textLength = general.RealLength(text) // 分隔符长度
+								general.PrintDelimiter(textLength)    // 分隔符
+								general.Delay(0.1)                    // 0.1s
+								continue
+							} else {
+								// 为已更新的脚本设置可执行权限
+								if err := os.Chmod(localProgram, 0755); err != nil {
+									color.Error.Println(err)
+								}
+								text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name.(string)), general.FgYellow(localHash[:6]), general.LightText("->"), general.NoteText(remoteHash[:6]), general.FgMagenta("updated"))
+								color.Printf(text)
+								textLength = general.RealLength(text) // 分隔符长度
+							}
+						}
+					} else {
+						text := color.Error.Sprintf("The source file %s does not exist\n", scriptLocalPath)
+						color.Printf(text)
+						textLength = general.RealLength(text) // 分隔符长度
+					}
+				}
+				// 分隔符和延时（延时使输出更加顺畅）
+				general.PrintDelimiter(textLength) // 分隔符
+				general.Delay(0.1)                 // 0.1s
 			}
 		}
 	},
