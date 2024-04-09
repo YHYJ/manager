@@ -124,6 +124,19 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"resources_path": installResourcesPath, // 资源安装路径
 			"source_temp":    installSourceTemp,    // Source 安装方式的基础存储目录
 			"release_temp":   installReleaseTemp,   // Release 安装方式的基础存储目录
+			"self": map[string]interface{}{ // 管理程序本身的配置
+				"name":            strings.ToLower(general.Name),   // 管理程序名
+				"release_api":     "https://api.github.com",        // Release 安装源 API 地址
+				"release_accept":  "application/vnd.github+json",   // Release 安装源请求头参数
+				"generate_path":   "build",                         // Source 安装编译结果存储文件夹
+				"github_url":      "https://github.com",            // Source 安装 - GitHub 安装源地址
+				"github_api":      "https://api.github.com",        // Source 安装 - GitHub 安装源 API 地址
+				"github_username": "YHYJ",                          // Source 安装 - GitHub 安装源用户名
+				"gitea_url":       "https://git.yj1516.top",        // Source 安装 - Gitea 安装源地址
+				"gitea_api":       "https://git.yj1516.top/api/v1", // Source 安装 - Gitea 安装源 API 地址
+				"gitea_username":  "YJ",                            // Source 安装 - Gitea 安装源用户名
+				"completion_dir":  goCompletionDir,                 // 自动补全文件夹
+			},
 			"go": map[string]interface{}{ // 基于 go 编写的程序的管理配置
 				"names":           goNames,                         // 可用的程序列表
 				"release_api":     "https://api.github.com",        // Release 安装源 API 地址
