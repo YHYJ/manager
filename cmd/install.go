@@ -183,7 +183,7 @@ var installCmd = &cobra.Command{
 
 		// 安装/更新 shell 脚本
 		if shellFlag {
-			color.Printf("\n\x1b[3m%s\x1b[0m\n\n", general.FgCyan("Installing shell-based programs..."))
+			color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyan("shell-based"))
 			// 设置代理
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
@@ -315,9 +315,11 @@ var installCmd = &cobra.Command{
 			}
 		}
 
+		color.Println()
+
 		// 安装/更新基于 go 的程序
 		if goFlag {
-			color.Printf("\n\x1b[3m%s\x1b[0m\n\n", general.FgCyan("Installing go-based programs..."))
+			color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyan("golang-based"))
 			// 设置代理
 			general.SetVariable("http_proxy", httpProxy)
 			general.SetVariable("https_proxy", httpsProxy)
