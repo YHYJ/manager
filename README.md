@@ -106,22 +106,36 @@ curl -fsSL https://raw.githubusercontent.com/YHYJ/manager/main/install.sh | sudo
 ```toml
 [install]                               # 全局安装配置
   method = "release"                    # 安装方法，可选值为 [release, source]，分别为使用 Github 的 Release 和源码安装（release 方法目前仅支持基于 go 的程序）
-  path = "/usr/local/bin"               # 程序/脚本安装路径
+  program_path = "/usr/local/bin"       # 程序/脚本存储路径
   release_temp = "/tmp/manager/release" # release 安装方法所下载文件的存储路径
+  resources_path = "/usr/local/share"   # 资源文件存储路径
   source_temp = "/tmp/manager/source"   # source 安装方法所下载文件的存储路径
 
-  [install.go]                                                                                          # 基于 go 的程序的安装配置
-    completion_dir = ["/home/yj/.cache/oh-my-zsh/completions", "/home/yj/.oh-my-zsh/cache/completions"] # 补全文件的存储路径
-    generate_path = "build"                                                                             # 编译生成文件的存储路径
-    gitea_api = "https://git.yj1516.top/api/v1"                                                         # source 安装方法 - Gitea 安装源 API 地址
-    gitea_url = "https://git.yj1516.top"                                                                # source 安装方法 - Gitea 安装源地址
-    gitea_username = "YJ"                                                                               # source 安装方法 - Gitea 安装源用户名
-    github_api = "https://api.github.com"                                                               # source 安装方法 - Github 安装源 API 地址
-    github_url = "https://github.com"                                                                   # source 安装方法 - Github 安装源地址
-    github_username = "YHYJ"                                                                            # source 安装方法 - Github 安装源用户名
-    names = ["checker", "repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet"]       # 要安装的程序列表
-    release_accept = "application/vnd.github+json"                                                      # release 安装方法 - API 请求头参数
-    release_api = "https://api.github.com"                                                              # release 安装方法 - API 地址
+  [install.go]                                                                                             # 基于 go 的程序的安装配置
+    completion_dir = ["/home/yj/.cache/oh-my-zsh/completions", "/home/yj/.oh-my-zsh/cache/completions"]    # 补全文件的存储路径
+    generate_path = "build"                                                                                # 编译生成文件的存储路径
+    gitea_api = "https://git.yj1516.top/api/v1"                                                            # source 安装方法 - Gitea 安装源 API 地址
+    gitea_url = "https://git.yj1516.top"                                                                   # source 安装方法 - Gitea 安装源地址
+    gitea_username = "YJ"                                                                                  # source 安装方法 - Gitea 安装源用户名
+    github_api = "https://api.github.com"                                                                  # source 安装方法 - Github 安装源 API 地址
+    github_url = "https://github.com"                                                                      # source 安装方法 - Github 安装源地址
+    github_username = "YHYJ"                                                                               # source 安装方法 - Github 安装源用户名
+    names = ["checker", "repos", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet", "trash"] # 要安装的程序列表
+    release_accept = "application/vnd.github+json"                                                         # release 安装方法 - API 请求头参数
+    release_api = "https://api.github.com"                                                                 # release 安装方法 - API 地址
+
+  [install.self]                                                                                           # 管理程序本身的配置
+    completion_dir = ["/home/yj/.cache/oh-my-zsh/completions", "/home/yj/.oh-my-zsh/cache/completions"]    # 补全文件的存储路径
+    generate_path = "build"                                                                                # 编译生成文件的存储路径
+    gitea_api = "https://git.yj1516.top/api/v1"                                                            # source 安装方法 - Gitea 安装源 API 地址
+    gitea_url = "https://git.yj1516.top"                                                                   # source 安装方法 - Gitea 安装源地址
+    gitea_username = "YJ"                                                                                  # source 安装方法 - Gitea 安装源用户名
+    github_api = "https://api.github.com"                                                                  # source 安装方法 - Github 安装源 API 地址
+    github_url = "https://github.com"                                                                      # source 安装方法 - Github 安装源地址
+    github_username = "YHYJ"                                                                               # source 安装方法 - Github 安装源用户名
+    name = "manager"                                                                                       # 管理程序名
+    release_accept = "application/vnd.github+json"                                                         # release 安装方法 - API 请求头参数
+    release_api = "https://api.github.com"                                                                 # release 安装方法 - API 地址
 
   [install.shell]                                    # shell 脚本的安装配置
     dir = "System-Script/app"                        # shell 脚本在仓库中的路径
