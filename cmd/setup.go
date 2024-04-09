@@ -145,8 +145,8 @@ var setupCmd = &cobra.Command{
 			descriptorText = "environment file"
 			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlue(subjectName))
 			color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.GoConfigFile))
-			if err := general.WriteFile(cli.GoConfigFile, cli.GoConfig); err != nil {
+			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.GolangConfigFile))
+			if err := general.WriteFile(cli.GolangConfigFile, cli.GolangConfig); err != nil {
 				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
 				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellow("Setup completed"))

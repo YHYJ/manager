@@ -34,7 +34,7 @@ var (
 	ChezmoiConfigFile   = filepath.Join(home, ".config", "chezmoi", "chezmoi.toml")
 
 	// cobra 的依赖项
-	CobraDependencies = filepath.Join(goGOBIN, "cobra-cli")
+	CobraDependencies = filepath.Join(golangGOBIN, "cobra-cli")
 	// cobra 配置
 	cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
 	cobraAuthor       = "YJ"
@@ -82,16 +82,16 @@ var (
 	GitConfigFile        = filepath.Join(home, ".gitconfig")
 
 	// go 的依赖项
-	GoDependencies = "/usr/bin/go"
+	GolangDependencies = "/usr/bin/go"
 	// go 配置
-	goConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
-	goGO111MODULE  = "on"
-	goGOBIN        = filepath.Join(home, ".go", "bin")
-	goGOPATH       = filepath.Join(home, ".go")
-	goGOCACHE      = filepath.Join(home, ".cache", "go", "go-build")
-	goGOMODCACHE   = filepath.Join(home, ".cache", "go", "pkg", "mod")
-	GoConfig       = fmt.Sprintf(goConfigFormat, goGO111MODULE, goGOBIN, goGOPATH, goGOCACHE, goGOMODCACHE)
-	GoConfigFile   = filepath.Join(home, ".config", "go", "env")
+	golangConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
+	golangGO111MODULE  = "on"
+	golangGOBIN        = filepath.Join(home, ".go", "bin")
+	golangGOPATH       = filepath.Join(home, ".go")
+	golangGOCACHE      = filepath.Join(home, ".cache", "go", "go-build")
+	golangGOMODCACHE   = filepath.Join(home, ".cache", "go", "pkg", "mod")
+	GolangConfig       = fmt.Sprintf(golangConfigFormat, golangGO111MODULE, golangGOBIN, golangGOPATH, golangGOCACHE, golangGOMODCACHE)
+	GolangConfigFile   = filepath.Join(home, ".config", "go", "env")
 
 	// pip 的依赖项
 	PipDependencies = "/usr/bin/pip"
