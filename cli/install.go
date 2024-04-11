@@ -25,88 +25,13 @@ import (
 	"github.com/yhyj/manager/general"
 )
 
-// 用于转换 Toml 配置树的结构体
-type Config struct {
-	Install  InstallConfig  `toml:"install"`
-	Variable VariableConfig `toml:"variable"`
-}
-type InstallConfig struct {
-	Method        string      `toml:"method"`
-	ProgramPath   string      `toml:"program_path"`
-	ReleaseTemp   string      `toml:"release_temp"`
-	SourceTemp    string      `toml:"source_temp"`
-	ResourcesPath string      `toml:"resources_path"`
-	Self          SelfConfig  `toml:"self"`
-	Go            GoConfig    `toml:"go"`
-	Shell         ShellConfig `toml:"shell"`
-}
-type VariableConfig struct {
-	HTTPProxy  string `toml:"http_proxy"`
-	HTTPSProxy string `toml:"https_proxy"`
-}
-type SelfConfig struct {
-	Name           string   `toml:"name"`
-	ReleaseApi     string   `toml:"release_api"`
-	ReleaseAccept  string   `toml:"release_accept"`
-	GeneratePath   string   `toml:"generate_path"`
-	GithubUrl      string   `toml:"github_url"`
-	GithubApi      string   `toml:"github_api"`
-	GithubUsername string   `toml:"github_username"`
-	GiteaUrl       string   `toml:"gitea_url"`
-	GiteaApi       string   `toml:"gitea_api"`
-	GiteaUsername  string   `toml:"gitea_username"`
-	CompletionDir  []string `toml:"completion_dir"`
-}
-type GoConfig struct {
-	Names          []string `toml:"names"`
-	ReleaseApi     string   `toml:"release_api"`
-	ReleaseAccept  string   `toml:"release_accept"`
-	GeneratePath   string   `toml:"generate_path"`
-	GithubUrl      string   `toml:"github_url"`
-	GithubApi      string   `toml:"github_api"`
-	GithubUsername string   `toml:"github_username"`
-	GiteaUrl       string   `toml:"gitea_url"`
-	GiteaApi       string   `toml:"gitea_api"`
-	GiteaUsername  string   `toml:"gitea_username"`
-	CompletionDir  []string `toml:"completion_dir"`
-}
-type ShellConfig struct {
-	Names          []string `toml:"names"`
-	Repo           string   `toml:"repo"`
-	Dir            string   `toml:"dir"`
-	GithubApi      string   `toml:"github_api"`
-	GithubRaw      string   `toml:"github_raw"`
-	GithubUsername string   `toml:"github_username"`
-	GithubBranch   string   `toml:"github_branch"`
-	GiteaApi       string   `toml:"gitea_api"`
-	GiteaRaw       string   `toml:"gitea_raw"`
-	GiteaUsername  string   `toml:"gitea_username"`
-	GiteaBranch    string   `toml:"gitea_branch"`
-}
-
-// LoadConfigToStruct 将 Toml 配置树加载到结构体
-//
-// 参数：
-//   - configTree: 解析 toml 配置文件得到的配置树
-//
-// 返回：
-//   - 结构体
-//   - 错误信息
-func LoadConfigToStruct(configTree *toml.Tree) (*Config, error) {
-	var config Config
-	if err := configTree.Unmarshal(&config); err != nil {
-		return nil, err
-	}
-	return &config, nil
-}
-
 // InstallSelfProgram 安装/更新管理程序本身
 //
 // 参数：
 //   - configTree: 解析 toml 配置文件得到的配置树
 func InstallSelfProgram(configTree *toml.Tree) {
 	// 获取配置项
-	config, err := LoadConfigToStruct(configTree)
+	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
 		color.Error.Println(err)
 		return
@@ -713,7 +638,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 //   - configTree: 解析 toml 配置文件得到的配置树
 func InstallGolangBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
-	config, err := LoadConfigToStruct(configTree)
+	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
 		color.Error.Println(err)
 		return
@@ -1322,7 +1247,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 //   - configTree: 解析 toml 配置文件得到的配置树
 func InstallShellBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
-	config, err := LoadConfigToStruct(configTree)
+	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
 		color.Error.Println(err)
 		return
