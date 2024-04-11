@@ -29,171 +29,30 @@ var setupCmd = &cobra.Command{
 		}
 
 		// 解析参数
+		allFlags := make(map[string]bool)
 		allFlag, _ := cmd.Flags().GetBool("all")
-		chezmoiFlag, _ := cmd.Flags().GetBool("chezmoi")
-		cobraFlag, _ := cmd.Flags().GetBool("cobra")
-		dockerFlag, _ := cmd.Flags().GetBool("docker")
-		frpcFlag, _ := cmd.Flags().GetBool("frpc")
-		gitFlag, _ := cmd.Flags().GetBool("git")
-		goFlag, _ := cmd.Flags().GetBool("go")
-		pipFlag, _ := cmd.Flags().GetBool("pip")
-		systemcheckupdatesFlag, _ := cmd.Flags().GetBool("system-checkupdates")
-
-		// 根据参数执行操作
 		if allFlag {
-			chezmoiFlag, cobraFlag, dockerFlag, frpcFlag, gitFlag, goFlag, pipFlag, systemcheckupdatesFlag = true, true, true, true, true, true, true, true
+			allFlags["chezmoiFlag"] = true
+			allFlags["cobraFlag"] = true
+			allFlags["dockerFlag"] = true
+			allFlags["frpcFlag"] = true
+			allFlags["gitFlag"] = true
+			allFlags["goFlag"] = true
+			allFlags["pipFlag"] = true
+			allFlags["systemcheckupdatesFlag"] = true
+		} else {
+			allFlags["chezmoiFlag"], _ = cmd.Flags().GetBool("chezmoi")
+			allFlags["cobraFlag"], _ = cmd.Flags().GetBool("cobra")
+			allFlags["dockerFlag"], _ = cmd.Flags().GetBool("docker")
+			allFlags["frpcFlag"], _ = cmd.Flags().GetBool("frpc")
+			allFlags["gitFlag"], _ = cmd.Flags().GetBool("git")
+			allFlags["goFlag"], _ = cmd.Flags().GetBool("go")
+			allFlags["pipFlag"], _ = cmd.Flags().GetBool("pip")
+			allFlags["systemcheckupdatesFlag"], _ = cmd.Flags().GetBool("system-checkupdates")
 		}
 
-		// 预定义变量
-		var (
-			subjectName      string
-			descriptorText   string
-			subjectMinorName string
-		)
-
-		// 定义输出格式
-		subjectMinorNameFormat := "%*s%s %s\n"
-		descriptorFormat := "%*s%s %s: %s %s %s\n"
-		configFileFormat := "%*s%s %s: %s\n"
-		errorFormat := "%*s%s %s: %s\n\n"
-		successFormat := "%*s%s %s: %s\n\n"
-
-		// 配置 chezmoi
-		if chezmoiFlag {
-			subjectName = "chezmoi"
-			descriptorText = "configuration file"
-			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-			color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.ChezmoiConfigFile))
-			if err := general.WriteFile(cli.ChezmoiConfigFile, cli.ChezmoiConfig); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-		}
-		// 配置 cobra
-		if cobraFlag {
-			subjectName = "cobra-cli"
-			descriptorText = "configuration file"
-			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-			color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.CobraConfigFile))
-			if err := general.WriteFile(cli.CobraConfigFile, cli.CobraConfig); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-		}
-		// 配置 docker
-		if dockerFlag {
-			subjectName = "docker"
-			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-			// docker service
-			subjectMinorName = "docker service"
-			descriptorText = "root directory"
-			color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-			color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.DockerServiceConfigFile))
-			if err := general.WriteFile(cli.DockerServiceConfigFile, cli.DockerServiceConfig); err != nil {
-				errorFormat = "%*s%s %s: %s\n"
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				successFormat = "%*s%s %s: %s\n"
-				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-			// docker mirrors
-			subjectMinorName = "docker mirrors"
-			descriptorText = "registry mirrors"
-			color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-			color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.DockerMirrorsConfigFile))
-			if err := general.WriteFile(cli.DockerMirrorsConfigFile, cli.DockerMirrorsConfig); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-		}
-		// 配置 frpc
-		if frpcFlag {
-			subjectName = "frpc"
-			descriptorText = "restart timing"
-			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-			color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.FrpcConfigFile))
-			if err := general.WriteFile(cli.FrpcConfigFile, cli.FrpcConfig); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-		}
-		// 配置 git
-		if gitFlag {
-			subjectName = "git"
-			descriptorText = "configuration file"
-			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-			color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.GitConfigFile))
-			if err := general.WriteFile(cli.GitConfigFile, cli.GitConfig); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-		}
-		// 配置 golang
-		if goFlag {
-			subjectName = "go"
-			descriptorText = "environment file"
-			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-			color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.GolangConfigFile))
-			if err := general.WriteFile(cli.GolangConfigFile, cli.GolangConfig); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-		}
-		// 配置 pip
-		if pipFlag {
-			subjectName = "pip"
-			descriptorText = "mirrors"
-			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-			color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.PipConfigFile))
-			if err := general.WriteFile(cli.PipConfigFile, cli.PipConfig); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-		}
-		// 配置 system-checkupdates
-		if systemcheckupdatesFlag {
-			subjectName = "system-checkupdates"
-			color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-			// system-checkupdates timer
-			subjectMinorName = "system-checkupdates timer"
-			descriptorText = "timer"
-			color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-			color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.SystemCheckupdatesTimerConfigFile))
-			if err := general.WriteFile(cli.SystemCheckupdatesTimerConfigFile, cli.SystemCheckupdatesTimerConfig); err != nil {
-				errorFormat = "%*s%s %s: %s\n"
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				successFormat = "%*s%s %s: %s\n"
-				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-			// system-checkupdates service
-			subjectMinorName = "system-checkupdates service"
-			descriptorText = "service"
-			color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-			color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-			color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(cli.SystemCheckupdatesServiceConfigFile))
-			if err := general.WriteFile(cli.SystemCheckupdatesServiceConfigFile, cli.SystemCheckupdatesServiceConfig); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-			}
-		}
+		// 调用程序配置器
+		cli.ProgramConfigurator(allFlags)
 	},
 }
 
