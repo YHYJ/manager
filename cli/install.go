@@ -112,7 +112,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		return
 	}
 	// 开始安装
-	color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyan(config.Install.Self.Name))
+	color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyanText(config.Install.Self.Name))
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -161,7 +161,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 		// 比较远端和本地版本
 		if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreen(name), general.FgYellow(remoteTag), general.LightText(general.LatestVersionMessage))
+			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(remoteTag), general.LightText(general.LatestVersionMessage))
 			color.Printf(text)
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -345,7 +345,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					}
 					// 本次安装结束分隔符
-					text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(remoteTag), general.FgMagenta("installed"))
+					text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(remoteTag), general.FgMagentaText("installed"))
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				} else { // 存在，更新
@@ -432,7 +432,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					}
 					// 本次更新结束分隔符
-					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagenta("updated"))
+					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				}
@@ -506,7 +506,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 		// 比较远端和本地版本
 		if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreen(name), general.FgYellow(remoteTag), general.LightText(general.LatestVersionMessage))
+			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(remoteTag), general.LightText(general.LatestVersionMessage))
 			color.Printf(text)
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -525,12 +525,12 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			}
 			// 克隆远端仓库 - GitHub
 			goGithubCloneBaseUrl := color.Sprintf("%s/%s", config.Install.Go.GithubUrl, config.Install.Go.GithubUsername) // 远端仓库基础克隆地址（除仓库名）
-			color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreen(name), "from GitHub")
+			color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from GitHub")
 			if err := CloneRepoViaHTTP(config.Install.SourceTemp, goGithubCloneBaseUrl, name); err != nil {
 				color.Printf("%s\n", general.ErrorText("error -> ", err))
 				// 克隆远端仓库 - Gitea
 				goGiteaCloneBaseUrl := color.Sprintf("%s/%s", config.Install.Go.GiteaUrl, config.Install.Go.GiteaUsername) // 远端仓库基础克隆地址（除仓库名）
-				color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreen(name), "from Gitea")
+				color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from Gitea")
 				if err := CloneRepoViaHTTP(config.Install.SourceTemp, goGiteaCloneBaseUrl, name); err != nil {
 					text := color.Sprintf("%s\n", general.ErrorText("error -> ", err))
 					color.Printf(text)
@@ -626,7 +626,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					}
 					// 本次安装结束分隔符
-					text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(remoteTag), general.FgMagenta("installed"))
+					text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(remoteTag), general.FgMagentaText("installed"))
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				} else { // 存在，更新
@@ -673,7 +673,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					}
 					// 本次更新结束分隔符
-					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagenta("updated"))
+					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				}
@@ -721,7 +721,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		return
 	}
 	// 开始安装
-	color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyan("golang-based"))
+	color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyanText("golang-based"))
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -770,7 +770,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 			// 比较远端和本地版本
 			if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-				text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreen(name), general.FgYellow(remoteTag), general.LightText(general.LatestVersionMessage))
+				text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(remoteTag), general.LightText(general.LatestVersionMessage))
 				color.Printf(text)
 				textLength = general.RealLength(text) // 分隔符长度
 			} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -954,7 +954,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						}
 						// 本次安装结束分隔符
-						text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(remoteTag), general.FgMagenta("installed"))
+						text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(remoteTag), general.FgMagentaText("installed"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					} else { // 存在，更新
@@ -1041,7 +1041,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						}
 						// 本次更新结束分隔符
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagenta("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
@@ -1116,7 +1116,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 			// 比较远端和本地版本
 			if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-				text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreen(name), general.FgYellow(remoteTag), general.LightText(general.LatestVersionMessage))
+				text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(remoteTag), general.LightText(general.LatestVersionMessage))
 				color.Printf(text)
 				textLength = general.RealLength(text) // 分隔符长度
 			} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -1135,12 +1135,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				}
 				// 克隆远端仓库 - GitHub
 				goGithubCloneBaseUrl := color.Sprintf("%s/%s", config.Install.Go.GithubUrl, config.Install.Go.GithubUsername) // 远端仓库基础克隆地址（除仓库名）
-				color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreen(name), "from GitHub")
+				color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from GitHub")
 				if err := CloneRepoViaHTTP(config.Install.SourceTemp, goGithubCloneBaseUrl, name); err != nil {
 					color.Printf("%s\n", general.ErrorText("error -> ", err))
 					// 克隆远端仓库 - Gitea
 					goGiteaCloneBaseUrl := color.Sprintf("%s/%s", config.Install.Go.GiteaUrl, config.Install.Go.GiteaUsername) // 远端仓库基础克隆地址（除仓库名）
-					color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreen(name), "from Gitea")
+					color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from Gitea")
 					if err := CloneRepoViaHTTP(config.Install.SourceTemp, goGiteaCloneBaseUrl, name); err != nil {
 						text := color.Sprintf("%s\n", general.ErrorText("error -> ", err))
 						color.Printf(text)
@@ -1236,7 +1236,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						}
 						// 本次安装结束分隔符
-						text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(remoteTag), general.FgMagenta("installed"))
+						text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(remoteTag), general.FgMagentaText("installed"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					} else { // 存在，更新
@@ -1283,7 +1283,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						}
 						// 本次更新结束分隔符
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagenta("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.LightText("->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
@@ -1332,7 +1332,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		return
 	}
 	// 开始安装
-	color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyan("shell-based"))
+	color.Info.Tips("Installing \x1b[3m%s\x1b[0m programs...\n", general.FgCyanText("shell-based"))
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -1379,7 +1379,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
 		// 比较远端和本地脚本 Hash
 		if remoteHash == localHash { // Hash 一致，则输出无需更新信息
-			text := color.Sprintf("%s %s %s\n", general.LatestFlag, general.FgGreen(name), general.LatestVersionMessage)
+			text := color.Sprintf("%s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.LatestVersionMessage)
 			color.Printf(text)
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // Hash 不一致，则更新脚本，并输出已更新信息
@@ -1420,7 +1420,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 						if err := os.Chmod(localProgram, 0755); err != nil {
 							color.Error.Println(err)
 						}
-						text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(remoteHash[:6]), general.FgMagenta("installed"))
+						text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(remoteHash[:6]), general.FgMagentaText("installed"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
@@ -1447,7 +1447,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 						if err := os.Chmod(localProgram, 0755); err != nil {
 							color.Error.Println(err)
 						}
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreen(name), general.FgYellow(localHash[:6]), general.LightText("->"), general.NoteText(remoteHash[:6]), general.FgMagenta("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localHash[:6]), general.LightText("->"), general.NoteText(remoteHash[:6]), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
