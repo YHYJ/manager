@@ -29,8 +29,10 @@ var setupCmd = &cobra.Command{
 		}
 
 		// 解析参数
-		allFlags := make(map[string]bool)
 		allFlag, _ := cmd.Flags().GetBool("all")
+
+		// 根据参数执行操作
+		allFlags := make(map[string]bool)
 		if allFlag {
 			allFlags["chezmoiFlag"] = true
 			allFlags["cobraFlag"] = true
@@ -51,8 +53,32 @@ var setupCmd = &cobra.Command{
 			allFlags["systemcheckupdatesFlag"], _ = cmd.Flags().GetBool("system-checkupdates")
 		}
 
+		var (
+			noticeSlogan []string // 提示标语
+		)
+		// 检查 allFlags 中的所有值是否都为 false
+		allFalse := true
+		for _, value := range allFlags {
+			if value {
+				allFalse = false
+				break
+			}
+		}
+		if allFalse {
+			cmd.Help()
+			noticeSlogan = append(noticeSlogan, "Please refer to the above help information")
+		}
+
 		// 调用程序配置器
 		cli.ProgramConfigurator(allFlags)
+
+		// 输出标语
+		if len(noticeSlogan) > 0 {
+			color.Println()
+			for _, slogan := range noticeSlogan {
+				color.Notice.Tips(general.PrimaryText(slogan))
+			}
+		}
 	},
 }
 

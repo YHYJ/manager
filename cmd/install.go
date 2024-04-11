@@ -29,16 +29,16 @@ var installCmd = &cobra.Command{
 		selfFlag, _ := cmd.Flags().GetBool("self")
 		shellFlag, _ := cmd.Flags().GetBool("shell")
 
-		var (
-			noticeSlogan []string // 提示标语
-		)
-
 		// 根据参数执行操作
 		if allFlag {
 			goFlag, shellFlag = true, true
 		}
+
+		var (
+			noticeSlogan []string // 提示标语
+		)
 		if selfFlag && (goFlag || shellFlag) {
-			noticeSlogan = append(noticeSlogan, "参数 '--self' 只能独立使用，不能同时安装/更新其他程序")
+			noticeSlogan = append(noticeSlogan, "'--self' cannot be mixed with other Flags")
 			goFlag, shellFlag = false, false
 		}
 
