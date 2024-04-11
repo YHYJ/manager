@@ -10,7 +10,6 @@ Description: 子命令 'setup' 的实现
 package cli
 
 import (
-	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -31,7 +30,7 @@ var (
 	chezmoiSourceDir    = `"~/Documents/Repos/System/Profile"`
 	chezmoiAutoCommit   = false
 	chezmoiAutoPush     = false
-	ChezmoiConfig       = fmt.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
+	ChezmoiConfig       = color.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
 	ChezmoiConfigFile   = filepath.Join(home, ".config", "chezmoi", "chezmoi.toml")
 
 	// cobra 的依赖项
@@ -41,7 +40,7 @@ var (
 	cobraAuthor       = "YJ"
 	cobraLicense      = "GPLv3"
 	cobraUseViper     = false
-	CobraConfig       = fmt.Sprintf(cobraConfigFormat, cobraAuthor, email, cobraLicense, cobraUseViper)
+	CobraConfig       = color.Sprintf(cobraConfigFormat, cobraAuthor, email, cobraLicense, cobraUseViper)
 	CobraConfigFile   = filepath.Join(home, ".cobra.yaml")
 
 	// docker service 和 mirrors 的依赖项
@@ -50,12 +49,12 @@ var (
 	dockerServiceConfigFormat = "[Service]\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
 	dockerServiceExecStart    = "/usr/bin/dockerd"
 	dockerServiceDataRoot     = filepath.Join(home, "Documents", "Docker", "Root")
-	DockerServiceConfig       = fmt.Sprintf(dockerServiceConfigFormat, dockerServiceExecStart, dockerServiceDataRoot)
+	DockerServiceConfig       = color.Sprintf(dockerServiceConfigFormat, dockerServiceExecStart, dockerServiceDataRoot)
 	DockerServiceConfigFile   = "/etc/systemd/system/docker.service.d/override.conf"
 	// docker 配置 - docker mirrors
 	dockerMirrorsConfigFormat    = "{\n%s\"registry-mirrors\": %s\n}\n"
 	dockerMirrorsRegistryMirrors = []string{`"https://docker.mirrors.ustc.edu.cn"`}
-	DockerMirrorsConfig          = fmt.Sprintf(dockerMirrorsConfigFormat, sep, dockerMirrorsRegistryMirrors)
+	DockerMirrorsConfig          = color.Sprintf(dockerMirrorsConfigFormat, sep, dockerMirrorsRegistryMirrors)
 	DockerMirrorsConfigFile      = "/etc/docker/daemon.json"
 
 	// frpc 的依赖项
@@ -63,7 +62,7 @@ var (
 	// frpc 配置
 	frpcConfigFormat = "[Service]\nRestart=\nRestart=%s\n"
 	frpcRestart      = "always"
-	FrpcConfig       = fmt.Sprintf(frpcConfigFormat, frpcRestart)
+	FrpcConfig       = color.Sprintf(frpcConfigFormat, frpcRestart)
 	FrpcConfigFile   = "/etc/systemd/system/frpc.service.d/override.conf"
 
 	// git 的依赖项
@@ -79,7 +78,7 @@ var (
 	gitFilterLfsSmudge   = "git-lfs smudge -- %f"
 	gitFilterLfsProcess  = "git-lfs filter-process"
 	gitFilterLfsRequired = true
-	GitConfig            = fmt.Sprintf(gitConfigFormat, sep, hostname, sep, email, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
+	GitConfig            = color.Sprintf(gitConfigFormat, sep, hostname, sep, email, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
 	GitConfigFile        = filepath.Join(home, ".gitconfig")
 
 	// go 的依赖项
@@ -91,7 +90,7 @@ var (
 	golangGOPATH       = filepath.Join(home, ".go")
 	golangGOCACHE      = filepath.Join(home, ".cache", "go", "go-build")
 	golangGOMODCACHE   = filepath.Join(home, ".cache", "go", "pkg", "mod")
-	GolangConfig       = fmt.Sprintf(golangConfigFormat, golangGO111MODULE, golangGOBIN, golangGOPATH, golangGOCACHE, golangGOMODCACHE)
+	GolangConfig       = color.Sprintf(golangConfigFormat, golangGO111MODULE, golangGOBIN, golangGOPATH, golangGOCACHE, golangGOMODCACHE)
 	GolangConfigFile   = filepath.Join(home, ".config", "go", "env")
 
 	// pip 的依赖项
@@ -100,7 +99,7 @@ var (
 	pipConfigFormat = "[global]\nindex-url = %s\ntrusted-host = %s\n"
 	pipIndexUrl     = "https://mirrors.aliyun.com/pypi/simple"
 	pipTrustedHost  = "mirrors.aliyun.com"
-	PipConfig       = fmt.Sprintf(pipConfigFormat, pipIndexUrl, pipTrustedHost)
+	PipConfig       = color.Sprintf(pipConfigFormat, pipIndexUrl, pipTrustedHost)
 	PipConfigFile   = filepath.Join(home, ".config", "pip", "pip.conf")
 
 	// system-checkupdates timer 和 service 的依赖项
@@ -113,7 +112,7 @@ var (
 	systemcheckupdatesTimerAccuracySec       = "30min"
 	systemcheckupdatesTimerPersistent        = true
 	systemcheckupdatesTimerWantedBy          = "timers.target"
-	SystemCheckupdatesTimerConfig            = fmt.Sprintf(systemCheckupdatesTimerConfigFormat, systemcheckupdatesTimerDescription, systemcheckupdatesTimerOnBootSec, systemcheckupdatesTimerOnUnitInactiveSec, systemcheckupdatesTimerAccuracySec, systemcheckupdatesTimerPersistent, systemcheckupdatesTimerWantedBy)
+	SystemCheckupdatesTimerConfig            = color.Sprintf(systemCheckupdatesTimerConfigFormat, systemcheckupdatesTimerDescription, systemcheckupdatesTimerOnBootSec, systemcheckupdatesTimerOnUnitInactiveSec, systemcheckupdatesTimerAccuracySec, systemcheckupdatesTimerPersistent, systemcheckupdatesTimerWantedBy)
 	SystemCheckupdatesTimerConfigFile        = "/etc/systemd/system/system-checkupdates.timer"
 	// system-checkupdates 配置 - system-checkupdates service
 	systemCheckupdatesServiceConfigFormat = "[Unit]\nDescription=%s\nAfter=%s\nWants=%s\n\n[Service]\nType=%s\nExecStart=%s\n"
@@ -122,7 +121,7 @@ var (
 	systemcheckupdatesServiceWants        = "network.target"
 	systemcheckupdatesServiceType         = "oneshot"
 	systemcheckupdatesServiceExecStart    = "/usr/local/bin/system-checkupdates --check"
-	SystemCheckupdatesServiceConfig       = fmt.Sprintf(systemCheckupdatesServiceConfigFormat, systemcheckupdatesServiceDescription, systemcheckupdatesServiceAfter, systemcheckupdatesServiceWants, systemcheckupdatesServiceType, systemcheckupdatesServiceExecStart)
+	SystemCheckupdatesServiceConfig       = color.Sprintf(systemCheckupdatesServiceConfigFormat, systemcheckupdatesServiceDescription, systemcheckupdatesServiceAfter, systemcheckupdatesServiceWants, systemcheckupdatesServiceType, systemcheckupdatesServiceExecStart)
 	SystemCheckupdatesServiceConfigFile   = "/etc/systemd/system/system-checkupdates.service"
 )
 

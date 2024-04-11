@@ -202,7 +202,6 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				general.Delay(0.1)                    // 0.1s
 				return
 			}
-			// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", color.Sprintf("[%s] - %s", name, filesInfo.ChecksumsFileInfo.Name), " ", "from GitHub Release ")
 			general.ProgressParameters["action"] = general.DownloadFlag
 			general.ProgressParameters["prefix"] = "Download"
 			general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
@@ -218,7 +217,6 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				general.Delay(0.1)                    // 0.1s
 				return
 			}
-			// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", color.Sprintf("[%s] - %s", name, filesInfo.ArchiveFileInfo.Name), " ", "from GitHub Release ")
 			general.ProgressParameters["action"] = general.DownloadFlag
 			general.ProgressParameters["prefix"] = "Download"
 			general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
@@ -811,7 +809,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					general.Delay(0.1)                    // 0.1s
 					continue
 				}
-				// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", color.Sprintf("[%s] - %s", name, filesInfo.ChecksumsFileInfo.Name), " ", "from GitHub Release ")
 				general.ProgressParameters["action"] = general.DownloadFlag
 				general.ProgressParameters["prefix"] = "Download"
 				general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
@@ -827,7 +824,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					general.Delay(0.1)                    // 0.1s
 					continue
 				}
-				// fmt.Printf(general.SliceTraverse2PSuffixFormat, general.Run, " Download ", color.Sprintf("[%s] - %s", name, filesInfo.ArchiveFileInfo.Name), " ", "from GitHub Release ")
 				general.ProgressParameters["action"] = general.DownloadFlag
 				general.ProgressParameters["prefix"] = "Download"
 				general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
