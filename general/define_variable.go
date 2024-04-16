@@ -97,6 +97,27 @@ var (
 	ShellGiteaBaseDownloadUrlFormat  = "%s/%s/%s/raw/branch/%s"         // API 和下载地址 - 远端仓库脚本基础下载地址（不包括在仓库路中的路径） - Gitea 格式
 )
 
+var (
+	CursorOnFlag   = "👉"  // 选择器符号 - 光标在
+	CursorOffFlag  = "  " // 选择器符号 - 光标不在
+	SelectedFlag   = "•"  // 选择器符号 - 已选中
+	UnselectedFlag = " "  // 选择器符号 - 已选中
+	SelectAllFlag  = "⭐️" // 选择器符号 - 全选
+)
+
+var (
+	Separator1st = "=" // 分隔符 - 1级
+	Separator2st = "-" // 分隔符 - 2级
+	Separator3st = "·" // 分隔符 - 3级
+)
+
+var (
+	MultiSelectTips  = "Please select from the %s below (multi-select)\n"  // 提示词 - 多选
+	SingleSelectTips = "Please select from the %s below (single-select)\n" // 提示词 - 单选
+	QuietTips        = "Press '%s' to quit\n"                              // 提示词 - 退出
+	SelectAllTips    = "Select All"                                        // 提示词 - 全选
+)
+
 // ---------- 环境变量
 
 var Platform = runtime.GOOS                   // 操作系统
