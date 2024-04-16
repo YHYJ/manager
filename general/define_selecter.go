@@ -116,7 +116,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 //   - string: 绘制内容
 func (m model) View() string {
 	// 定时显示主题
-	name := "repo name" // 选项类型
+	name := "program name" // 选项类型
 
 	// 构建显示内容
 	s := strings.Builder{}
