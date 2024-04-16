@@ -1,3 +1,4 @@
+- [ ] 添加 `uninstall` 子命令 (2024-04-16 15:16)
 - [X] 优化输出信息 (2023-06-16 13:40)
 - [X] 完成install --script部分 (2023-06-16 16:36)
 - [X] 默认配置项增加'go.fallbacksource'和'shell.fallbacksource' (2023-07-12 16:18)
