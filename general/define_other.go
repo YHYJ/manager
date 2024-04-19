@@ -35,7 +35,7 @@ func RealLength(text string) int {
 // 参数：
 //   - length: 分隔符长度
 func PrintDelimiter(length int) {
-	dashes := strings.Repeat("-", length) // 组装分隔符
+	dashes := strings.Repeat("-", length)     // 组装分隔符
 	color.Printf("%s\n", FgBlackText(dashes)) // 美化输出
 }
 
