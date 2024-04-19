@@ -12,6 +12,7 @@ package cli
 import (
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/gookit/color"
@@ -657,10 +658,13 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			color.Error.Println(err)
 			return
 		}
+		// 让用户选择需要安装/更新的程序
 		selectedNames, err := general.MultipleSelectionFilter(config.Install.Go.Names)
 		if err != nil {
 			color.Error.Println(err)
 		}
+		// 对所选的程序进行排序
+		sort.Strings(selectedNames)
 		// 遍历所选程序名
 		for _, name := range selectedNames {
 			textLength := 0                                                                                                                                         // 输出文本的长度
@@ -999,10 +1003,13 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			color.Error.Println(err)
 			return
 		}
+		// 让用户选择需要安装/更新的程序
 		selectedNames, err := general.MultipleSelectionFilter(config.Install.Go.Names)
 		if err != nil {
 			color.Error.Println(err)
 		}
+		// 对所选的程序进行排序
+		sort.Strings(selectedNames)
 		// 遍历所选程序名
 		for _, name := range selectedNames {
 			textLength := 0                                                                                                                                      // 输出文本的长度
@@ -1267,10 +1274,13 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		color.Error.Println(err)
 		return
 	}
-		selectedNames, err := general.MultipleSelectionFilter(config.Install.Shell.Names)
-		if err != nil {
-			color.Error.Println(err)
-		}
+	// 让用户选择需要安装/更新的程序
+	selectedNames, err := general.MultipleSelectionFilter(config.Install.Shell.Names)
+	if err != nil {
+		color.Error.Println(err)
+	}
+	// 对所选的程序进行排序
+	sort.Strings(selectedNames)
 	// 遍历所选脚本名
 	for _, name := range selectedNames {
 		textLength := 0                                                                                                                                                                                             // 输出文本的长度
