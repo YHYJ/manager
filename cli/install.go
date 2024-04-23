@@ -1269,11 +1269,16 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
+
+	// 设置进度条参数
+	general.ProgressParameters["view"] = "0"
+
 	// 创建临时目录
 	if err := general.CreateDir(config.Install.SourceTemp); err != nil {
 		color.Error.Println(err)
 		return
 	}
+
 	// 让用户选择需要安装/更新的程序
 	selectedNames, err := general.MultipleSelectionFilter(config.Install.Shell.Names)
 	if err != nil {
