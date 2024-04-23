@@ -161,6 +161,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		shellNames = []string{
 			"collect-system",
 			"configure-dtags",
+			"open-remote-repository",
 			"py-virtualenv-tool",
 			"save-docker-images",
 			"sfm",
@@ -179,7 +180,10 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			filepath.Join(UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 			filepath.Join(UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
 		}
-		shellNames = []string{"spacevim-update"}
+		shellNames = []string{
+			"open-remote-repository",
+			"spacevim-update",
+		}
 	} else if Platform == "windows" {
 		installProgramPath = filepath.Join(GetVariable("ProgramFiles"), "Manager")
 		installSourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", "manager", "source")
