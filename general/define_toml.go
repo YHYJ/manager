@@ -161,10 +161,10 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		shellNames = []string{
 			"collect-system",
 			"configure-dtags",
+			"open",
 			"open-remote-repository",
 			"py-virtualenv-tool",
 			"save-docker-images",
-			"sfm",
 			"spacevim-update",
 			"spider",
 			"system-checkupdates",
