@@ -200,6 +200,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"open-remote-repository",
 			"spacevim-update",
 			"spider",
+			"trust-app",
 		}
 	} else if Platform == "windows" {
 		installProgramPath = filepath.Join(GetVariable("ProgramFiles"), Name)
