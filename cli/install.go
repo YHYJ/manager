@@ -351,7 +351,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					}
 					// 本次更新结束分隔符
-					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
+					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("-->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				}
@@ -592,7 +592,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					}
 					// 本次更新结束分隔符
-					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
+					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("-->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				}
@@ -966,7 +966,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						}
 						// 本次更新结束分隔符
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("-->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
@@ -1215,7 +1215,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						}
 						// 本次更新结束分隔符
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("-->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
@@ -1392,7 +1392,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 						if err := os.Chmod(localProgram, 0755); err != nil {
 							color.Error.Println(err)
 						}
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localHash[:6]), general.FgWhiteText("->"), general.NoteText(remoteHash[:6]), general.FgMagentaText("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localHash[:6]), general.FgWhiteText("-->"), general.NoteText(remoteHash[:6]), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
