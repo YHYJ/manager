@@ -198,6 +198,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		}
 		shellNames = []string{
 			"open-remote-repository",
+			"py-virtualenv-tool",
 			"spacevim-update",
 			"spider",
 			"trust-app",
