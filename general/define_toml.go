@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/gookit/color"
 	"github.com/pelletier/go-toml"
 )
 
@@ -138,6 +139,8 @@ func LoadConfigToStruct(configTree *toml.Tree) (*Config, error) {
 //   - 写入的字节数
 //   - 错误信息
 func WriteTomlConfig(filePath string) (int64, error) {
+	// 从常量读取该程序自身的名字
+	name := strings.ToLower(Name)
 	// 根据系统不同决定某些参数
 	var (
 		installProgramPath   = ""         // 定义在不同平台的程序安装路径
@@ -151,15 +154,24 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	if Platform == "linux" {
 		installProgramPath = "/usr/local/bin"
 		installResourcesPath = "/usr/local/share"
-		installSourceTemp = "/tmp/manager/source"
-		installReleaseTemp = "/tmp/manager/release"
-		goNames = []string{"checker", "curator", "eniac", "kbdstage", "manager", "rolling", "scleaner", "skynet", "trash"}
+		installSourceTemp = color.Sprintf("/tmp/%s/source", name)
+		installReleaseTemp = color.Sprintf("/tmp/%s/release", name)
+		goNames = []string{
+			name,
+			"checker",
+			"curator",
+			"eniac",
+			"kbdstage",
+			"rolling",
+			"scleaner",
+			"skynet",
+			"trash",
+		}
 		goCompletionDir = []string{
 			filepath.Join(UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 			filepath.Join(UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
 		}
 		shellNames = []string{
-			"collect-system",
 			"configure-dtags",
 			"open",
 			"open-remote-repository",
@@ -173,9 +185,13 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	} else if Platform == "darwin" {
 		installProgramPath = "/usr/local/bin"
 		installResourcesPath = "/usr/local/share"
-		installSourceTemp = "/tmp/manager/source"
-		installReleaseTemp = "/tmp/manager/release"
-		goNames = []string{"curator", "manager", "skynet"}
+		installSourceTemp = color.Sprintf("/tmp/%s/source", name)
+		installReleaseTemp = color.Sprintf("/tmp/%s/release", name)
+		goNames = []string{
+			name,
+			"curator",
+			"skynet",
+		}
 		goCompletionDir = []string{
 			filepath.Join(UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
 			filepath.Join(UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
@@ -183,12 +199,16 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		shellNames = []string{
 			"open-remote-repository",
 			"spacevim-update",
+			"spider",
 		}
 	} else if Platform == "windows" {
-		installProgramPath = filepath.Join(GetVariable("ProgramFiles"), "Manager")
-		installSourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", "manager", "source")
-		installReleaseTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", "manager", "release")
-		goNames = []string{"skynet"}
+		installProgramPath = filepath.Join(GetVariable("ProgramFiles"), Name)
+		installSourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "source")
+		installReleaseTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "release")
+		goNames = []string{
+			name,
+			"skynet",
+		}
 	}
 	// 定义一个 map[string]interface{} 类型的变量并赋值
 	exampleConf := map[string]interface{}{
