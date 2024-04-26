@@ -172,7 +172,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			filepath.Join(UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
 		}
 		shellNames = []string{
-			"configure-dtags",
+			"configure-tags",
 			"open",
 			"open-remote-repository",
 			"py-virtualenv-tool",
@@ -197,6 +197,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			filepath.Join(UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
 		}
 		shellNames = []string{
+			"configure-tags",
 			"open-remote-repository",
 			"py-virtualenv-tool",
 			"spacevim-update",
