@@ -31,9 +31,11 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		color.Error.Println(err)
 		return
 	}
-	// 开始安装
+
+	// 开始安装提示
 	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText(config.Program.Self.Name))
 	color.Info.Tips("%s: %s\n", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -53,9 +55,15 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			color.Error.Println(err)
 			return
 		}
-		// 安装
-		name := config.Program.Self.Name
-		goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Program.Go.ReleaseApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
+
+		// 程序文件
+		name := config.Program.Self.Name                                // 程序名
+		localProgram := filepath.Join(config.Program.ProgramPath, name) // 程序路径
+		programArgs := []string{"version", "--only"}                    // 获取程序版本信息的参数
+
+		// API
+		goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Program.Go.ReleaseApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag
+
 		// 请求 API - GitHub
 		body, err := general.RequestApi(goGithubLatestReleaseTagApi)
 		if err != nil {
@@ -78,10 +86,10 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			general.Delay(0.1)                    // 0.1s
 			return
 		}
-		// 获取本地版本
-		localProgram := filepath.Join(config.Program.ProgramPath, name) // 本地程序路径
-		nameArgs := []string{"version", "--only"}                       // 本地程序参数
-		localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
+
+		// 获取本地程序版本信息
+		localVersion, commandErr := general.RunCommandGetResult(localProgram, programArgs)
+
 		// 比较远端和本地版本
 		if remoteTag == localVersion { // 版本一致，则输出无需更新信息
 			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText(general.LatestVersionMessage))
@@ -125,6 +133,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				general.Delay(0.1)                    // 0.1s
 				return
 			}
+
+			// 下载 Checksums 文件
 			general.ProgressParameters["action"] = general.DownloadFlag
 			general.ProgressParameters["prefix"] = "Download"
 			general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
@@ -140,6 +150,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				general.Delay(0.1)                    // 0.1s
 				return
 			}
+			// 下载 Release 文件
 			general.ProgressParameters["action"] = general.DownloadFlag
 			general.ProgressParameters["prefix"] = "Download"
 			general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
@@ -155,6 +166,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				general.Delay(0.1)                    // 0.1s
 				return
 			}
+
 			// 进到下载的远端文件目录
 			if err := general.GoToDir(goReleaseTempDir); err != nil {
 				text := color.Sprintf("%s\n", general.ErrorText(err))
@@ -389,10 +401,16 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			color.Error.Println(err)
 			return
 		}
-		// 安装
-		name := config.Program.Self.Name
-		goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GithubApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
-		goGiteaLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GiteaApi, config.Program.Go.GiteaUsername, name)    // 请求远端仓库最新 Tag 的 API
+
+		// 程序文件
+		name := config.Program.Self.Name                                // 程序名
+		localProgram := filepath.Join(config.Program.ProgramPath, name) // 程序路径
+		nameArgs := []string{"version", "--only"}                       // 获取程序版本信息的参数
+
+		// API
+		goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GithubApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag
+		goGiteaLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GiteaApi, config.Program.Go.GiteaUsername, name)    // 请求远端仓库最新 Tag
+
 		// 请求 API - GitHub
 		body, err := general.RequestApi(goGithubLatestSourceTagApi)
 		if err != nil {
@@ -420,10 +438,10 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			general.Delay(0.1)                    // 0.1s
 			return
 		}
-		// 获取本地版本
-		localProgram := filepath.Join(config.Program.ProgramPath, name) // 本地程序路径
-		nameArgs := []string{"version", "--only"}                       // 本地程序参数
+
+		// 获取本地程序版本信息
 		localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
+
 		// 比较远端和本地版本
 		if remoteTag == localVersion { // 版本一致，则输出无需更新信息
 			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText(general.LatestVersionMessage))
@@ -465,7 +483,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			} else {
 				color.Println(general.SuccessText("success"))
 			}
-			// 进到下载的远端文件目录
+
+			// 进到克隆的远端文件目录
 			if err := general.GoToDir(goSourceTempDir); err != nil {
 				text := color.Sprintf("%s\n", general.ErrorText(err))
 				color.Printf(text)
@@ -475,6 +494,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				general.Delay(0.1)                    // 0.1s
 				return
 			}
+
 			// 编译生成程序
 			if general.FileExist("Makefile") { // Makefile 文件存在则使用 make 编译
 				makeArgs := []string{}
@@ -507,6 +527,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				general.Delay(0.1)                    // 0.1s
 				return
 			}
+
 			// 检测编译生成的程序是否存在
 			compileProgram := filepath.Join(config.Program.SourceTemp, name, config.Program.Go.GeneratePath, name) // 编译生成的程序
 			if general.FileExist(compileProgram) {
@@ -640,9 +661,11 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		color.Error.Println(err)
 		return
 	}
-	// 开始安装
+
+	// 开始安装提示
 	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText("golang-based"))
 	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -662,6 +685,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			color.Error.Println(err)
 			return
 		}
+
 		// 让用户选择需要安装/更新的程序
 		selectedNames, err := general.MultipleSelectionFilter(config.Program.Go.Names)
 		if err != nil {
@@ -1006,6 +1030,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			color.Error.Println(err)
 			return
 		}
+
 		// 让用户选择需要安装/更新的程序
 		selectedNames, err := general.MultipleSelectionFilter(config.Program.Go.Names)
 		if err != nil {
@@ -1265,9 +1290,11 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		color.Error.Println(err)
 		return
 	}
-	// 开始安装
+
+	// 开始安装提示
 	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText("shell-based"))
 	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
