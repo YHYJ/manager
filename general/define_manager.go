@@ -1,10 +1,10 @@
 /*
-File: define_install.go
+File: define_manager.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2024-04-16 15:26:20
 
-Description: 文件安装
+Description: 安装/卸载管理
 */
 
 package general
@@ -14,7 +14,7 @@ import (
 	"os"
 )
 
-// InstallFile 安装文件，覆盖已存在的同名文件
+// Install 安装，覆盖已存在的同名文件
 //
 // 参数：
 //   - sourceFile: 源文件路径
@@ -23,7 +23,7 @@ import (
 //
 // 返回：
 //   - 错误信息
-func InstallFile(sourceFile, targetFile string, perm os.FileMode) error {
+func Install(sourceFile, targetFile string, perm os.FileMode) error {
 	// 打开源文件
 	sFile, err := os.Open(sourceFile)
 	if err != nil {
@@ -44,4 +44,15 @@ func InstallFile(sourceFile, targetFile string, perm os.FileMode) error {
 		return err
 	}
 	return nil
+}
+
+// Uninstall 卸载
+//
+// 参数：
+//   - targetFile: 目标文件路径
+//
+// 返回：
+//   - 错误信息
+func Uninstall(targetFile string) error {
+	return os.Remove(targetFile)
 }
