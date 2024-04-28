@@ -21,10 +21,10 @@ import (
 
 // 用于转换 Toml 配置树的结构体
 type Config struct {
-	Install  InstallConfig  `toml:"install"`
+	Program  ProgramConfig  `toml:"program"`
 	Variable VariableConfig `toml:"variable"`
 }
-type InstallConfig struct {
+type ProgramConfig struct {
 	Method        string      `toml:"method"`
 	ProgramPath   string      `toml:"program_path"`
 	ReleaseTemp   string      `toml:"release_temp"`
@@ -143,19 +143,19 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	name := strings.ToLower(Name)
 	// 根据系统不同决定某些参数
 	var (
-		installProgramPath   = ""         // 定义在不同平台的程序安装路径
-		installResourcesPath = ""         // 定义在不同平台的资源安装路径
-		installSourceTemp    = ""         // 定义在不同平台的Source安装方式的存储目录
-		installReleaseTemp   = ""         // 定义在不同平台的Release安装方式的存储目录
-		goNames              = []string{} // 定义在不同平台可用的程序
-		goCompletionDir      = []string{} // 定义在不同平台的自动补全文件路径（仅限oh-my-zsh）
-		shellNames           = []string{} // 定义在不同平台可用的脚本
+		ProgramPath     = ""         // 定义在不同平台的程序安装路径
+		ResourcesPath   = ""         // 定义在不同平台的资源安装路径
+		SourceTemp      = ""         // 定义在不同平台的Source安装方式的存储目录
+		ReleaseTemp     = ""         // 定义在不同平台的Release安装方式的存储目录
+		goNames         = []string{} // 定义在不同平台可用的程序
+		goCompletionDir = []string{} // 定义在不同平台的自动补全文件路径（仅限oh-my-zsh）
+		shellNames      = []string{} // 定义在不同平台可用的脚本
 	)
 	if Platform == "linux" {
-		installProgramPath = "/usr/local/bin"
-		installResourcesPath = "/usr/local/share"
-		installSourceTemp = color.Sprintf("/tmp/%s/source", name)
-		installReleaseTemp = color.Sprintf("/tmp/%s/release", name)
+		ProgramPath = "/usr/local/bin"
+		ResourcesPath = "/usr/local/share"
+		SourceTemp = color.Sprintf("/tmp/%s/source", name)
+		ReleaseTemp = color.Sprintf("/tmp/%s/release", name)
 		goNames = []string{
 			name,
 			"checker",
@@ -183,10 +183,10 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"usb-manager",
 		}
 	} else if Platform == "darwin" {
-		installProgramPath = "/usr/local/bin"
-		installResourcesPath = "/usr/local/share"
-		installSourceTemp = color.Sprintf("/tmp/%s/source", name)
-		installReleaseTemp = color.Sprintf("/tmp/%s/release", name)
+		ProgramPath = "/usr/local/bin"
+		ResourcesPath = "/usr/local/share"
+		SourceTemp = color.Sprintf("/tmp/%s/source", name)
+		ReleaseTemp = color.Sprintf("/tmp/%s/release", name)
 		goNames = []string{
 			name,
 			"curator",
@@ -205,9 +205,9 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"trust-app",
 		}
 	} else if Platform == "windows" {
-		installProgramPath = filepath.Join(GetVariable("ProgramFiles"), Name)
-		installSourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "source")
-		installReleaseTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "release")
+		ProgramPath = filepath.Join(GetVariable("ProgramFiles"), Name)
+		SourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "source")
+		ReleaseTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "release")
 		goNames = []string{
 			name,
 			"skynet",
@@ -219,12 +219,12 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"http_proxy":  "", // HTTP 代理
 			"https_proxy": "", // HTTPS 代理
 		},
-		"install": map[string]interface{}{
-			"method":         "release",            // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
-			"program_path":   installProgramPath,   // 程序安装路径
-			"resources_path": installResourcesPath, // 资源安装路径
-			"source_temp":    installSourceTemp,    // Source 安装方式的基础存储目录
-			"release_temp":   installReleaseTemp,   // Release 安装方式的基础存储目录
+		"program": map[string]interface{}{
+			"method":         "release",     // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
+			"program_path":   ProgramPath,   // 程序安装路径
+			"resources_path": ResourcesPath, // 资源安装路径
+			"source_temp":    SourceTemp,    // Source 安装方式的基础存储目录
+			"release_temp":   ReleaseTemp,   // Release 安装方式的基础存储目录
 			"self": map[string]interface{}{ // 管理程序本身的配置
 				"name":            strings.ToLower(Name),           // 管理程序名
 				"release_api":     "https://api.github.com",        // Release 安装源 API 地址

@@ -32,8 +32,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		return
 	}
 	// 开始安装
-	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText(config.Install.Self.Name))
-	color.Info.Tips("%s: %s\n", general.FgWhiteText("Installation path"), general.PrimaryText(config.Install.ProgramPath))
+	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText(config.Program.Self.Name))
+	color.Info.Tips("%s: %s\n", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -43,17 +43,17 @@ func InstallSelfProgram(configTree *toml.Tree) {
 	general.ProgressParameters["sep"] = "-"
 
 	// 使用配置的安装方式进行安装
-	switch strings.ToLower(config.Install.Method) {
+	switch strings.ToLower(config.Program.Method) {
 	case "release":
 		// 创建临时目录
-		if err := general.CreateDir(config.Install.ReleaseTemp); err != nil {
+		if err := general.CreateDir(config.Program.ReleaseTemp); err != nil {
 			color.Error.Println(err)
 			return
 		}
 		// 安装
-		name := config.Install.Self.Name
+		name := config.Program.Self.Name
 		textLength := 0                                                                                                                                         // 输出文本的长度
-		goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Install.Go.ReleaseApi, config.Install.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
+		goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Program.Go.ReleaseApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
 		// 请求 API - GitHub
 		body, err := general.RequestApi(goGithubLatestReleaseTagApi)
 		if err != nil {
@@ -77,7 +77,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			return
 		}
 		// 获取本地版本
-		localProgram := filepath.Join(config.Install.ProgramPath, name) // 本地程序路径
+		localProgram := filepath.Join(config.Program.ProgramPath, name) // 本地程序路径
 		nameArgs := []string{"version", "--only"}                       // 本地程序参数
 		localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 		// 比较远端和本地版本
@@ -87,7 +87,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
 			// 下载远端文件（如果 Temp 中已有远端文件则删除重新下载）
-			goReleaseTempDir := filepath.Join(config.Install.ReleaseTemp, name)
+			goReleaseTempDir := filepath.Join(config.Program.ReleaseTemp, name)
 			if general.FileExist(goReleaseTempDir) {
 				if err := os.RemoveAll(goReleaseTempDir); err != nil {
 					text := color.Sprintf("%s\n", general.ErrorText(err))
@@ -128,7 +128,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
 			general.ProgressParameters["fileName"] = color.Sprintf("[%s]", filesInfo.ChecksumsFileInfo.Name)
 			general.ProgressParameters["suffix"] = "from Github release:"
-			checksumsLocalPath := filepath.Join(config.Install.ReleaseTemp, name, filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
+			checksumsLocalPath := filepath.Join(config.Program.ReleaseTemp, name, filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
 			if err := general.DownloadFile(filesInfo.ChecksumsFileInfo.DownloadUrl, checksumsLocalPath, general.ProgressParameters); err != nil {
 				text := color.Error.Sprintf("error -> %s\n", err)
 				color.Printf(text)
@@ -143,7 +143,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
 			general.ProgressParameters["fileName"] = color.Sprintf("[%s]", filesInfo.ArchiveFileInfo.Name)
 			general.ProgressParameters["suffix"] = "from Github release:"
-			archiveLocalPath := filepath.Join(config.Install.ReleaseTemp, name, filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
+			archiveLocalPath := filepath.Join(config.Program.ReleaseTemp, name, filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
 			if err := general.DownloadFile(filesInfo.ArchiveFileInfo.DownloadUrl, archiveLocalPath, general.ProgressParameters); err != nil {
 				text := color.Error.Sprintf("error -> %s\n", err)
 				color.Printf(text)
@@ -190,7 +190,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				archivedResourcesFolder := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, "resources") // 解压得到的资源文件夹
 				// 检测本地程序是否存在
 				if commandErr != nil { // 不存在，安装
-					if err := general.InstallFile(archivedProgram, localProgram, 0755); err != nil { // 安装程序
+					if err := general.Install(archivedProgram, localProgram, 0755); err != nil { // 安装程序
 						text := color.Sprintf("%s\n", general.ErrorText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
@@ -211,9 +211,9 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					}
 					// 安装资源文件 - desktop 文件
 					archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", color.Sprintf("%s.desktop", name))   // 解压得到的资源文件 - desktop 文件
-					localResourcesDesktopFile := filepath.Join(config.Install.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
+					localResourcesDesktopFile := filepath.Join(config.Program.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
 					if general.FileExist(archivedResourcesDesktopFile) {
-						if err := general.InstallFile(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
+						if err := general.Install(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
 							text := color.Sprintf("%s\n", general.ErrorText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
@@ -225,7 +225,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					}
 					// 安装资源文件 - icon 文件
 					archivedResourcesIconFolder := filepath.Join(archivedResourcesFolder, "pixmaps")   // 解压得到的资源文件 - icon 文件夹
-					localResourcesIconFolder := filepath.Join(config.Install.ResourcesPath, "pixmaps") // 本地资源文件 - icon 文件夹
+					localResourcesIconFolder := filepath.Join(config.Program.ResourcesPath, "pixmaps") // 本地资源文件 - icon 文件夹
 					if general.FileExist(archivedResourcesIconFolder) {
 						files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 						if err != nil {
@@ -252,7 +252,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						for _, file := range files {
 							archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 							localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
-							if err := general.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
+							if err := general.Install(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
 								text := color.Sprintf("%s\n", general.ErrorText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
@@ -277,7 +277,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						general.Delay(0.1)                    // 0.1s
 						return
 					}
-					if err := general.InstallFile(archivedProgram, localProgram, 0755); err != nil { // 安装新程序
+					if err := general.Install(archivedProgram, localProgram, 0755); err != nil { // 安装新程序
 						text := color.Sprintf("%s\n", general.ErrorText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
@@ -298,9 +298,9 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					}
 					// 安装资源文件 - desktop 文件
 					archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", color.Sprintf("%s.desktop", name))   // 解压得到的资源文件 - desktop 文件
-					localResourcesDesktopFile := filepath.Join(config.Install.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
+					localResourcesDesktopFile := filepath.Join(config.Program.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
 					if general.FileExist(archivedResourcesDesktopFile) {
-						if err := general.InstallFile(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
+						if err := general.Install(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
 							text := color.Sprintf("%s\n", general.ErrorText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
@@ -312,7 +312,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					}
 					// 安装资源文件 - icon 文件
 					archivedResourcesIconFolder := filepath.Join(archivedResourcesFolder, "pixmaps")   // 解压得到的资源文件 - icon 文件夹
-					localResourcesIconFolder := filepath.Join(config.Install.ResourcesPath, "pixmaps") // 本地资源文件 - icon 文件夹
+					localResourcesIconFolder := filepath.Join(config.Program.ResourcesPath, "pixmaps") // 本地资源文件 - icon 文件夹
 					if general.FileExist(archivedResourcesIconFolder) {
 						files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 						if err != nil {
@@ -339,7 +339,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						for _, file := range files {
 							archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 							localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
-							if err := general.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
+							if err := general.Install(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
 								text := color.Sprintf("%s\n", general.ErrorText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
@@ -356,7 +356,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					textLength = general.RealLength(text) // 分隔符长度
 				}
 				// 生成/更新自动补全脚本
-				for _, completionDir := range config.Install.Go.CompletionDir {
+				for _, completionDir := range config.Program.Go.CompletionDir {
 					if general.FileExist(completionDir) {
 						generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir, name)}
 						if err := general.RunCommand("bash", generateArgs); err != nil {
@@ -383,15 +383,15 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		general.Delay(0.1)                 // 0.01s
 	case "source":
 		// 创建临时目录
-		if err := general.CreateDir(config.Install.SourceTemp); err != nil {
+		if err := general.CreateDir(config.Program.SourceTemp); err != nil {
 			color.Error.Println(err)
 			return
 		}
 		// 安装
-		name := config.Install.Self.Name
+		name := config.Program.Self.Name
 		textLength := 0                                                                                                                                      // 输出文本的长度
-		goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Install.Go.GithubApi, config.Install.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
-		goGiteaLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Install.Go.GiteaApi, config.Install.Go.GiteaUsername, name)    // 请求远端仓库最新 Tag 的 API
+		goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GithubApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
+		goGiteaLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GiteaApi, config.Program.Go.GiteaUsername, name)    // 请求远端仓库最新 Tag 的 API
 		// 请求 API - GitHub
 		body, err := general.RequestApi(goGithubLatestSourceTagApi)
 		if err != nil {
@@ -420,7 +420,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			return
 		}
 		// 获取本地版本
-		localProgram := filepath.Join(config.Install.ProgramPath, name) // 本地程序路径
+		localProgram := filepath.Join(config.Program.ProgramPath, name) // 本地程序路径
 		nameArgs := []string{"version", "--only"}                       // 本地程序参数
 		localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 		// 比较远端和本地版本
@@ -430,7 +430,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
 			// 如果 Temp 中已有远端仓库则删除重新克隆
-			goSourceTempDir := filepath.Join(config.Install.SourceTemp, name)
+			goSourceTempDir := filepath.Join(config.Program.SourceTemp, name)
 			if general.FileExist(goSourceTempDir) {
 				if err := os.RemoveAll(goSourceTempDir); err != nil {
 					text := color.Sprintf("%s\n", general.ErrorText(err))
@@ -443,14 +443,14 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				}
 			}
 			// 克隆远端仓库 - GitHub
-			goGithubCloneBaseUrl := color.Sprintf("%s/%s", config.Install.Go.GithubUrl, config.Install.Go.GithubUsername) // 远端仓库基础克隆地址（除仓库名）
+			goGithubCloneBaseUrl := color.Sprintf("%s/%s", config.Program.Go.GithubUrl, config.Program.Go.GithubUsername) // 远端仓库基础克隆地址（除仓库名）
 			color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from GitHub")
-			if err := general.CloneRepoViaHTTP(config.Install.SourceTemp, goGithubCloneBaseUrl, name); err != nil {
+			if err := general.CloneRepoViaHTTP(config.Program.SourceTemp, goGithubCloneBaseUrl, name); err != nil {
 				color.Printf("%s\n", general.ErrorText("error -> ", err))
 				// 克隆远端仓库 - Gitea
-				goGiteaCloneBaseUrl := color.Sprintf("%s/%s", config.Install.Go.GiteaUrl, config.Install.Go.GiteaUsername) // 远端仓库基础克隆地址（除仓库名）
+				goGiteaCloneBaseUrl := color.Sprintf("%s/%s", config.Program.Go.GiteaUrl, config.Program.Go.GiteaUsername) // 远端仓库基础克隆地址（除仓库名）
 				color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from Gitea")
-				if err := general.CloneRepoViaHTTP(config.Install.SourceTemp, goGiteaCloneBaseUrl, name); err != nil {
+				if err := general.CloneRepoViaHTTP(config.Program.SourceTemp, goGiteaCloneBaseUrl, name); err != nil {
 					text := color.Sprintf("%s\n", general.ErrorText("error -> ", err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
@@ -507,7 +507,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				return
 			}
 			// 检测编译生成的程序是否存在
-			compileProgram := filepath.Join(config.Install.SourceTemp, name, config.Install.Go.GeneratePath, name) // 编译生成的程序
+			compileProgram := filepath.Join(config.Program.SourceTemp, name, config.Program.Go.GeneratePath, name) // 编译生成的程序
 			if general.FileExist(compileProgram) {
 				// 检测本地程序是否存在
 				if commandErr != nil { // 不存在，安装
@@ -523,7 +523,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							return
 						}
 					} else { // Makefile 文件不存在则使用自定义函数安装
-						if err := general.InstallFile(compileProgram, localProgram, 0755); err != nil {
+						if err := general.Install(compileProgram, localProgram, 0755); err != nil {
 							text := color.Sprintf("%s\n", general.ErrorText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
@@ -570,7 +570,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							general.Delay(0.1)                    // 0.1s
 							return
 						}
-						if err := general.InstallFile(compileProgram, localProgram, 0755); err != nil {
+						if err := general.Install(compileProgram, localProgram, 0755); err != nil {
 							text := color.Sprintf("%s\n", general.ErrorText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
@@ -597,7 +597,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					textLength = general.RealLength(text) // 分隔符长度
 				}
 				// 生成/更新自动补全脚本
-				for _, completionDir := range config.Install.Go.CompletionDir {
+				for _, completionDir := range config.Program.Go.CompletionDir {
 					if general.FileExist(completionDir) {
 						generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir, name)}
 						if err := general.RunCommand("bash", generateArgs); err != nil {
@@ -623,7 +623,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		general.PrintDelimiter(textLength) // 分隔符
 		general.Delay(0.1)                 // 0.01s
 	default:
-		text := color.Error.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", config.Install.Method)
+		text := color.Error.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", config.Program.Method)
 		color.Printf(text)
 	}
 }
@@ -641,7 +641,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	}
 	// 开始安装
 	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText("golang-based"))
-	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Install.ProgramPath))
+	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -651,15 +651,15 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	general.ProgressParameters["sep"] = "-"
 
 	// 使用配置的安装方式进行安装
-	switch strings.ToLower(config.Install.Method) {
+	switch strings.ToLower(config.Program.Method) {
 	case "release":
 		// 创建临时目录
-		if err := general.CreateDir(config.Install.ReleaseTemp); err != nil {
+		if err := general.CreateDir(config.Program.ReleaseTemp); err != nil {
 			color.Error.Println(err)
 			return
 		}
 		// 让用户选择需要安装/更新的程序
-		selectedNames, err := general.MultipleSelectionFilter(config.Install.Go.Names)
+		selectedNames, err := general.MultipleSelectionFilter(config.Program.Go.Names)
 		if err != nil {
 			color.Error.Println(err)
 		}
@@ -668,7 +668,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		// 遍历所选程序名
 		for _, name := range selectedNames {
 			textLength := 0                                                                                                                                         // 输出文本的长度
-			goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Install.Go.ReleaseApi, config.Install.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
+			goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Program.Go.ReleaseApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
 			// 请求 API - GitHub
 			body, err := general.RequestApi(goGithubLatestReleaseTagApi)
 			if err != nil {
@@ -692,7 +692,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				continue
 			}
 			// 获取本地版本
-			localProgram := filepath.Join(config.Install.ProgramPath, name) // 本地程序路径
+			localProgram := filepath.Join(config.Program.ProgramPath, name) // 本地程序路径
 			nameArgs := []string{"version", "--only"}                       // 本地程序参数
 			localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 			// 比较远端和本地版本
@@ -702,7 +702,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				textLength = general.RealLength(text) // 分隔符长度
 			} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
 				// 下载远端文件（如果 Temp 中已有远端文件则删除重新下载）
-				goReleaseTempDir := filepath.Join(config.Install.ReleaseTemp, name)
+				goReleaseTempDir := filepath.Join(config.Program.ReleaseTemp, name)
 				if general.FileExist(goReleaseTempDir) {
 					if err := os.RemoveAll(goReleaseTempDir); err != nil {
 						text := color.Sprintf("%s\n", general.ErrorText(err))
@@ -743,7 +743,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
 				general.ProgressParameters["fileName"] = color.Sprintf("[%s]", filesInfo.ChecksumsFileInfo.Name)
 				general.ProgressParameters["suffix"] = "from Github release:"
-				checksumsLocalPath := filepath.Join(config.Install.ReleaseTemp, name, filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
+				checksumsLocalPath := filepath.Join(config.Program.ReleaseTemp, name, filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
 				if err := general.DownloadFile(filesInfo.ChecksumsFileInfo.DownloadUrl, checksumsLocalPath, general.ProgressParameters); err != nil {
 					text := color.Error.Sprintf("error -> %s\n", err)
 					color.Printf(text)
@@ -758,7 +758,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				general.ProgressParameters["project"] = color.Sprintf("[%s]", name)
 				general.ProgressParameters["fileName"] = color.Sprintf("[%s]", filesInfo.ArchiveFileInfo.Name)
 				general.ProgressParameters["suffix"] = "from Github release:"
-				archiveLocalPath := filepath.Join(config.Install.ReleaseTemp, name, filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
+				archiveLocalPath := filepath.Join(config.Program.ReleaseTemp, name, filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
 				if err := general.DownloadFile(filesInfo.ArchiveFileInfo.DownloadUrl, archiveLocalPath, general.ProgressParameters); err != nil {
 					text := color.Error.Sprintf("error -> %s\n", err)
 					color.Printf(text)
@@ -805,7 +805,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					archivedResourcesFolder := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, "resources") // 解压得到的资源文件夹
 					// 检测本地程序是否存在
 					if commandErr != nil { // 不存在，安装
-						if err := general.InstallFile(archivedProgram, localProgram, 0755); err != nil { // 安装程序
+						if err := general.Install(archivedProgram, localProgram, 0755); err != nil { // 安装程序
 							text := color.Sprintf("%s\n", general.ErrorText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
@@ -826,9 +826,9 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						}
 						// 安装资源文件 - desktop 文件
 						archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", color.Sprintf("%s.desktop", name))   // 解压得到的资源文件 - desktop 文件
-						localResourcesDesktopFile := filepath.Join(config.Install.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
+						localResourcesDesktopFile := filepath.Join(config.Program.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
 						if general.FileExist(archivedResourcesDesktopFile) {
-							if err := general.InstallFile(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
+							if err := general.Install(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
 								text := color.Sprintf("%s\n", general.ErrorText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
@@ -840,7 +840,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						}
 						// 安装资源文件 - icon 文件
 						archivedResourcesIconFolder := filepath.Join(archivedResourcesFolder, "pixmaps")   // 解压得到的资源文件 - icon 文件夹
-						localResourcesIconFolder := filepath.Join(config.Install.ResourcesPath, "pixmaps") // 本地资源文件 - icon 文件夹
+						localResourcesIconFolder := filepath.Join(config.Program.ResourcesPath, "pixmaps") // 本地资源文件 - icon 文件夹
 						if general.FileExist(archivedResourcesIconFolder) {
 							files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 							if err != nil {
@@ -867,7 +867,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							for _, file := range files {
 								archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 								localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
-								if err := general.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
+								if err := general.Install(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
 									text := color.Sprintf("%s\n", general.ErrorText(err))
 									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
@@ -892,7 +892,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							general.Delay(0.1)                    // 0.1s
 							continue
 						}
-						if err := general.InstallFile(archivedProgram, localProgram, 0755); err != nil { // 安装新程序
+						if err := general.Install(archivedProgram, localProgram, 0755); err != nil { // 安装新程序
 							text := color.Sprintf("%s\n", general.ErrorText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
@@ -913,9 +913,9 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						}
 						// 安装资源文件 - desktop 文件
 						archivedResourcesDesktopFile := filepath.Join(archivedResourcesFolder, "applications", color.Sprintf("%s.desktop", name))   // 解压得到的资源文件 - desktop 文件
-						localResourcesDesktopFile := filepath.Join(config.Install.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
+						localResourcesDesktopFile := filepath.Join(config.Program.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
 						if general.FileExist(archivedResourcesDesktopFile) {
-							if err := general.InstallFile(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
+							if err := general.Install(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
 								text := color.Sprintf("%s\n", general.ErrorText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
@@ -927,7 +927,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						}
 						// 安装资源文件 - icon 文件
 						archivedResourcesIconFolder := filepath.Join(archivedResourcesFolder, "pixmaps")   // 解压得到的资源文件 - icon 文件夹
-						localResourcesIconFolder := filepath.Join(config.Install.ResourcesPath, "pixmaps") // 本地资源文件 - icon 文件夹
+						localResourcesIconFolder := filepath.Join(config.Program.ResourcesPath, "pixmaps") // 本地资源文件 - icon 文件夹
 						if general.FileExist(archivedResourcesIconFolder) {
 							files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 							if err != nil {
@@ -954,7 +954,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							for _, file := range files {
 								archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 								localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
-								if err := general.InstallFile(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
+								if err := general.Install(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
 									text := color.Sprintf("%s\n", general.ErrorText(err))
 									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
@@ -971,7 +971,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						textLength = general.RealLength(text) // 分隔符长度
 					}
 					// 生成/更新自动补全脚本
-					for _, completionDir := range config.Install.Go.CompletionDir {
+					for _, completionDir := range config.Program.Go.CompletionDir {
 						if general.FileExist(completionDir) {
 							generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir, name)}
 							if err := general.RunCommand("bash", generateArgs); err != nil {
@@ -999,12 +999,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		}
 	case "source":
 		// 创建临时目录
-		if err := general.CreateDir(config.Install.SourceTemp); err != nil {
+		if err := general.CreateDir(config.Program.SourceTemp); err != nil {
 			color.Error.Println(err)
 			return
 		}
 		// 让用户选择需要安装/更新的程序
-		selectedNames, err := general.MultipleSelectionFilter(config.Install.Go.Names)
+		selectedNames, err := general.MultipleSelectionFilter(config.Program.Go.Names)
 		if err != nil {
 			color.Error.Println(err)
 		}
@@ -1013,8 +1013,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		// 遍历所选程序名
 		for _, name := range selectedNames {
 			textLength := 0                                                                                                                                      // 输出文本的长度
-			goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Install.Go.GithubApi, config.Install.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
-			goGiteaLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Install.Go.GiteaApi, config.Install.Go.GiteaUsername, name)    // 请求远端仓库最新 Tag 的 API
+			goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GithubApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
+			goGiteaLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GiteaApi, config.Program.Go.GiteaUsername, name)    // 请求远端仓库最新 Tag 的 API
 			// 请求 API - GitHub
 			body, err := general.RequestApi(goGithubLatestSourceTagApi)
 			if err != nil {
@@ -1043,7 +1043,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				continue
 			}
 			// 获取本地版本
-			localProgram := filepath.Join(config.Install.ProgramPath, name) // 本地程序路径
+			localProgram := filepath.Join(config.Program.ProgramPath, name) // 本地程序路径
 			nameArgs := []string{"version", "--only"}                       // 本地程序参数
 			localVersion, commandErr := general.RunCommandGetResult(localProgram, nameArgs)
 			// 比较远端和本地版本
@@ -1053,7 +1053,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				textLength = general.RealLength(text) // 分隔符长度
 			} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
 				// 如果 Temp 中已有远端仓库则删除重新克隆
-				goSourceTempDir := filepath.Join(config.Install.SourceTemp, name)
+				goSourceTempDir := filepath.Join(config.Program.SourceTemp, name)
 				if general.FileExist(goSourceTempDir) {
 					if err := os.RemoveAll(goSourceTempDir); err != nil {
 						text := color.Sprintf("%s\n", general.ErrorText(err))
@@ -1066,14 +1066,14 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					}
 				}
 				// 克隆远端仓库 - GitHub
-				goGithubCloneBaseUrl := color.Sprintf("%s/%s", config.Install.Go.GithubUrl, config.Install.Go.GithubUsername) // 远端仓库基础克隆地址（除仓库名）
+				goGithubCloneBaseUrl := color.Sprintf("%s/%s", config.Program.Go.GithubUrl, config.Program.Go.GithubUsername) // 远端仓库基础克隆地址（除仓库名）
 				color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from GitHub")
-				if err := general.CloneRepoViaHTTP(config.Install.SourceTemp, goGithubCloneBaseUrl, name); err != nil {
+				if err := general.CloneRepoViaHTTP(config.Program.SourceTemp, goGithubCloneBaseUrl, name); err != nil {
 					color.Printf("%s\n", general.ErrorText("error -> ", err))
 					// 克隆远端仓库 - Gitea
-					goGiteaCloneBaseUrl := color.Sprintf("%s/%s", config.Install.Go.GiteaUrl, config.Install.Go.GiteaUsername) // 远端仓库基础克隆地址（除仓库名）
+					goGiteaCloneBaseUrl := color.Sprintf("%s/%s", config.Program.Go.GiteaUrl, config.Program.Go.GiteaUsername) // 远端仓库基础克隆地址（除仓库名）
 					color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from Gitea")
-					if err := general.CloneRepoViaHTTP(config.Install.SourceTemp, goGiteaCloneBaseUrl, name); err != nil {
+					if err := general.CloneRepoViaHTTP(config.Program.SourceTemp, goGiteaCloneBaseUrl, name); err != nil {
 						text := color.Sprintf("%s\n", general.ErrorText("error -> ", err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
@@ -1130,7 +1130,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					continue
 				}
 				// 检测编译生成的程序是否存在
-				compileProgram := filepath.Join(config.Install.SourceTemp, name, config.Install.Go.GeneratePath, name) // 编译生成的程序
+				compileProgram := filepath.Join(config.Program.SourceTemp, name, config.Program.Go.GeneratePath, name) // 编译生成的程序
 				if general.FileExist(compileProgram) {
 					// 检测本地程序是否存在
 					if commandErr != nil { // 不存在，安装
@@ -1146,7 +1146,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								continue
 							}
 						} else { // Makefile 文件不存在则使用自定义函数安装
-							if err := general.InstallFile(compileProgram, localProgram, 0755); err != nil {
+							if err := general.Install(compileProgram, localProgram, 0755); err != nil {
 								text := color.Sprintf("%s\n", general.ErrorText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
@@ -1193,7 +1193,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								general.Delay(0.1)                    // 0.1s
 								continue
 							}
-							if err := general.InstallFile(compileProgram, localProgram, 0755); err != nil {
+							if err := general.Install(compileProgram, localProgram, 0755); err != nil {
 								text := color.Sprintf("%s\n", general.ErrorText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
@@ -1220,7 +1220,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						textLength = general.RealLength(text) // 分隔符长度
 					}
 					// 生成/更新自动补全脚本
-					for _, completionDir := range config.Install.Go.CompletionDir {
+					for _, completionDir := range config.Program.Go.CompletionDir {
 						if general.FileExist(completionDir) {
 							generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s/_%s", localProgram, completionDir, name)}
 							if err := general.RunCommand("bash", generateArgs); err != nil {
@@ -1247,7 +1247,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			general.Delay(0.1)                 // 0.01s
 		}
 	default:
-		text := color.Error.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", config.Install.Method)
+		text := color.Error.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", config.Program.Method)
 		color.Printf(text)
 	}
 }
@@ -1265,7 +1265,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	}
 	// 开始安装
 	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText("shell-based"))
-	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Install.ProgramPath))
+	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -1274,13 +1274,13 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	general.ProgressParameters["view"] = "0"
 
 	// 创建临时目录
-	if err := general.CreateDir(config.Install.SourceTemp); err != nil {
+	if err := general.CreateDir(config.Program.SourceTemp); err != nil {
 		color.Error.Println(err)
 		return
 	}
 
 	// 让用户选择需要安装/更新的程序
-	selectedNames, err := general.MultipleSelectionFilter(config.Install.Shell.Names)
+	selectedNames, err := general.MultipleSelectionFilter(config.Program.Shell.Names)
 	if err != nil {
 		color.Error.Println(err)
 	}
@@ -1289,8 +1289,8 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	// 遍历所选脚本名
 	for _, name := range selectedNames {
 		textLength := 0                                                                                                                                                                                             // 输出文本的长度
-		shellGithubLatestHashApi := color.Sprintf(general.ShellLatestHashApiFormat, config.Install.Shell.GithubApi, config.Install.Shell.GithubUsername, config.Install.Shell.Repo, config.Install.Shell.Dir, name) // 请求远端仓库最新脚本的 Hash 值的 API
-		shellGiteaLatestHashApi := color.Sprintf(general.ShellLatestHashApiFormat, config.Install.Shell.GiteaApi, config.Install.Shell.GiteaUsername, config.Install.Shell.Repo, config.Install.Shell.Dir, name)    // 请求远端仓库最新脚本的 Hash 值的 API
+		shellGithubLatestHashApi := color.Sprintf(general.ShellLatestHashApiFormat, config.Program.Shell.GithubApi, config.Program.Shell.GithubUsername, config.Program.Shell.Repo, config.Program.Shell.Dir, name) // 请求远端仓库最新脚本的 Hash 值的 API
+		shellGiteaLatestHashApi := color.Sprintf(general.ShellLatestHashApiFormat, config.Program.Shell.GiteaApi, config.Program.Shell.GiteaUsername, config.Program.Shell.Repo, config.Program.Shell.Dir, name)    // 请求远端仓库最新脚本的 Hash 值的 API
 		// 请求 API - GitHub
 		body, err := general.RequestApi(shellGithubLatestHashApi)
 		if err != nil {
@@ -1319,7 +1319,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 			continue
 		}
 		// 获取本地脚本 Hash
-		localProgram := filepath.Join(config.Install.ProgramPath, name) // 本地程序路径
+		localProgram := filepath.Join(config.Program.ProgramPath, name) // 本地程序路径
 		gitHashObjectArgs := []string{"hash-object", localProgram}      // 本地程序参数
 		localHash, commandErr := general.RunCommandGetResult("git", gitHashObjectArgs)
 		// 比较远端和本地脚本 Hash
@@ -1328,15 +1328,15 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 			color.Printf(text)
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // Hash 不一致，则更新脚本，并输出已更新信息
-			shellUrlFile := filepath.Join(config.Install.Shell.Dir, name)                                // 脚本在仓库中的路径
-			scriptLocalPath := filepath.Join(config.Install.SourceTemp, config.Install.Shell.Repo, name) // 脚本本地存储位置
+			shellUrlFile := filepath.Join(config.Program.Shell.Dir, name)                                // 脚本在仓库中的路径
+			scriptLocalPath := filepath.Join(config.Program.SourceTemp, config.Program.Shell.Repo, name) // 脚本本地存储位置
 			// 下载远端脚本 - GitHub
-			shellGithubBaseDownloadUrl := color.Sprintf(general.ShellGithubBaseDownloadUrlFormat, config.Install.Shell.GithubRaw, config.Install.Shell.GithubUsername, config.Install.Shell.Repo, config.Install.Shell.GithubBranch) // 脚本远端仓库基础地址
+			shellGithubBaseDownloadUrl := color.Sprintf(general.ShellGithubBaseDownloadUrlFormat, config.Program.Shell.GithubRaw, config.Program.Shell.GithubUsername, config.Program.Shell.Repo, config.Program.Shell.GithubBranch) // 脚本远端仓库基础地址
 			fileUrl := color.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
 			if err := general.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
 				color.Error.Println(err)
 				// 下载远端脚本 - Gitea
-				shellGiteaBaseDownloadUrl := color.Sprintf(general.ShellGiteaBaseDownloadUrlFormat, config.Install.Shell.GiteaRaw, config.Install.Shell.GiteaUsername, config.Install.Shell.Repo, config.Install.Shell.GiteaBranch) // 脚本远端仓库基础地址
+				shellGiteaBaseDownloadUrl := color.Sprintf(general.ShellGiteaBaseDownloadUrlFormat, config.Program.Shell.GiteaRaw, config.Program.Shell.GiteaUsername, config.Program.Shell.Repo, config.Program.Shell.GiteaBranch) // 脚本远端仓库基础地址
 				fileUrl := color.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
 				if err = general.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
 					text := color.Sprintf("%s\n", general.ErrorText(err))
@@ -1352,7 +1352,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 			if general.FileExist(scriptLocalPath) {
 				// 检测本地程序是否存在
 				if commandErr != nil { // 不存在，安装
-					if err := general.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
+					if err := general.Install(scriptLocalPath, localProgram, 0755); err != nil {
 						text := color.Sprintf("%s\n", general.ErrorText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
@@ -1379,7 +1379,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 						general.Delay(0.1)                    // 0.1s
 						continue
 					}
-					if err := general.InstallFile(scriptLocalPath, localProgram, 0755); err != nil {
+					if err := general.Install(scriptLocalPath, localProgram, 0755); err != nil {
 						text := color.Sprintf("%s\n", general.ErrorText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
