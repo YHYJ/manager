@@ -15,7 +15,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gookit/color"
 	"github.com/pelletier/go-toml"
 )
 
@@ -27,9 +26,11 @@ type Config struct {
 type ProgramConfig struct {
 	Method        string      `toml:"method"`
 	ProgramPath   string      `toml:"program_path"`
+	ResourcesPath string      `toml:"resources_path"`
 	ReleaseTemp   string      `toml:"release_temp"`
 	SourceTemp    string      `toml:"source_temp"`
-	ResourcesPath string      `toml:"resources_path"`
+	PocketPath    string      `toml:"pocket_path"`
+	PocketFile    string      `toml:"pocket_file"`
 	Self          SelfConfig  `toml:"self"`
 	Go            GoConfig    `toml:"go"`
 	Shell         ShellConfig `toml:"shell"`
@@ -145,17 +146,19 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	var (
 		ProgramPath     = ""         // 定义在不同平台的程序安装路径
 		ResourcesPath   = ""         // 定义在不同平台的资源安装路径
-		SourceTemp      = ""         // 定义在不同平台的Source安装方式的存储目录
-		ReleaseTemp     = ""         // 定义在不同平台的Release安装方式的存储目录
+		ReleaseTemp     = ""         // 定义在不同平台的 Release 安装方式的存储目录
+		SourceTemp      = ""         // 定义在不同平台的 Source 安装方式的存储目录
+		PocketPath      = ""         // 定义在不同平台的记账文件路径
 		goNames         = []string{} // 定义在不同平台可用的程序
-		goCompletionDir = []string{} // 定义在不同平台的自动补全文件路径（仅限oh-my-zsh）
+		goCompletionDir = []string{} // 定义在不同平台的自动补全文件路径（仅限 oh-my-zsh）
 		shellNames      = []string{} // 定义在不同平台可用的脚本
 	)
 	if Platform == "linux" {
-		ProgramPath = "/usr/local/bin"
-		ResourcesPath = "/usr/local/share"
-		SourceTemp = color.Sprintf("/tmp/%s/source", name)
-		ReleaseTemp = color.Sprintf("/tmp/%s/release", name)
+		ProgramPath = filepath.Join(Sep, "usr", "local", "bin")
+		ResourcesPath = filepath.Join(Sep, "usr", "local", "share")
+		ReleaseTemp = filepath.Join(Sep, "tmp", name, "release")
+		SourceTemp = filepath.Join(Sep, "tmp", name, "source")
+		PocketPath = filepath.Join(Sep, "var", "lib", name, "local")
 		goNames = []string{
 			name,
 			"checker",
@@ -183,10 +186,11 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"usb-manager",
 		}
 	} else if Platform == "darwin" {
-		ProgramPath = "/usr/local/bin"
-		ResourcesPath = "/usr/local/share"
-		SourceTemp = color.Sprintf("/tmp/%s/source", name)
-		ReleaseTemp = color.Sprintf("/tmp/%s/release", name)
+		ProgramPath = filepath.Join(Sep, "usr", "local", "bin")
+		ResourcesPath = filepath.Join(Sep, "usr", "local", "share")
+		ReleaseTemp = filepath.Join(Sep, "tmp", name, "release")
+		SourceTemp = filepath.Join(Sep, "tmp", name, "source")
+		PocketPath = filepath.Join(Sep, "var", "lib", name, "local")
 		goNames = []string{
 			name,
 			"curator",
@@ -206,13 +210,15 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		}
 	} else if Platform == "windows" {
 		ProgramPath = filepath.Join(GetVariable("ProgramFiles"), Name)
-		SourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "source")
 		ReleaseTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "release")
+		SourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "source")
+		PocketPath = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "local")
 		goNames = []string{
 			name,
 			"skynet",
 		}
 	}
+
 	// 定义一个 map[string]interface{} 类型的变量并赋值
 	exampleConf := map[string]interface{}{
 		"variable": map[string]interface{}{ // 环境变量设置
@@ -223,8 +229,10 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"method":         "release",     // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
 			"program_path":   ProgramPath,   // 程序安装路径
 			"resources_path": ResourcesPath, // 资源安装路径
-			"source_temp":    SourceTemp,    // Source 安装方式的基础存储目录
 			"release_temp":   ReleaseTemp,   // Release 安装方式的基础存储目录
+			"source_temp":    SourceTemp,    // Source 安装方式的基础存储目录
+			"pocket_path":    PocketPath,    // 记账文件路径
+			"pocket_file":    "files",       // 记账文件名
 			"self": map[string]interface{}{ // 管理程序本身的配置
 				"name":            strings.ToLower(Name),           // 管理程序名
 				"release_api":     "https://api.github.com",        // Release 安装源 API 地址
@@ -266,19 +274,23 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			},
 		},
 	}
+
 	// 检测配置文件是否存在
 	if !FileExist(filePath) {
 		return 0, fmt.Errorf("Open %s: no such file or directory", filePath)
 	}
+
 	// 检测配置文件是否是 toml 文件
 	if !isTomlFile(filePath) {
 		return 0, fmt.Errorf("Open %s: is not a toml file", filePath)
 	}
+
 	// 把 exampleConf 转换为 *toml.Tree 类型
 	tree, err := toml.TreeFromMap(exampleConf)
 	if err != nil {
 		return 0, err
 	}
+
 	// 打开一个文件并获取 io.Writer 接口
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {

@@ -12,6 +12,7 @@ package general
 import (
 	"os"
 	"os/user"
+	"path/filepath"
 	"runtime"
 	"strconv"
 
@@ -83,10 +84,12 @@ var (
 )
 
 var (
-	LatestVersionMessage     = "is already the latest version"                 // 输出文本 - 已安装的程序和脚本为最新版
-	UnableToCompileMessage   = "Makefile or main.go file does not exist"       // 输出文本 - 缺失编译文件无法完成编译
-	AcsInstallSuccessMessage = "auto-completion script installed successfully" // 输出文本 - 自动补全脚本安装成功
-	AcsInstallFailedMessage  = "auto-completion script installation failed"    // 输出文本 - 自动补全脚本安装失败
+	LatestVersionMessage       = "is already the latest version"                   // 输出文本 - 已安装的程序和脚本为最新版
+	UnableToCompileMessage     = "Makefile or main.go file does not exist"         // 输出文本 - 缺失编译文件无法完成编译
+	AcsInstallSuccessMessage   = "auto-completion script installed successfully"   // 输出文本 - 自动补全脚本安装成功
+	AcsInstallFailedMessage    = "auto-completion script installation failed"      // 输出文本 - 自动补全脚本安装失败
+	AcsUninstallSuccessMessage = "auto-completion script uninstalled successfully" // 输出文本 - 自动补全脚本卸载成功
+	AcsUninstallFailedMessage  = "auto-completion script uninstallation failed"    // 输出文本 - 自动补全脚本卸载失败
 )
 
 var (
@@ -122,6 +125,7 @@ var (
 
 var Platform = runtime.GOOS                   // 操作系统
 var Arch = runtime.GOARCH                     // 系统架构
+var Sep = string(filepath.Separator)          // 路径分隔符
 var UserInfo, _ = GetUserInfoByName(UserName) // 用户信息
 // 用户名，当程序提权运行时，使用 SUDO_USER 变量获取提权前的用户名
 var UserName = func() string {
