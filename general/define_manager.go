@@ -58,16 +58,13 @@ func Uninstall(targetFile string) error {
 }
 
 // InitPocketFile 初始化记账文件
-func InitPocketFile(pocketFilePath string) error {
-	if !FileExist(pocketFilePath) {
-		if err := CreateFile(pocketFilePath); err != nil {
-			return err
-		}
-		return nil
-	}
-	if err := DeleteFile(pocketFilePath); err != nil {
-		if err := CreateFile(pocketFilePath); err != nil {
-			return err
-		}
-	}
+//
+// 参数：
+//   - pocketFile: 记账文件路径
+//
+// 返回：
+//   - 错误信息
+func InitPocketFile(pocketFile string) error {
+	// 清空文件，文件不存在则创建
+	return EmptyFile(pocketFile)
 }
