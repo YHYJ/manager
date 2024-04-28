@@ -143,6 +143,17 @@ func GetAbsPath(filePath string) string {
 	}
 }
 
+// GetFileDir 获取文件所在目录
+//
+// 参数：
+//   - filePath: 文件路径
+//
+// 返回：
+//   - 文件所在目录
+func GetFileDir(filePath string) string {
+	return filepath.Dir(filePath)
+}
+
 // FileEmpty 判断文件是否为空
 //
 //   - 无法判断文件夹

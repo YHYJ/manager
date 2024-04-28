@@ -56,3 +56,18 @@ func Install(sourceFile, targetFile string, perm os.FileMode) error {
 func Uninstall(targetFile string) error {
 	return os.Remove(targetFile)
 }
+
+// InitPocketFile 初始化记账文件
+func InitPocketFile(pocketFilePath string) error {
+	if !FileExist(pocketFilePath) {
+		if err := CreateFile(pocketFilePath); err != nil {
+			return err
+		}
+		return nil
+	}
+	if err := DeleteFile(pocketFilePath); err != nil {
+		if err := CreateFile(pocketFilePath); err != nil {
+			return err
+		}
+	}
+}
