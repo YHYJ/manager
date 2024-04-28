@@ -42,6 +42,9 @@ func InstallSelfProgram(configTree *toml.Tree) {
 	general.ProgressParameters["view"] = "1"
 	general.ProgressParameters["sep"] = "-"
 
+	// 设置文本参数
+	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
 	// 使用配置的安装方式进行安装
 	switch strings.ToLower(config.Program.Method) {
 	case "release":
@@ -52,7 +55,6 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		}
 		// 安装
 		name := config.Program.Self.Name
-		textLength := 0                                                                                                                                         // 输出文本的长度
 		goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Program.Go.ReleaseApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
 		// 请求 API - GitHub
 		body, err := general.RequestApi(goGithubLatestReleaseTagApi)
@@ -389,7 +391,6 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		}
 		// 安装
 		name := config.Program.Self.Name
-		textLength := 0                                                                                                                                      // 输出文本的长度
 		goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GithubApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
 		goGiteaLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GiteaApi, config.Program.Go.GiteaUsername, name)    // 请求远端仓库最新 Tag 的 API
 		// 请求 API - GitHub
@@ -650,6 +651,9 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	general.ProgressParameters["view"] = "1"
 	general.ProgressParameters["sep"] = "-"
 
+	// 设置文本参数
+	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
 	// 使用配置的安装方式进行安装
 	switch strings.ToLower(config.Program.Method) {
 	case "release":
@@ -667,7 +671,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		sort.Strings(selectedNames)
 		// 遍历所选程序名
 		for _, name := range selectedNames {
-			textLength := 0                                                                                                                                         // 输出文本的长度
 			goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Program.Go.ReleaseApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
 			// 请求 API - GitHub
 			body, err := general.RequestApi(goGithubLatestReleaseTagApi)
@@ -1012,7 +1015,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		sort.Strings(selectedNames)
 		// 遍历所选程序名
 		for _, name := range selectedNames {
-			textLength := 0                                                                                                                                      // 输出文本的长度
 			goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GithubApi, config.Program.Go.GithubUsername, name) // 请求远端仓库最新 Tag 的 API
 			goGiteaLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GiteaApi, config.Program.Go.GiteaUsername, name)    // 请求远端仓库最新 Tag 的 API
 			// 请求 API - GitHub
@@ -1273,6 +1275,9 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	// 设置进度条参数
 	general.ProgressParameters["view"] = "0"
 
+	// 设置文本参数
+	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
 	// 创建临时目录
 	if err := general.CreateDir(config.Program.SourceTemp); err != nil {
 		color.Error.Println(err)
@@ -1288,7 +1293,6 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	sort.Strings(selectedNames)
 	// 遍历所选脚本名
 	for _, name := range selectedNames {
-		textLength := 0                                                                                                                                                                                             // 输出文本的长度
 		shellGithubLatestHashApi := color.Sprintf(general.ShellLatestHashApiFormat, config.Program.Shell.GithubApi, config.Program.Shell.GithubUsername, config.Program.Shell.Repo, config.Program.Shell.Dir, name) // 请求远端仓库最新脚本的 Hash 值的 API
 		shellGiteaLatestHashApi := color.Sprintf(general.ShellLatestHashApiFormat, config.Program.Shell.GiteaApi, config.Program.Shell.GiteaUsername, config.Program.Shell.Repo, config.Program.Shell.Dir, name)    // 请求远端仓库最新脚本的 Hash 值的 API
 		// 请求 API - GitHub
