@@ -10,6 +10,8 @@ Description: 处理一些杂事
 package general
 
 import (
+	"bufio"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -45,4 +47,40 @@ func PrintDelimiter(length int) {
 //   - second: 延时秒数
 func Delay(second float32) {
 	time.Sleep(time.Duration(second*1000) * time.Millisecond)
+}
+
+// AskUser 询问用户
+//
+// 参数：
+//   - question: 问题
+//   - answer: 期望的回答（每个选项之间用斜线/隔开），例如 "y/N" 代表期望输入 y 或 n，其中大写字母代表默认值，示例是 N
+//
+// 返回：
+//   - 用户的回答
+//   - 错误信息
+func AskUser(question string, answer string) (string, error) {
+	color.Printf("%s [%s] ", question, answer)
+
+	// 从标准输入中读取用户的回答
+	reader := bufio.NewReader(os.Stdin)
+	userAnswer, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+
+	// 将期望的回答以斜线分割，分割结果转换为小写并去除首尾空格
+	possibleAnswers := strings.Split(strings.TrimSpace(strings.ToLower(answer)), "/")
+	// 将用户的回答转换为小写并去除首尾空格
+	userAnswer = strings.TrimSpace(strings.ToLower(userAnswer))
+
+	// 检查用户的回答是否符合期望
+	for _, possibleAnswer := range possibleAnswers {
+		if userAnswer == possibleAnswer {
+			return userAnswer, nil
+		} else {
+			return "n", nil
+		}
+	}
+
+	return "n", nil
 }
