@@ -306,46 +306,29 @@ func GoToDir(dirPath string) error {
 	return os.Chdir(dirPath)
 }
 
-// WriteFile 写入内容到文件
+// WriteFileNew 写入内容到文件，文件不存在则创建
 //
 // 参数：
 //   - filePath: 文件路径
-//   - content: 内容
+//   - content: 写入内容
+//   - mode: 写入模式，追加('a', O_APPEND, 默认)或覆盖('t', O_TRUNC)
 //
 // 返回：
 //   - 错误信息
-func WriteFile(filePath string, content string) error {
-	// 文件存在
-	if FileExist(filePath) {
-		if FileEmpty(filePath) { // 文件内容为空
-			// 打开文件并写入内容
-			file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0666)
-			if err != nil {
-				return err
-			} else {
-				_, err := file.WriteString(content)
-				if err != nil {
-					return err
-				}
-			}
-		} else { // 文件内容不为空
-			return fmt.Errorf("File %s is not empty", filePath)
-		}
-	} else {
-		// 文件不存在，创建文件
-		if err := CreateFile(filePath); err != nil {
-			return err
-		}
-		// 打开文件并写入内容
-		file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC, 0666)
-		if err != nil {
-			return err
-		} else {
-			_, err := file.WriteString(content)
-			if err != nil {
-				return err
-			}
-		}
+func WriteFile(filePath, content, mode string) error {
+	// 确定写入模式
+	writeMode := os.O_WRONLY | os.O_CREATE | os.O_APPEND
+	if mode == "t" {
+		writeMode = os.O_WRONLY | os.O_CREATE | os.O_TRUNC
+	}
+
+	// 将内容写入文件
+	file, err := os.OpenFile(filePath, writeMode, 0666)
+	if err != nil {
+		return err
+	}
+	if _, err = file.WriteString(content); err != nil {
+		return err
 	}
 	return nil
 }
