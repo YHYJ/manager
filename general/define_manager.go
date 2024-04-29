@@ -46,7 +46,7 @@ func Install(sourceFile, targetFile string, perm os.FileMode) error {
 	return nil
 }
 
-// Uninstall 卸载
+// Uninstall 卸载文件，自动检测文件是否存在
 //
 // 参数：
 //   - targetFile: 目标文件路径
@@ -54,7 +54,7 @@ func Install(sourceFile, targetFile string, perm os.FileMode) error {
 // 返回：
 //   - 错误信息
 func Uninstall(targetFile string) error {
-	return os.Remove(targetFile)
+	return DeleteFile(targetFile)
 }
 
 // InitPocketFile 初始化记账文件
