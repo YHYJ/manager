@@ -26,24 +26,58 @@ import (
 	"github.com/gookit/color"
 )
 
+// ReadFile 依次读取文件每行内容
+//
+// 参数：
+//   - filePath: 文件路径
+//
+// 返回：
+//   - 指定行的内容
+func ReadFile(filePath string) ([]string, error) {
+	// 打开文件
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// 创建一个 Scanner 对象
+	scanner := bufio.NewScanner(file)
+
+	// 存储读取到的每行内容的切片
+	var lines []string
+
+	// 逐行读取文件内容
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
+	}
+
+	// 检查是否出现了读取错误
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+
+	return lines, nil
+}
+
 // ReadFileLine 读取文件指定行
 //
 // 参数：
-//   - file: 文件路径
+//   - filePath: 文件路径
 //   - line: 行号
 //
 // 返回：
 //   - 指定行的内容
-func ReadFileLine(file string, line int) string {
+func ReadFileLine(filePath string, line int) string {
 	// 打开文件
-	text, err := os.Open(file)
+	file, err := os.Open(filePath)
 	if err != nil {
 		color.Error.Println(err)
 	}
-	defer text.Close()
+	defer file.Close()
 
 	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(text)
+	scanner := bufio.NewScanner(file)
 	// 行计数
 	count := 1
 	// 逐行读取，输出指定行
@@ -59,21 +93,21 @@ func ReadFileLine(file string, line int) string {
 // ReadFileKey 读取文件包含关键字的行
 //
 // 参数：
-//   - file: 文件路径
+//   - filePath: 文件路径
 //   - key: 关键字
 //
 // 返回：
 //   - 包含关键字的行的内容
-func ReadFileKey(file, key string) string {
+func ReadFileKey(filePath, key string) string {
 	// 打开文件
-	text, err := os.Open(file)
+	file, err := os.Open(filePath)
 	if err != nil {
 		color.Error.Println(err)
 	}
-	defer text.Close()
+	defer file.Close()
 
 	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(text)
+	scanner := bufio.NewScanner(file)
 	// 逐行读取，输出指定行
 	for scanner.Scan() {
 		if strings.Contains(scanner.Text(), key) {
@@ -86,21 +120,21 @@ func ReadFileKey(file, key string) string {
 // ReadFileCount 获取文件包含关键字的行的计数
 //
 // 参数：
-//   - file: 文件路径
+//   - filePath: 文件路径
 //   - key: 关键字
 //
 // 返回：
 //   - 包含关键字的行的数量
-func ReadFileCount(file, key string) int {
+func ReadFileCount(filePath, key string) int {
 	// 打开文件
-	text, err := os.Open(file)
+	file, err := os.Open(filePath)
 	if err != nil {
 		color.Error.Println(err)
 	}
-	defer text.Close()
+	defer file.Close()
 
 	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(text)
+	scanner := bufio.NewScanner(file)
 	// 计数器
 	count := 0
 	// 逐行读取，输出指定行
@@ -360,7 +394,7 @@ func WriteFileWithNewLine(filePath, content, mode string) error {
 	return nil
 }
 
-// DeleteFile 删除文件
+// DeleteFile 删除文件，如果目标是文件夹则包括其下所有文件
 //
 // 参数：
 //   - filePath: 文件路径
@@ -371,7 +405,7 @@ func DeleteFile(filePath string) error {
 	if !FileExist(filePath) {
 		return nil
 	}
-	return os.Remove(filePath)
+	return os.RemoveAll(filePath)
 }
 
 // CompareFile 并发比较两个文件是否相同
