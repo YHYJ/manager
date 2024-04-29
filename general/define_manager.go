@@ -65,6 +65,8 @@ func Uninstall(targetFile string) error {
 // 返回：
 //   - 错误信息
 func InitPocketFile(pocketFile string) error {
-	// 清空文件，文件不存在则创建
+	if err := CreateFile(pocketFile); err != nil {
+		return err
+	}
 	return EmptyFile(pocketFile)
 }
