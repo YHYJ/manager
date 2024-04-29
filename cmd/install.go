@@ -19,8 +19,8 @@ import (
 // installCmd represents the install command
 var installCmd = &cobra.Command{
 	Use:   "install",
-	Short: "Install or update programs and scripts",
-	Long:  `Install or update self-developed programs and scripts.`,
+	Short: "Install or update software and scripts",
+	Long:  `Install or update my software and scripts.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// 解析参数
 		cfgFile, _ := cmd.Flags().GetString("config")
@@ -79,8 +79,8 @@ var installCmd = &cobra.Command{
 
 func init() {
 	installCmd.Flags().BoolP("self", "", false, "Install or update itself (Can only be called alone)")
-	installCmd.Flags().BoolP("all", "", false, "Install or update all programs and scripts")
-	installCmd.Flags().BoolP("go", "", false, "Install or update programs developed based on go")
+	installCmd.Flags().BoolP("all", "", false, "Install or update all software and scripts")
+	installCmd.Flags().BoolP("go", "", false, "Install or update golang-based software")
 	installCmd.Flags().BoolP("shell", "", false, "Install or update shell scripts")
 
 	installCmd.Flags().BoolP("help", "h", false, "help for install command")
