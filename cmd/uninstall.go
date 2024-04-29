@@ -12,6 +12,8 @@ package cmd
 import (
 	"github.com/gookit/color"
 	"github.com/spf13/cobra"
+	"github.com/yhyj/manager/cli"
+	"github.com/yhyj/manager/general"
 )
 
 // uninstallCmd represents the uninstall command
@@ -20,7 +22,58 @@ var uninstallCmd = &cobra.Command{
 	Short: "Uninstall programs and scripts",
 	Long:  `Uninstall self-developed programs and scripts.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		color.Println("uninstall called")
+		// 解析参数
+		cfgFile, _ := cmd.Flags().GetString("config")
+		allFlag, _ := cmd.Flags().GetBool("all")
+		goFlag, _ := cmd.Flags().GetBool("go")
+		selfFlag, _ := cmd.Flags().GetBool("self")
+		shellFlag, _ := cmd.Flags().GetBool("shell")
+
+		// 根据参数执行操作
+		if allFlag {
+			goFlag, shellFlag = true, true
+		}
+
+		var (
+			noticeSlogan []string // 提示标语
+		)
+		if selfFlag && (goFlag || shellFlag) {
+			noticeSlogan = append(noticeSlogan, "'--self' cannot be mixed with other Flags")
+			goFlag, shellFlag = false, false
+		}
+
+		// 读取配置文件
+		configTree, err := general.GetTomlConfig(cfgFile)
+		if err != nil {
+			color.Error.Println(err)
+			return
+		}
+
+		// 卸载管理程序本身
+		if selfFlag {
+			color.Println()
+			cli.UninstallSelfProgram(configTree)
+		}
+
+		// 卸载基于 golang 的程序
+		if goFlag {
+			color.Println()
+			cli.UninstallGolangBasedProgram(configTree)
+		}
+
+		// 卸载基于 shell 的程序
+		if shellFlag {
+			color.Println()
+			cli.UninstallShellBasedProgram(configTree)
+		}
+
+		// 输出标语
+		if len(noticeSlogan) > 0 {
+			color.Println()
+			for _, slogan := range noticeSlogan {
+				color.Notice.Tips(general.PrimaryText(slogan))
+			}
+		}
 	},
 }
 
