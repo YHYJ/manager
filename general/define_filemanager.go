@@ -306,7 +306,7 @@ func GoToDir(dirPath string) error {
 	return os.Chdir(dirPath)
 }
 
-// WriteFileNew 写入内容到文件，文件不存在则创建
+// WriteFile 写入内容到文件，文件不存在则创建，不自动换行
 //
 // 参数：
 //   - filePath: 文件路径
@@ -328,6 +328,33 @@ func WriteFile(filePath, content, mode string) error {
 		return err
 	}
 	if _, err = file.WriteString(content); err != nil {
+		return err
+	}
+	return nil
+}
+
+// WriteFileWithNewLine 写入内容到文件，文件不存在则创建，自动换行
+//
+// 参数：
+//   - filePath: 文件路径
+//   - content: 写入内容
+//   - mode: 写入模式，追加('a', O_APPEND, 默认)或覆盖('t', O_TRUNC)
+//
+// 返回：
+//   - 错误信息
+func WriteFileWithNewLine(filePath, content, mode string) error {
+	// 确定写入模式
+	writeMode := os.O_WRONLY | os.O_CREATE | os.O_APPEND
+	if mode == "t" {
+		writeMode = os.O_WRONLY | os.O_CREATE | os.O_TRUNC
+	}
+
+	// 将内容写入文件
+	file, err := os.OpenFile(filePath, writeMode, 0666)
+	if err != nil {
+		return err
+	}
+	if _, err = file.WriteString(content + "\n"); err != nil {
 		return err
 	}
 	return nil
