@@ -158,7 +158,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		ResourcesPath = filepath.Join(Sep, "usr", "local", "share")
 		ReleaseTemp = filepath.Join(Sep, "tmp", name, "release")
 		SourceTemp = filepath.Join(Sep, "tmp", name, "source")
-		PocketPath = filepath.Join(Sep, "var", "lib", name, "local")
+		PocketPath = filepath.Join(Sep, "var", "local", "lib", name, "local")
 		goNames = []string{
 			name,
 			"checker",
@@ -190,7 +190,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		ResourcesPath = filepath.Join(Sep, "usr", "local", "share")
 		ReleaseTemp = filepath.Join(Sep, "tmp", name, "release")
 		SourceTemp = filepath.Join(Sep, "tmp", name, "source")
-		PocketPath = filepath.Join(Sep, "var", "lib", name, "local")
+		PocketPath = filepath.Join(Sep, "var", "local", "lib", name, "local")
 		goNames = []string{
 			name,
 			"curator",
