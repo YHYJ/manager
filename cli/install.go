@@ -54,7 +54,6 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 	// 记账文件
 	pocketFile := filepath.Join(config.Program.PocketPath, name, config.Program.PocketFile) // 记账文件路径
-	general.InitPocketFile(pocketFile)                                                      // 初始化记账文件
 	var writeMode string = "a"                                                              // 写入模式
 
 	// 使用配置的安装方式进行安装
@@ -207,6 +206,9 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				}
 				archivedProgram := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, name)                // 解压得到的程序
 				archivedResourcesFolder := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, "resources") // 解压得到的资源文件夹
+
+				// 初始化记账文件
+				general.InitPocketFile(pocketFile)
 				// 检测本地程序是否存在
 				if commandErr != nil { // 不存在，安装
 					// 安装程序
@@ -759,7 +761,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		for _, name := range selectedNames {
 			// 记账文件
 			pocketFile := filepath.Join(config.Program.PocketPath, name, config.Program.PocketFile) // 记账文件路径
-			general.InitPocketFile(pocketFile)                                                      // 初始化记账文件
 			var writeMode string = "a"                                                              // 写入模式
 
 			// API
@@ -900,6 +901,9 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					}
 					archivedProgram := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, name)                // 解压得到的程序
 					archivedResourcesFolder := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, "resources") // 解压得到的资源文件夹
+
+					// 初始化记账文件
+					general.InitPocketFile(pocketFile)
 					// 检测本地程序是否存在
 					if commandErr != nil { // 不存在，安装
 						// 安装程序
@@ -1016,6 +1020,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							continue
 						} else {
 							// 记账
+							color.Println(localProgram)
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
 								color.Error.Println(err)
 							}
@@ -1151,7 +1156,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		for _, name := range selectedNames {
 			// 记账文件
 			pocketFile := filepath.Join(config.Program.PocketPath, name, config.Program.PocketFile) // 记账文件路径
-			general.InitPocketFile(pocketFile)                                                      // 初始化记账文件
 			var writeMode string = "a"                                                              // 写入模式
 
 			// API
@@ -1273,9 +1277,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					general.Delay(0.1)                    // 0.1s
 					continue
 				}
+
 				// 检测编译生成的程序是否存在
 				compileProgram := filepath.Join(config.Program.SourceTemp, name, config.Program.Go.GeneratePath, name) // 编译生成的程序
 				if general.FileExist(compileProgram) {
+					// 初始化记账文件
+					general.InitPocketFile(pocketFile)
 					// 检测本地程序是否存在
 					if commandErr != nil { // 不存在，安装
 						if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令安装
@@ -1455,7 +1462,6 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	for _, name := range selectedNames {
 		// 记账文件
 		pocketFile := filepath.Join(config.Program.PocketPath, name, config.Program.PocketFile) // 记账文件路径
-		general.InitPocketFile(pocketFile)                                                      // 初始化记账文件
 		var writeMode string = "a"                                                              // 写入模式
 
 		// API
@@ -1522,6 +1528,8 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 			}
 			// 检测脚本文件是否存在
 			if general.FileExist(scriptLocalPath) {
+				// 初始化记账文件
+				general.InitPocketFile(pocketFile)
 				// 检测本地程序是否存在
 				if commandErr != nil { // 不存在，安装
 					if err := general.Install(scriptLocalPath, localProgram, 0755); err != nil {
