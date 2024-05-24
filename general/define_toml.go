@@ -176,8 +176,8 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		}
 		shellNames = []string{
 			"configure-tags",
+			"git-browser",
 			"open",
-			"open-remote-repository",
 			"py-virtualenv-tool",
 			"save-docker-images",
 			"spacevim-update",
@@ -202,7 +202,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		}
 		shellNames = []string{
 			"configure-tags",
-			"open-remote-repository",
+			"git-browser",
 			"py-virtualenv-tool",
 			"spacevim-update",
 			"spider",
