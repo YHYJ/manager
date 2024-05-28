@@ -138,15 +138,15 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 让用户选择需要卸载的程序
-	selectedNames, err := general.MultipleSelectionFilter(installedPrograms)
+	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
 	if err != nil {
 		color.Error.Println(err)
 	}
 	// 对所选的程序进行排序
-	sort.Strings(selectedNames)
+	sort.Strings(selectedPrograms)
 
 	// 确认是否要卸载
-	if len(selectedNames) != 0 {
+	if len(selectedPrograms) != 0 {
 		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), "y/N")
 		if err != nil {
 			color.Error.Println(err)
@@ -168,9 +168,9 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
 	// 遍历所选脚本名
-	for _, name := range selectedNames {
+	for _, program := range selectedPrograms {
 		// 记账文件
-		pocketDir := filepath.Join(config.Program.PocketPath, name)       // 记账文件夹路径
+		pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
 		pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
 		pocketLines := make([]string, 0)                                  // 记账文件内容
 		if general.FileExist(pocketFile) {                                // 读取记账文件内容
@@ -206,7 +206,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 		}
 
 		// 本次卸载结束分隔符
-		text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgMagentaText("uninstalled"))
+		text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
 		color.Printf(text)
 		textLength = general.RealLength(text) // 分隔符长度
 
@@ -241,15 +241,15 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 让用户选择需要卸载的程序
-	selectedNames, err := general.MultipleSelectionFilter(installedPrograms)
+	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
 	if err != nil {
 		color.Error.Println(err)
 	}
 	// 对所选的程序进行排序
-	sort.Strings(selectedNames)
+	sort.Strings(selectedPrograms)
 
 	// 确认是否要卸载
-	if len(selectedNames) != 0 {
+	if len(selectedPrograms) != 0 {
 		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), "y/N")
 		if err != nil {
 			color.Error.Println(err)
@@ -271,9 +271,9 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
 	// 遍历所选脚本名
-	for _, name := range selectedNames {
+	for _, program := range selectedPrograms {
 		// 记账文件
-		pocketDir := filepath.Join(config.Program.PocketPath, name)       // 记账文件夹路径
+		pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
 		pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
 		pocketLines := make([]string, 0)                                  // 记账文件内容
 		if general.FileExist(pocketFile) {                                // 读取记账文件内容
@@ -309,7 +309,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 		}
 
 		// 本次卸载结束分隔符
-		text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgMagentaText("uninstalled"))
+		text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
 		color.Printf(text)
 		textLength = general.RealLength(text) // 分隔符长度
 
