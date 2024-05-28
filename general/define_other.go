@@ -68,19 +68,8 @@ func AskUser(question string, answer string) (string, error) {
 		return "", err
 	}
 
-	// 将期望的回答以斜线分割，分割结果转换为小写并去除首尾空格
-	possibleAnswers := strings.Split(strings.TrimSpace(strings.ToLower(answer)), "/")
 	// 将用户的回答转换为小写并去除首尾空格
 	userAnswer = strings.TrimSpace(strings.ToLower(userAnswer))
 
-	// 检查用户的回答是否符合期望
-	for _, possibleAnswer := range possibleAnswers {
-		if userAnswer == possibleAnswer {
-			return userAnswer, nil
-		} else {
-			return "n", nil
-		}
-	}
-
-	return "n", nil
+	return userAnswer, nil
 }
