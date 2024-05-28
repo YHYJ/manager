@@ -120,14 +120,16 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	sort.Strings(selectedNames)
 
 	// 确认是否要卸载
-	question := general.QuestionText("Do you plan to delete these software?")
-	answer, err := general.AskUser(question, "y/N")
-	if err != nil {
-		color.Error.Println(err)
-		return
-	}
-	if answer == "n" {
-		return
+	if len(selectedNames) != 0 {
+		question := general.QuestionText("Do you plan to delete these software?")
+		answer, err := general.AskUser(question, "y/N")
+		if err != nil {
+			color.Error.Println(err)
+			return
+		}
+		if answer == "n" {
+			return
+		}
 	}
 
 	// 遍历所选脚本名
@@ -203,14 +205,16 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	sort.Strings(selectedNames)
 
 	// 确认是否要卸载
-	question := general.QuestionText("Do you plan to delete these software?")
-	answer, err := general.AskUser(question, "y/N")
-	if err != nil {
-		color.Error.Println(err)
-		return
-	}
-	if answer == "n" {
-		return
+	if len(selectedNames) != 0 {
+		question := general.QuestionText("Do you plan to delete these software?")
+		answer, err := general.AskUser(question, "y/N")
+		if err != nil {
+			color.Error.Println(err)
+			return
+		}
+		if answer == "n" {
+			return
+		}
 	}
 
 	// 遍历所选脚本名
