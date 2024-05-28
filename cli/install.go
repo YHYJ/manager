@@ -1189,7 +1189,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				continue
 			}
 
-			// 获取本地版本
+			// 获取本地程序版本信息
 			localProgram := filepath.Join(config.Program.ProgramPath, name) // 本地程序路径
 			programVersionArgs := []string{"version", "--only"}             // 获取本地程序版本信息的参数
 			localVersion, commandErr := general.RunCommandGetResult(localProgram, programVersionArgs)
