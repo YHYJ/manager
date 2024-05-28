@@ -32,11 +32,6 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		return
 	}
 
-	// 开始安装提示
-	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText(config.Program.Self.Name))
-	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
-	color.Printf("%s\n", strings.Repeat(general.Separator1st, general.SeparatorBaseLength))
-
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -47,6 +42,11 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 	// 设置文本参数
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
+	// 开始安装提示
+	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText(config.Program.Self.Name))
+	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+	color.Printf("%s\n", strings.Repeat(general.Separator1st, general.SeparatorBaseLength))
 
 	// 程序文件
 	name := config.Program.Self.Name                                // 程序名
@@ -727,10 +727,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		return
 	}
 
-	// 开始安装提示
-	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText("golang-based"))
-	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
-
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -741,6 +737,20 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 
 	// 设置文本参数
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
+	// 检测主文件是否存在为已安装程序计数
+	totalNum := len(config.Program.Go.Names) // 总程序数
+	installedNum := 0                        // 已安装程序数
+	for _, program := range config.Program.Go.Names {
+		programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
+		if general.FileExist(programMainFile) {
+			installedNum++
+		}
+	}
+
+	// 开始安装提示
+	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs %s", general.FgCyanText("golang-based"), general.SecondaryText("(", installedNum, "/", totalNum, ")"))
+	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
 
 	// 让用户选择需要安装/更新的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names)
@@ -1426,10 +1436,6 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		return
 	}
 
-	// 开始安装提示
-	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText("shell-based"))
-	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
-
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -1439,6 +1445,20 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 
 	// 设置文本参数
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
+	// 检测主文件是否存在为已安装程序计数
+	totalNum := len(config.Program.Shell.Names) // 总程序数
+	installedNum := 0                           // 已安装程序数
+	for _, program := range config.Program.Shell.Names {
+		programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
+		if general.FileExist(programMainFile) {
+			installedNum++
+		}
+	}
+
+	// 开始安装提示
+	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs %s", general.FgCyanText("shell-based"), general.SecondaryText("(", installedNum, "/", totalNum, ")"))
+	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
 
 	// 创建临时目录
 	if err := general.CreateDir(config.Program.SourceTemp); err != nil {

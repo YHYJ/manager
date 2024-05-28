@@ -125,17 +125,19 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 		return
 	}
 
-	// 开始卸载提示
-	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs", general.FgCyanText("golang-based"))
-
 	// 检测主文件是否存在来决定是否在选项中显示
 	installedPrograms := make([]string, 0) // 已安装程序
-	for _, name := range config.Program.Go.Names {
-		programMainFile := filepath.Join(config.Program.ProgramPath, name) // 程序主文件路径
+	for _, program := range config.Program.Go.Names {
+		programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
 		if general.FileExist(programMainFile) {
-			installedPrograms = append(installedPrograms, name)
+			installedPrograms = append(installedPrograms, program)
 		}
 	}
+
+	// 开始卸载提示
+	totalNum := len(config.Program.Shell.Names) // 总程序数
+	installedNum := len(installedPrograms)      // 已安装程序数
+	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs %s", general.FgCyanText("golang-based"), general.SecondaryText("(", installedNum, "/", totalNum, ")"))
 
 	// 让用户选择需要卸载的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
@@ -228,17 +230,19 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 		return
 	}
 
-	// 开始卸载提示
-	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs", general.FgCyanText("shell-based"))
-
 	// 检测主文件是否存在来决定是否在选项中显示
 	installedPrograms := make([]string, 0) // 已安装程序
-	for _, name := range config.Program.Shell.Names {
-		programMainFile := filepath.Join(config.Program.ProgramPath, name) // 程序主文件路径
+	for _, program := range config.Program.Shell.Names {
+		programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
 		if general.FileExist(programMainFile) {
-			installedPrograms = append(installedPrograms, name)
+			installedPrograms = append(installedPrograms, program)
 		}
 	}
+
+	// 开始卸载提示
+	totalNum := len(config.Program.Shell.Names) // 总程序数
+	installedNum := len(installedPrograms)      // 已安装程序数
+	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs %s", general.FgCyanText("shell-based"), general.SecondaryText("(", installedNum, "/", totalNum, ")"))
 
 	// 让用户选择需要卸载的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
