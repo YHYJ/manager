@@ -101,7 +101,7 @@ var (
 )
 
 var (
-	CursorOnFlag   = "👉"  // 选择器符号 - 光标在
+	CursorOnFlag   = "👉"  // 选择器符号 - 光标所在
 	CursorOffFlag  = "  " // 选择器符号 - 光标不在
 	SelectedFlag   = "•"  // 选择器符号 - 已选中
 	UnselectedFlag = " "  // 选择器符号 - 已选中
@@ -119,6 +119,7 @@ var (
 	SingleSelectTips = "Please select from the %s below (single-select)\n" // 提示词 - 单选
 	QuietTips        = "Press '%s' to quit\n"                              // 提示词 - 退出
 	SelectAllTips    = "Select All"                                        // 提示词 - 全选
+	UninstallTips    = "Do you want to uninstall these software?"          // 提示词 - 卸载软件
 )
 
 // ---------- 环境变量
