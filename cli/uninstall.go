@@ -12,6 +12,7 @@ package cli
 import (
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/gookit/color"
 	"github.com/pelletier/go-toml"
@@ -38,7 +39,10 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 
 	// 检测主文件是否存在来决定是否在选项中显示
 	programMainFile := filepath.Join(config.Program.ProgramPath, name) // 程序主文件路径
-	if !general.FileExist(programMainFile) {
+	if general.FileExist(programMainFile) {
+		color.Printf("%s\n", strings.Repeat(general.Separator2st, general.SeparatorBaseLength))
+	} else {
+		color.Printf("%s\n", strings.Repeat(general.Separator3st, general.SeparatorBaseLength))
 		color.Warn.Tips("Program \x1b[3m%s\x1b[0m is not installed", general.FgCyanText(name))
 		return
 	}
@@ -61,7 +65,14 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 		color.Error.Println(err)
 		return
 	}
-	if answer == "n" {
+	switch answer {
+	case "y":
+		color.Printf("%s\n", strings.Repeat(general.Separator2st, len(general.UninstallTips)))
+	case "n":
+		return
+	default:
+		color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
+		color.Warn.Tips("%s", "Unexpected answer")
 		return
 	}
 
@@ -141,7 +152,14 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 			color.Error.Println(err)
 			return
 		}
-		if answer == "n" {
+		switch answer {
+		case "y":
+			color.Printf("%s\n", strings.Repeat(general.Separator2st, len(general.UninstallTips)))
+		case "n":
+			return
+		default:
+			color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
+			color.Warn.Tips("%s", "Unexpected answer")
 			return
 		}
 	}
@@ -237,7 +255,14 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 			color.Error.Println(err)
 			return
 		}
-		if answer == "n" {
+		switch answer {
+		case "y":
+			color.Printf("%s\n", strings.Repeat(general.Separator2st, len(general.UninstallTips)))
+		case "n":
+			return
+		default:
+			color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
+			color.Warn.Tips("%s", "Unexpected answer")
 			return
 		}
 	}

@@ -34,7 +34,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 	// 开始安装提示
 	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText(config.Program.Self.Name))
-	color.Info.Tips("%s: %s\n", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+	color.Printf("%s\n", strings.Repeat(general.Separator1st, general.SeparatorBaseLength))
 
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
