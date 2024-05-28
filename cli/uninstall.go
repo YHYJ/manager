@@ -30,22 +30,29 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 		return
 	}
 
-	// 开始卸载提示
-	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs", general.FgCyanText(config.Program.Self.Name))
-
-	// 设置文本参数
-	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
-
 	// 程序文件
 	name := config.Program.Self.Name // 程序名
+
+	// 开始卸载提示
+	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs", general.FgCyanText(name))
+
+	// 检测主文件是否存在来决定是否在选项中显示
+	programMainFile := filepath.Join(config.Program.ProgramPath, name) // 程序主文件路径
+	if !general.FileExist(programMainFile) {
+		color.Warn.Tips("Program \x1b[3m%s\x1b[0m is not installed", general.FgCyanText(name))
+		return
+	}
 
 	// 记账文件
 	pocketDir := filepath.Join(config.Program.PocketPath, name)       // 记账文件夹路径
 	pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
-	pocketLines, err := general.ReadFile(pocketFile)                  // 读取记账文件内容
-	if err != nil {
-		color.Error.Println(err)
-		return
+	pocketLines := make([]string, 0)                                  // 记账文件内容
+	if general.FileExist(pocketFile) {                                // 读取记账文件内容
+		pocketLines, err = general.ReadFile(pocketFile)
+		if err != nil {
+			color.Error.Println(err)
+			return
+		}
 	}
 
 	// 确认是否要卸载
@@ -57,6 +64,9 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	if answer == "n" {
 		return
 	}
+
+	// 设置文本参数
+	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
 	// 卸载程序
 	for _, pocketLine := range pocketLines {
@@ -107,11 +117,17 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	// 开始卸载提示
 	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs", general.FgCyanText("golang-based"))
 
-	// 设置文本参数
-	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+	// 检测主文件是否存在来决定是否在选项中显示
+	installedPrograms := make([]string, 0) // 已安装程序
+	for _, name := range config.Program.Go.Names {
+		programMainFile := filepath.Join(config.Program.ProgramPath, name) // 程序主文件路径
+		if general.FileExist(programMainFile) {
+			installedPrograms = append(installedPrograms, name)
+		}
+	}
 
 	// 让用户选择需要卸载的程序
-	selectedNames, err := general.MultipleSelectionFilter(config.Program.Go.Names)
+	selectedNames, err := general.MultipleSelectionFilter(installedPrograms)
 	if err != nil {
 		color.Error.Println(err)
 	}
@@ -130,15 +146,21 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 		}
 	}
 
+	// 设置文本参数
+	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
 	// 遍历所选脚本名
 	for _, name := range selectedNames {
 		// 记账文件
 		pocketDir := filepath.Join(config.Program.PocketPath, name)       // 记账文件夹路径
 		pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
-		pocketLines, err := general.ReadFile(pocketFile)                  // 读取记账文件内容
-		if err != nil {
-			color.Error.Println(err)
-			return
+		pocketLines := make([]string, 0)                                  // 记账文件内容
+		if general.FileExist(pocketFile) {                                // 读取记账文件内容
+			pocketLines, err = general.ReadFile(pocketFile)
+			if err != nil {
+				color.Error.Println(err)
+				continue
+			}
 		}
 
 		// 卸载程序
@@ -191,11 +213,17 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	// 开始卸载提示
 	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs", general.FgCyanText("shell-based"))
 
-	// 设置文本参数
-	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+	// 检测主文件是否存在来决定是否在选项中显示
+	installedPrograms := make([]string, 0) // 已安装程序
+	for _, name := range config.Program.Shell.Names {
+		programMainFile := filepath.Join(config.Program.ProgramPath, name) // 程序主文件路径
+		if general.FileExist(programMainFile) {
+			installedPrograms = append(installedPrograms, name)
+		}
+	}
 
 	// 让用户选择需要卸载的程序
-	selectedNames, err := general.MultipleSelectionFilter(config.Program.Shell.Names)
+	selectedNames, err := general.MultipleSelectionFilter(installedPrograms)
 	if err != nil {
 		color.Error.Println(err)
 	}
@@ -214,15 +242,21 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 		}
 	}
 
+	// 设置文本参数
+	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
 	// 遍历所选脚本名
 	for _, name := range selectedNames {
 		// 记账文件
 		pocketDir := filepath.Join(config.Program.PocketPath, name)       // 记账文件夹路径
 		pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
-		pocketLines, err := general.ReadFile(pocketFile)                  // 读取记账文件内容
-		if err != nil {
-			color.Error.Println(err)
-			return
+		pocketLines := make([]string, 0)                                  // 记账文件内容
+		if general.FileExist(pocketFile) {                                // 读取记账文件内容
+			pocketLines, err = general.ReadFile(pocketFile)
+			if err != nil {
+				color.Error.Println(err)
+				continue
+			}
 		}
 
 		// 卸载程序
