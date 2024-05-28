@@ -742,6 +742,14 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	// 设置文本参数
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
+	// 让用户选择需要安装/更新的程序
+	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names)
+	if err != nil {
+		color.Error.Println(err)
+	}
+	// 对所选的程序进行排序
+	sort.Strings(selectedPrograms)
+
 	// 使用配置的安装方式进行安装
 	switch strings.ToLower(config.Program.Method) {
 	case "release":
@@ -751,13 +759,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			return
 		}
 
-		// 让用户选择需要安装/更新的程序
-		selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names)
-		if err != nil {
-			color.Error.Println(err)
-		}
-		// 对所选的程序进行排序
-		sort.Strings(selectedPrograms)
 		// 遍历所选程序名
 		for _, program := range selectedPrograms {
 			// 记账文件
@@ -1146,13 +1147,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			return
 		}
 
-		// 让用户选择需要安装/更新的程序
-		selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names)
-		if err != nil {
-			color.Error.Println(err)
-		}
-		// 对所选的程序进行排序
-		sort.Strings(selectedPrograms)
 		// 遍历所选程序名
 		for _, program := range selectedPrograms {
 			// 记账文件
