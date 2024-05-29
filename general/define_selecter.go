@@ -25,7 +25,7 @@ var quietKey = "q"
 type model struct {
 	choices  []string         // 所有选项
 	cursor   int              // 光标当前所在选项的索引
-	selected map[int]struct{} // 已选中选项，key 为选项 choices 的索引
+	selected map[int]struct{} // 已选中选项，key 为选项 choices 的索引。使用 map 便于判断指定选项是否已被选中
 }
 
 // initialModel 初始化 model
@@ -83,11 +83,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor = 0
 			}
 		case " ":
-			if m.cursor == 0 { // 选中 "Select All" 选项
+			if m.cursor == 0 { // 选中“全选”项
 				// 在全选和取消全选之间切换
-				if len(m.selected) == len(m.choices)-1 {
+				if len(m.selected) == len(m.choices)-1 { // 取消全选
 					m.selected = make(map[int]struct{})
-				} else {
+				} else { // 全选
 					m.selected = make(map[int]struct{})
 					for i := 1; i < len(m.choices); i++ {
 						m.selected[i] = struct{}{} // 选中所有非 "Select All" 选项
@@ -103,6 +103,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 		case "enter":
+			// 回车执行
 			return m, tea.Quit
 		}
 	}
@@ -115,8 +116,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // 返回：
 //   - string: 绘制内容
 func (m model) View() string {
-	// 定时显示主题
-	name := "program name" // 选项类型
+	// 选择器主题
+	name := "program name"
 
 	// 构建显示内容
 	s := strings.Builder{}
