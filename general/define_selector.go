@@ -1,10 +1,10 @@
 /*
-File: define_selecter.go
+File: define_selector.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2024-04-10 13:33:59
 
-Description: 选择器
+Description: 定义选择器
 
 - Update, View 等方法通过 model 与用户进行交互
 */
@@ -19,7 +19,8 @@ import (
 	"github.com/gookit/color"
 )
 
-var quietKey = "q"
+var quietKey = "q"                // 默认的退出键
+var selectorType = "program name" // 选择器主题
 
 // model 结构体，选择器的数据
 type model struct {
@@ -116,15 +117,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // 返回：
 //   - string: 绘制内容
 func (m model) View() string {
-	// 选择器主题
-	name := "program name"
-
 	// 构建显示内容
 	s := strings.Builder{}
-	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(name))))
-	s.WriteString(color.Sprintf(QuestionText(MultiSelectTips), name))
+	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(selectorType))))
+	s.WriteString(color.Sprintf(QuestionText(MultiSelectTips), selectorType))
 	s.WriteString(color.Sprintf(SecondaryText(QuietTips), quietKey))
-	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(name))))
+	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(selectorType))))
 
 	// 对 choices 进行迭代
 	SelectedFlag = SuccessText(SelectedFlag)
@@ -149,7 +147,7 @@ func (m model) View() string {
 		}
 		s.WriteString(color.Sprintf("%s [%s] %s\n", cursorFlag, checked, choice))
 	}
-	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(name))))
+	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(selectorType))))
 	return s.String()
 }
 
