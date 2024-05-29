@@ -28,7 +28,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 		return
 	}
 
@@ -62,7 +62,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 	case "release":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.ReleaseTemp); err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			return
 		}
 
@@ -72,7 +72,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		// 请求 API - GitHub
 		body, err := general.RequestApi(goGithubLatestReleaseTagApi)
 		if err != nil {
-			text := color.Sprintf("%s\n", general.ErrorText(err))
+			text := color.Sprintf("%s\n", general.DangerText(err))
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
@@ -83,7 +83,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		// 获取远端版本（用于 release 安装方法）
 		remoteTag, err := general.GetLatestReleaseTag(body)
 		if err != nil {
-			text := color.Sprintf("%s\n", general.ErrorText(err))
+			text := color.Sprintf("%s\n", general.DangerText(err))
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
@@ -105,7 +105,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			goReleaseTempDir := filepath.Join(config.Program.ReleaseTemp, name)
 			if general.FileExist(goReleaseTempDir) {
 				if err := os.RemoveAll(goReleaseTempDir); err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -130,7 +130,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			// 获取 Release 文件信息
 			filesInfo, err := general.GetReleaseFileInfo(body, fileName)
 			if err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -147,7 +147,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			general.ProgressParameters["suffix"] = "from Github release:"
 			checksumsLocalPath := filepath.Join(config.Program.ReleaseTemp, name, filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
 			if err := general.DownloadFile(filesInfo.ChecksumsFileInfo.DownloadUrl, checksumsLocalPath, general.ProgressParameters); err != nil {
-				text := color.Error.Sprintf("error -> %s\n", err)
+				text := color.Danger.Sprintf("error -> %s\n", err)
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -163,7 +163,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			general.ProgressParameters["suffix"] = "from Github release:"
 			archiveLocalPath := filepath.Join(config.Program.ReleaseTemp, name, filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
 			if err := general.DownloadFile(filesInfo.ArchiveFileInfo.DownloadUrl, archiveLocalPath, general.ProgressParameters); err != nil {
-				text := color.Error.Sprintf("error -> %s\n", err)
+				text := color.Danger.Sprintf("error -> %s\n", err)
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -174,7 +174,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 			// 进到下载的远端文件目录
 			if err := general.GoToDir(goReleaseTempDir); err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -185,7 +185,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			// 使用校验文件校验下载的压缩包
 			verificationResult, err := general.FileVerification(checksumsLocalPath, archiveLocalPath)
 			if err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -197,7 +197,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				// 解压压缩包
 				err := general.UnzipFile(archiveLocalPath, goReleaseTempDir)
 				if err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -214,7 +214,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				if commandErr != nil { // 不存在，安装
 					// 安装程序
 					if err := general.Install(archivedProgram, localProgram, 0755); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -224,12 +224,12 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					} else {
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-							color.Error.Println(err)
+							color.Danger.Println(err)
 						}
 
 						// 为已安装的程序设置可执行权限
 						if err := os.Chmod(localProgram, 0755); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -244,7 +244,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					localResourcesDesktopFile := filepath.Join(config.Program.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
 					if general.FileExist(archivedResourcesDesktopFile) {
 						if err := general.Install(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -254,7 +254,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localResourcesDesktopFile, writeMode); err != nil {
-							color.Error.Println(err)
+							color.Danger.Println(err)
 						}
 					}
 
@@ -264,7 +264,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					if general.FileExist(archivedResourcesIconFolder) {
 						files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 						if err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -275,7 +275,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						if !general.FileExist(localResourcesIconFolder) {
 							err := general.CreateDir(localResourcesIconFolder)
 							if err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -288,7 +288,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 							localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
 							if err := general.Install(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -298,7 +298,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							}
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localResourcesIconFile, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 						}
 					}
@@ -309,7 +309,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				} else { // 存在，更新
 					// 删除已安装的旧程序
 					if err := os.Remove(localProgram); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -320,7 +320,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 					// 安装程序
 					if err := general.Install(archivedProgram, localProgram, 0755); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -330,12 +330,12 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					} else {
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-							color.Error.Println(err)
+							color.Danger.Println(err)
 						}
 
 						// 为已安装的程序设置可执行权限
 						if err := os.Chmod(localProgram, 0755); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -350,7 +350,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					localResourcesDesktopFile := filepath.Join(config.Program.ResourcesPath, "applications", color.Sprintf("%s.desktop", name)) // 本地资源文件 - desktop 文件
 					if general.FileExist(archivedResourcesDesktopFile) {
 						if err := general.Install(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -360,7 +360,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localResourcesDesktopFile, writeMode); err != nil {
-							color.Error.Println(err)
+							color.Danger.Println(err)
 						}
 					}
 
@@ -370,7 +370,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					if general.FileExist(archivedResourcesIconFolder) {
 						files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 						if err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -381,7 +381,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						if !general.FileExist(localResourcesIconFolder) {
 							err := general.CreateDir(localResourcesIconFolder)
 							if err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -394,7 +394,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 							localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
 							if err := general.Install(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -404,7 +404,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							}
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localResourcesIconFile, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 						}
 					}
@@ -420,14 +420,14 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						completionFile := filepath.Join(completionDir, color.Sprintf("_%s", name))
 						generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s", localProgram, completionFile)}
 						if err := general.RunCommand("bash", generateArgs); err != nil {
-							text := color.Sprintf("%s %s\n", general.ErrorFlag, general.ErrorText(general.AcsInstallFailedMessage))
+							text := color.Sprintf("%s %s\n", general.ErrorFlag, general.DangerText(general.AcsInstallFailedMessage))
 							color.Printf(text)
 							textLength = general.RealLength(text) // 分隔符长度
 							continue
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, completionFile, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 
 							text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(general.AcsInstallSuccessMessage))
@@ -438,7 +438,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					}
 				}
 			} else { // 压缩包校验失败
-				text := color.Error.Sprintf("Archive file verification failed: %s\n", filesInfo.ArchiveFileInfo.Name)
+				text := color.Danger.Sprintf("Archive file verification failed: %s\n", filesInfo.ArchiveFileInfo.Name)
 				color.Printf(text)
 				textLength = general.RealLength(text) // 分隔符长度
 			}
@@ -449,7 +449,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 	case "source":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.SourceTemp); err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			return
 		}
 
@@ -460,11 +460,11 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		// 请求 API - GitHub
 		body, err := general.RequestApi(goGithubLatestSourceTagApi)
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			// 请求 API - Gitea
 			body, err = general.RequestApi(goGiteaLatestSourceTagApi)
 			if err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -476,7 +476,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		// 获取远端版本（用于 source 安装方法）
 		remoteTag, err := general.GetLatestSourceTag(body)
 		if err != nil {
-			text := color.Sprintf("%s\n", general.ErrorText(err))
+			text := color.Sprintf("%s\n", general.DangerText(err))
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
@@ -498,7 +498,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			goSourceTempDir := filepath.Join(config.Program.SourceTemp, name)
 			if general.FileExist(goSourceTempDir) {
 				if err := os.RemoveAll(goSourceTempDir); err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -511,12 +511,12 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			goGithubCloneBaseUrl := color.Sprintf("%s/%s", config.Program.Go.GithubUrl, config.Program.Go.GithubUsername) // 远端仓库基础克隆地址（除仓库名）
 			color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from GitHub")
 			if err := general.CloneRepoViaHTTP(config.Program.SourceTemp, goGithubCloneBaseUrl, name); err != nil {
-				color.Printf("%s\n", general.ErrorText("error -> ", err))
+				color.Printf("%s\n", general.DangerText("error -> ", err))
 				// 克隆远端仓库 - Gitea
 				goGiteaCloneBaseUrl := color.Sprintf("%s/%s", config.Program.Go.GiteaUrl, config.Program.Go.GiteaUsername) // 远端仓库基础克隆地址（除仓库名）
 				color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(name), "from Gitea")
 				if err := general.CloneRepoViaHTTP(config.Program.SourceTemp, goGiteaCloneBaseUrl, name); err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText("error -> ", err))
+					text := color.Sprintf("%s\n", general.DangerText("error -> ", err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -532,7 +532,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 			// 进到克隆的远端文件目录
 			if err := general.GoToDir(goSourceTempDir); err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -545,7 +545,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			if general.FileExist("Makefile") { // Makefile 文件存在则使用 make 编译
 				makeArgs := []string{}
 				if err := general.RunCommand("make", makeArgs); err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -556,7 +556,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			} else if general.FileExist("main.go") { // Makefile 文件不存在则使用 `go build` 命令编译
 				buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name}
 				if err := general.RunCommand("go", buildArgs); err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -565,7 +565,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					return
 				}
 			} else {
-				text := color.Error.Sprintf(general.UnableToCompileMessage)
+				text := color.Danger.Sprintf(general.UnableToCompileMessage)
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -582,7 +582,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令安装
 						makeArgs := []string{"install"}
 						if err := general.RunCommand("make", makeArgs); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -592,7 +592,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					} else { // Makefile 文件不存在则使用自定义函数安装
 						if err := general.Install(compileProgram, localProgram, 0755); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -602,12 +602,12 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 
 							// 为已安装的程序设置可执行权限
 							if err := os.Chmod(localProgram, 0755); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -625,7 +625,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令更新
 						makeArgs := []string{"install"}
 						if err := general.RunCommand("make", makeArgs); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -636,7 +636,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					} else { // Makefile 文件不存在则使用自定义函数更新
 						// 删除已安装的旧程序
 						if err := os.Remove(localProgram); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -647,7 +647,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 						// 安装程序
 						if err := general.Install(compileProgram, localProgram, 0755); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -657,12 +657,12 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 
 							// 为已安装的程序设置可执行权限
 							if err := os.Chmod(localProgram, 0755); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -683,14 +683,14 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						completionFile := filepath.Join(completionDir, color.Sprintf("_%s", name))
 						generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s", localProgram, completionFile)}
 						if err := general.RunCommand("bash", generateArgs); err != nil {
-							text := color.Sprintf("%s %s\n", general.ErrorFlag, general.ErrorText(general.AcsInstallFailedMessage))
+							text := color.Sprintf("%s %s\n", general.ErrorFlag, general.DangerText(general.AcsInstallFailedMessage))
 							color.Printf(text)
 							textLength = general.RealLength(text) // 分隔符长度
 							continue
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, completionFile, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 
 							text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(general.AcsInstallSuccessMessage))
@@ -701,7 +701,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					}
 				}
 			} else {
-				text := color.Error.Sprintf("The source file %s does not exist", compileProgram)
+				text := color.Danger.Sprintf("The source file %s does not exist", compileProgram)
 				color.Printf(text)
 				textLength = general.RealLength(text) // 分隔符长度
 			}
@@ -710,7 +710,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		general.PrintDelimiter(textLength) // 分隔符
 		general.Delay(0.1)                 // 0.01s
 	default:
-		text := color.Error.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", config.Program.Method)
+		text := color.Danger.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", config.Program.Method)
 		color.Printf(text)
 	}
 }
@@ -723,7 +723,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 		return
 	}
 
@@ -755,7 +755,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	// 让用户选择需要安装/更新的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 	}
 	// 对所选的程序进行排序
 	sort.Strings(selectedPrograms)
@@ -765,7 +765,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	case "release":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.ReleaseTemp); err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			return
 		}
 
@@ -780,7 +780,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			// 请求 API - GitHub
 			body, err := general.RequestApi(goGithubLatestReleaseTagApi)
 			if err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -791,7 +791,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			// 获取远端版本（用于 release 安装方法）
 			remoteTag, err := general.GetLatestReleaseTag(body)
 			if err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -815,7 +815,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				goReleaseTempDir := filepath.Join(config.Program.ReleaseTemp, program)
 				if general.FileExist(goReleaseTempDir) {
 					if err := os.RemoveAll(goReleaseTempDir); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -840,7 +840,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				// 获取 Release 文件信息
 				filesInfo, err := general.GetReleaseFileInfo(body, fileName)
 				if err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -855,7 +855,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				general.ProgressParameters["suffix"] = "from Github release:"
 				checksumsLocalPath := filepath.Join(config.Program.ReleaseTemp, program, filesInfo.ChecksumsFileInfo.Name) // Checksums 文件本地存储位置
 				if err := general.DownloadFile(filesInfo.ChecksumsFileInfo.DownloadUrl, checksumsLocalPath, general.ProgressParameters); err != nil {
-					text := color.Error.Sprintf("error -> %s\n", err)
+					text := color.Danger.Sprintf("error -> %s\n", err)
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -870,7 +870,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				general.ProgressParameters["suffix"] = "from Github release:"
 				archiveLocalPath := filepath.Join(config.Program.ReleaseTemp, program, filesInfo.ArchiveFileInfo.Name) // Release 文件本地存储位置
 				if err := general.DownloadFile(filesInfo.ArchiveFileInfo.DownloadUrl, archiveLocalPath, general.ProgressParameters); err != nil {
-					text := color.Error.Sprintf("error -> %s\n", err)
+					text := color.Danger.Sprintf("error -> %s\n", err)
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -880,7 +880,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				}
 				// 进到下载的远端文件目录
 				if err := general.GoToDir(goReleaseTempDir); err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -891,7 +891,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				// 使用校验文件校验下载的压缩包
 				verificationResult, err := general.FileVerification(checksumsLocalPath, archiveLocalPath)
 				if err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -903,7 +903,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					// 解压压缩包
 					err := general.UnzipFile(archiveLocalPath, goReleaseTempDir)
 					if err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -920,7 +920,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					if commandErr != nil { // 不存在，安装
 						// 安装程序
 						if err := general.Install(archivedProgram, localProgram, 0755); err != nil {
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -930,12 +930,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 
 							// 为已安装的程序设置可执行权限
 							if err := os.Chmod(localProgram, 0755); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -950,7 +950,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						localResourcesDesktopFile := filepath.Join(config.Program.ResourcesPath, "applications", color.Sprintf("%s.desktop", program)) // 本地资源文件 - desktop 文件
 						if general.FileExist(archivedResourcesDesktopFile) {
 							if err := general.Install(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -960,7 +960,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localResourcesDesktopFile, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 						}
 
@@ -970,7 +970,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						if general.FileExist(archivedResourcesIconFolder) {
 							files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 							if err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -981,7 +981,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							if !general.FileExist(localResourcesIconFolder) {
 								err := general.CreateDir(localResourcesIconFolder)
 								if err != nil {
-									text := color.Sprintf("%s\n", general.ErrorText(err))
+									text := color.Sprintf("%s\n", general.DangerText(err))
 									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
@@ -994,7 +994,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 								localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
 								if err := general.Install(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
-									text := color.Sprintf("%s\n", general.ErrorText(err))
+									text := color.Sprintf("%s\n", general.DangerText(err))
 									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
@@ -1004,7 +1004,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								}
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, localResourcesIconFile, writeMode); err != nil {
-									color.Error.Println(err)
+									color.Danger.Println(err)
 								}
 							}
 						}
@@ -1014,7 +1014,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						textLength = general.RealLength(text) // 分隔符长度
 					} else { // 存在，更新
 						if err := os.Remove(localProgram); err != nil { // 删除已安装的旧程序
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -1023,7 +1023,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							continue
 						}
 						if err := general.Install(archivedProgram, localProgram, 0755); err != nil { // 安装新程序
-							text := color.Sprintf("%s\n", general.ErrorText(err))
+							text := color.Sprintf("%s\n", general.DangerText(err))
 							color.Printf(text)
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
@@ -1034,12 +1034,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							// 记账
 							color.Println(localProgram)
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 
 							// 为已安装的程序设置可执行权限
 							if err := os.Chmod(localProgram, 0755); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1054,7 +1054,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						localResourcesDesktopFile := filepath.Join(config.Program.ResourcesPath, "applications", color.Sprintf("%s.desktop", program)) // 本地资源文件 - desktop 文件
 						if general.FileExist(archivedResourcesDesktopFile) {
 							if err := general.Install(archivedResourcesDesktopFile, localResourcesDesktopFile, 0644); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1064,7 +1064,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localResourcesDesktopFile, writeMode); err != nil {
-								color.Error.Println(err)
+								color.Danger.Println(err)
 							}
 						}
 
@@ -1074,7 +1074,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						if general.FileExist(archivedResourcesIconFolder) {
 							files, err := general.ListFolderFiles(archivedResourcesIconFolder)
 							if err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1085,7 +1085,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							if !general.FileExist(localResourcesIconFolder) {
 								err := general.CreateDir(localResourcesIconFolder)
 								if err != nil {
-									text := color.Sprintf("%s\n", general.ErrorText(err))
+									text := color.Sprintf("%s\n", general.DangerText(err))
 									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
@@ -1098,7 +1098,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								archivedResourcesIconFile := filepath.Join(archivedResourcesIconFolder, file) // 解压得到的资源文件 - icon 文件
 								localResourcesIconFile := filepath.Join(localResourcesIconFolder, file)       // 本地资源文件 - icon 文件
 								if err := general.Install(archivedResourcesIconFile, localResourcesIconFile, 0644); err != nil {
-									text := color.Sprintf("%s\n", general.ErrorText(err))
+									text := color.Sprintf("%s\n", general.DangerText(err))
 									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
@@ -1108,7 +1108,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								}
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, localResourcesIconFile, writeMode); err != nil {
-									color.Error.Println(err)
+									color.Danger.Println(err)
 								}
 							}
 						}
@@ -1123,14 +1123,14 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							completionFile := filepath.Join(completionDir, color.Sprintf("_%s", program))
 							generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s", localProgram, completionFile)}
 							if err := general.RunCommand("bash", generateArgs); err != nil {
-								text := color.Sprintf("%s %s\n", general.ErrorFlag, general.ErrorText(general.AcsInstallFailedMessage))
+								text := color.Sprintf("%s %s\n", general.ErrorFlag, general.DangerText(general.AcsInstallFailedMessage))
 								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 								continue
 							} else {
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, completionFile, writeMode); err != nil {
-									color.Error.Println(err)
+									color.Danger.Println(err)
 								}
 
 								text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(general.AcsInstallSuccessMessage))
@@ -1141,7 +1141,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						}
 					}
 				} else { // 压缩包校验失败
-					text := color.Error.Sprintf("Archive file verification failed: %s\n", filesInfo.ArchiveFileInfo.Name)
+					text := color.Danger.Sprintf("Archive file verification failed: %s\n", filesInfo.ArchiveFileInfo.Name)
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				}
@@ -1153,7 +1153,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	case "source":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.SourceTemp); err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			return
 		}
 
@@ -1169,11 +1169,11 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			// 请求 API - GitHub
 			body, err := general.RequestApi(goGithubLatestSourceTagApi)
 			if err != nil {
-				color.Error.Println(err)
+				color.Danger.Println(err)
 				// 请求 API - Gitea
 				body, err = general.RequestApi(goGiteaLatestSourceTagApi)
 				if err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -1185,7 +1185,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			// 获取远端版本（用于 source 安装方法）
 			remoteTag, err := general.GetLatestSourceTag(body)
 			if err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -1209,7 +1209,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				goSourceTempDir := filepath.Join(config.Program.SourceTemp, program)
 				if general.FileExist(goSourceTempDir) {
 					if err := os.RemoveAll(goSourceTempDir); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -1222,12 +1222,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				goGithubCloneBaseUrl := color.Sprintf("%s/%s", config.Program.Go.GithubUrl, config.Program.Go.GithubUsername) // 远端仓库基础克隆地址（除仓库名）
 				color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(program), "from GitHub")
 				if err := general.CloneRepoViaHTTP(config.Program.SourceTemp, goGithubCloneBaseUrl, program); err != nil {
-					color.Printf("%s\n", general.ErrorText("error -> ", err))
+					color.Printf("%s\n", general.DangerText("error -> ", err))
 					// 克隆远端仓库 - Gitea
 					goGiteaCloneBaseUrl := color.Sprintf("%s/%s", config.Program.Go.GiteaUrl, config.Program.Go.GiteaUsername) // 远端仓库基础克隆地址（除仓库名）
 					color.Printf("%s %s %s %s ", general.DownloadFlag, general.LightText("Clone"), general.FgGreenText(program), "from Gitea")
 					if err := general.CloneRepoViaHTTP(config.Program.SourceTemp, goGiteaCloneBaseUrl, program); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText("error -> ", err))
+						text := color.Sprintf("%s\n", general.DangerText("error -> ", err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -1242,7 +1242,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				}
 				// 进到下载的远端文件目录
 				if err := general.GoToDir(goSourceTempDir); err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -1254,7 +1254,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				if general.FileExist("Makefile") { // Makefile 文件存在则使用 make 编译
 					makeArgs := []string{}
 					if err := general.RunCommand("make", makeArgs); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -1265,7 +1265,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				} else if general.FileExist("main.go") { // Makefile 文件不存在则使用 `go build` 命令编译
 					buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", program}
 					if err := general.RunCommand("go", buildArgs); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -1274,7 +1274,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						continue
 					}
 				} else {
-					text := color.Error.Sprintf(general.UnableToCompileMessage)
+					text := color.Danger.Sprintf(general.UnableToCompileMessage)
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -1293,7 +1293,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令安装
 							makeArgs := []string{"install"}
 							if err := general.RunCommand("make", makeArgs); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1303,7 +1303,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						} else { // Makefile 文件不存在则使用自定义函数安装
 							if err := general.Install(compileProgram, localProgram, 0755); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1313,12 +1313,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							} else {
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-									color.Error.Println(err)
+									color.Danger.Println(err)
 								}
 
 								// 为已安装的程序设置可执行权限
 								if err := os.Chmod(localProgram, 0755); err != nil {
-									text := color.Sprintf("%s\n", general.ErrorText(err))
+									text := color.Sprintf("%s\n", general.DangerText(err))
 									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
@@ -1336,7 +1336,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令更新
 							makeArgs := []string{"install"}
 							if err := general.RunCommand("make", makeArgs); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1346,7 +1346,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						} else { // Makefile 文件不存在则使用自定义函数更新
 							if err := os.Remove(localProgram); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1355,7 +1355,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								continue
 							}
 							if err := general.Install(compileProgram, localProgram, 0755); err != nil {
-								text := color.Sprintf("%s\n", general.ErrorText(err))
+								text := color.Sprintf("%s\n", general.DangerText(err))
 								color.Printf(text)
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1365,12 +1365,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							} else {
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-									color.Error.Println(err)
+									color.Danger.Println(err)
 								}
 
 								// 为已安装的程序设置可执行权限
 								if err := os.Chmod(localProgram, 0755); err != nil {
-									text := color.Sprintf("%s\n", general.ErrorText(err))
+									text := color.Sprintf("%s\n", general.DangerText(err))
 									color.Printf(text)
 									// 分隔符和延时（延时使输出更加顺畅）
 									textLength = general.RealLength(text) // 分隔符长度
@@ -1391,14 +1391,14 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							completionFile := filepath.Join(completionDir, color.Sprintf("_%s", program))
 							generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s", localProgram, completionFile)}
 							if err := general.RunCommand("bash", generateArgs); err != nil {
-								text := color.Sprintf("%s %s\n", general.ErrorFlag, general.ErrorText(general.AcsInstallFailedMessage))
+								text := color.Sprintf("%s %s\n", general.ErrorFlag, general.DangerText(general.AcsInstallFailedMessage))
 								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
 								continue
 							} else {
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, completionFile, writeMode); err != nil {
-									color.Error.Println(err)
+									color.Danger.Println(err)
 								}
 
 								text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(general.AcsInstallSuccessMessage))
@@ -1409,7 +1409,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						}
 					}
 				} else {
-					text := color.Error.Sprintf("The source file %s does not exist", compileProgram)
+					text := color.Danger.Sprintf("The source file %s does not exist", compileProgram)
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				}
@@ -1419,7 +1419,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			general.Delay(0.1)                 // 0.01s
 		}
 	default:
-		text := color.Error.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", config.Program.Method)
+		text := color.Danger.Sprintf("Unsupported installation method '%s': only 'release' and 'source' are supported", config.Program.Method)
 		color.Printf(text)
 	}
 }
@@ -1432,7 +1432,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 		return
 	}
 
@@ -1462,14 +1462,14 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 
 	// 创建临时目录
 	if err := general.CreateDir(config.Program.SourceTemp); err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 		return
 	}
 
 	// 让用户选择需要安装/更新的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Shell.Names)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 	}
 	// 对所选的程序进行排序
 	sort.Strings(selectedPrograms)
@@ -1485,11 +1485,11 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		// 请求 API - GitHub
 		body, err := general.RequestApi(shellGithubLatestHashApi)
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			// 请求 API - Gitea
 			body, err = general.RequestApi(shellGiteaLatestHashApi)
 			if err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -1501,7 +1501,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		// 获取远端脚本 Hash
 		remoteHash, err := general.GetLatestSourceHash(body)
 		if err != nil {
-			text := color.Sprintf("%s\n", general.ErrorText(err))
+			text := color.Sprintf("%s\n", general.DangerText(err))
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
@@ -1527,12 +1527,12 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 			shellGithubBaseDownloadUrl := color.Sprintf(general.ShellGithubBaseDownloadUrlFormat, config.Program.Shell.GithubRaw, config.Program.Shell.GithubUsername, config.Program.Shell.Repo, config.Program.Shell.GithubBranch) // 脚本远端仓库基础地址
 			fileUrl := color.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
 			if err := general.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
-				color.Error.Println(err)
+				color.Danger.Println(err)
 				// 下载远端脚本 - Gitea
 				shellGiteaBaseDownloadUrl := color.Sprintf(general.ShellGiteaBaseDownloadUrlFormat, config.Program.Shell.GiteaRaw, config.Program.Shell.GiteaUsername, config.Program.Shell.Repo, config.Program.Shell.GiteaBranch) // 脚本远端仓库基础地址
 				fileUrl := color.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
 				if err = general.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
-					text := color.Sprintf("%s\n", general.ErrorText(err))
+					text := color.Sprintf("%s\n", general.DangerText(err))
 					color.Printf(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
@@ -1548,7 +1548,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 				// 检测本地程序是否存在
 				if commandErr != nil { // 不存在，安装
 					if err := general.Install(scriptLocalPath, localProgram, 0755); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -1558,12 +1558,12 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 					} else {
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-							color.Error.Println(err)
+							color.Danger.Println(err)
 						}
 
 						// 为已安装的脚本设置可执行权限
 						if err := os.Chmod(localProgram, 0755); err != nil {
-							color.Error.Println(err)
+							color.Danger.Println(err)
 						}
 						text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(remoteHash[:6]), general.FgMagentaText("installed"))
 						color.Printf(text)
@@ -1572,7 +1572,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 				} else { // 存在，更新
 					// 删除已安装的旧程序
 					if err := os.Remove(localProgram); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -1583,7 +1583,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 
 					// 安装程序
 					if err := general.Install(scriptLocalPath, localProgram, 0755); err != nil {
-						text := color.Sprintf("%s\n", general.ErrorText(err))
+						text := color.Sprintf("%s\n", general.DangerText(err))
 						color.Printf(text)
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
@@ -1593,12 +1593,12 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 					} else {
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-							color.Error.Println(err)
+							color.Danger.Println(err)
 						}
 
 						// 为已更新的脚本设置可执行权限
 						if err := os.Chmod(localProgram, 0755); err != nil {
-							color.Error.Println(err)
+							color.Danger.Println(err)
 						}
 						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(localHash[:6]), general.FgWhiteText("-->"), general.NoteText(remoteHash[:6]), general.FgMagentaText("updated"))
 						color.Printf(text)
@@ -1606,7 +1606,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 					}
 				}
 			} else {
-				text := color.Error.Sprintf("The source file %s does not exist\n", scriptLocalPath)
+				text := color.Danger.Sprintf("The source file %s does not exist\n", scriptLocalPath)
 				color.Printf(text)
 				textLength = general.RealLength(text) // 分隔符长度
 			}

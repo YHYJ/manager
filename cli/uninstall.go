@@ -27,7 +27,7 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 		return
 	}
 
@@ -54,7 +54,7 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	if general.FileExist(pocketFile) {                                // 读取记账文件内容
 		pocketLines, err = general.ReadFile(pocketFile)
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			return
 		}
 	}
@@ -62,7 +62,7 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	// 确认是否要卸载
 	answer, err := general.AskUser(general.QuestionText(general.UninstallTips), "y/N")
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 		return
 	}
 	switch answer {
@@ -82,7 +82,7 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	// 卸载程序
 	for _, pocketLine := range pocketLines {
 		if err := general.Uninstall(pocketLine); err != nil {
-			text := color.Sprintf("%s\n", general.ErrorText(err))
+			text := color.Sprintf("%s\n", general.DangerText(err))
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
@@ -94,7 +94,7 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 
 	// 删除记账文件
 	if err := general.DeleteFile(pocketDir); err != nil {
-		text := color.Sprintf("%s\n", general.ErrorText(err))
+		text := color.Sprintf("%s\n", general.DangerText(err))
 		color.Printf(text)
 		// 分隔符和延时（延时使输出更加顺畅）
 		textLength = general.RealLength(text) // 分隔符长度
@@ -121,7 +121,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 		return
 	}
 
@@ -142,7 +142,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	// 让用户选择需要卸载的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 	}
 	// 对所选的程序进行排序
 	sort.Strings(selectedPrograms)
@@ -151,7 +151,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	if len(selectedPrograms) != 0 {
 		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), "y/N")
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			return
 		}
 		switch answer {
@@ -178,7 +178,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 		if general.FileExist(pocketFile) {                                // 读取记账文件内容
 			pocketLines, err = general.ReadFile(pocketFile)
 			if err != nil {
-				color.Error.Println(err)
+				color.Danger.Println(err)
 				continue
 			}
 		}
@@ -186,7 +186,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 		// 卸载程序
 		for _, pocketLine := range pocketLines {
 			if err := general.Uninstall(pocketLine); err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -198,7 +198,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 
 		// 删除记账文件
 		if err := general.DeleteFile(pocketDir); err != nil {
-			text := color.Sprintf("%s\n", general.ErrorText(err))
+			text := color.Sprintf("%s\n", general.DangerText(err))
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
@@ -226,7 +226,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 		return
 	}
 
@@ -247,7 +247,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	// 让用户选择需要卸载的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
 	if err != nil {
-		color.Error.Println(err)
+		color.Danger.Println(err)
 	}
 	// 对所选的程序进行排序
 	sort.Strings(selectedPrograms)
@@ -256,7 +256,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	if len(selectedPrograms) != 0 {
 		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), "y/N")
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			return
 		}
 		switch answer {
@@ -283,7 +283,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 		if general.FileExist(pocketFile) {                                // 读取记账文件内容
 			pocketLines, err = general.ReadFile(pocketFile)
 			if err != nil {
-				color.Error.Println(err)
+				color.Danger.Println(err)
 				continue
 			}
 		}
@@ -291,7 +291,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 		// 卸载程序
 		for _, pocketLine := range pocketLines {
 			if err := general.Uninstall(pocketLine); err != nil {
-				text := color.Sprintf("%s\n", general.ErrorText(err))
+				text := color.Sprintf("%s\n", general.DangerText(err))
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -303,7 +303,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 
 		// 删除记账文件
 		if err := general.DeleteFile(pocketDir); err != nil {
-			text := color.Sprintf("%s\n", general.ErrorText(err))
+			text := color.Sprintf("%s\n", general.DangerText(err))
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度

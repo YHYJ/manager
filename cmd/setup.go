@@ -24,7 +24,7 @@ var setupCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// 检查平台
 		if general.Platform != "linux" && general.Platform != "darwin" {
-			color.Printf("%s\n", general.ErrorText("Only Linux and macOS are supported"))
+			color.Printf("%s\n", general.DangerText("Only Linux and macOS are supported"))
 			return
 		}
 

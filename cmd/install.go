@@ -45,7 +45,7 @@ var installCmd = &cobra.Command{
 		// 读取配置文件
 		configTree, err := general.GetTomlConfig(cfgFile)
 		if err != nil {
-			color.Error.Println(err)
+			color.Danger.Println(err)
 			return
 		}
 
