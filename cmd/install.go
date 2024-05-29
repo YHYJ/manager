@@ -23,7 +23,7 @@ var installCmd = &cobra.Command{
 	Long:  `Install or update my software and scripts.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// 解析参数
-		cfgFile, _ := cmd.Flags().GetString("config")
+		configFile, _ := cmd.Flags().GetString("config")
 		allFlag, _ := cmd.Flags().GetBool("all")
 		goFlag, _ := cmd.Flags().GetBool("go")
 		selfFlag, _ := cmd.Flags().GetBool("self")
@@ -43,7 +43,7 @@ var installCmd = &cobra.Command{
 		}
 
 		// 读取配置文件
-		configTree, err := general.GetTomlConfig(cfgFile)
+		configTree, err := general.GetTomlConfig(configFile)
 		if err != nil {
 			color.Danger.Println(err)
 			return
