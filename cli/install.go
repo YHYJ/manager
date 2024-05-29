@@ -1032,7 +1032,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							continue
 						} else {
 							// 记账
-							color.Println(localProgram)
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
 								color.Danger.Println(err)
 							}
