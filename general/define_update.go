@@ -1,5 +1,5 @@
 /*
-File: define_checkupdate.go
+File: define_update.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023-09-19 14:30:34
