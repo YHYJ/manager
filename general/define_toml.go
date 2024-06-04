@@ -194,6 +194,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		goNames = []string{
 			name,
 			"curator",
+			"eniac",
 			"skynet",
 		}
 		goCompletionDir = []string{
