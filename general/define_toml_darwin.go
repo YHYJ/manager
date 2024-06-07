@@ -1,5 +1,7 @@
+//go:build darwin
+
 /*
-File: define_toml.go
+File: define_toml_darwin.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2024-04-11 15:15:12
@@ -142,7 +144,7 @@ func LoadConfigToStruct(configTree *toml.Tree) (*Config, error) {
 func WriteTomlConfig(filePath string) (int64, error) {
 	// 从常量读取该程序自身的名字
 	name := strings.ToLower(Name)
-	// 根据系统不同决定某些参数
+
 	var (
 		ProgramPath     = ""         // 定义在不同平台的程序安装路径
 		ResourcesPath   = ""         // 定义在不同平台的资源安装路径
@@ -153,71 +155,28 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		goCompletionDir = []string{} // 定义在不同平台的自动补全文件路径（仅限 oh-my-zsh）
 		shellNames      = []string{} // 定义在不同平台可用的脚本
 	)
-	if Platform == "linux" {
-		ProgramPath = filepath.Join(Sep, "usr", "local", "bin")
-		ResourcesPath = filepath.Join(Sep, "usr", "local", "share")
-		ReleaseTemp = filepath.Join(Sep, "tmp", name, "release")
-		SourceTemp = filepath.Join(Sep, "tmp", name, "source")
-		PocketPath = filepath.Join(Sep, "var", "local", "lib", name, "local")
-		goNames = []string{
-			name,
-			"checker",
-			"curator",
-			"eniac",
-			"kbdstage",
-			"rolling",
-			"scleaner",
-			"skynet",
-			"trash",
-		}
-		goCompletionDir = []string{
-			filepath.Join(UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
-			filepath.Join(UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
-		}
-		shellNames = []string{
-			"configure-tags",
-			"git-browser",
-			"open",
-			"py-virtualenv-tool",
-			"save-docker-images",
-			"spacevim-update",
-			"spider",
-			"system-checkupdates",
-			"usb-manager",
-		}
-	} else if Platform == "darwin" {
-		ProgramPath = filepath.Join(Sep, "usr", "local", "bin")
-		ResourcesPath = filepath.Join(Sep, "usr", "local", "share")
-		ReleaseTemp = filepath.Join(Sep, "tmp", name, "release")
-		SourceTemp = filepath.Join(Sep, "tmp", name, "source")
-		PocketPath = filepath.Join(Sep, "var", "local", "lib", name, "local")
-		goNames = []string{
-			name,
-			"curator",
-			"eniac",
-			"skynet",
-		}
-		goCompletionDir = []string{
-			filepath.Join(UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
-			filepath.Join(UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
-		}
-		shellNames = []string{
-			"configure-tags",
-			"git-browser",
-			"py-virtualenv-tool",
-			"spacevim-update",
-			"spider",
-			"trust-app",
-		}
-	} else if Platform == "windows" {
-		ProgramPath = filepath.Join(GetVariable("ProgramFiles"), Name)
-		ReleaseTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "release")
-		SourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "source")
-		PocketPath = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "local")
-		goNames = []string{
-			name,
-			"skynet",
-		}
+	ProgramPath = filepath.Join(Sep, "usr", "local", "bin")
+	ResourcesPath = filepath.Join(Sep, "usr", "local", "share")
+	ReleaseTemp = filepath.Join(Sep, "tmp", name, "release")
+	SourceTemp = filepath.Join(Sep, "tmp", name, "source")
+	PocketPath = filepath.Join(Sep, "var", "local", "lib", name, "local")
+	goNames = []string{
+		name,
+		"curator",
+		"eniac",
+		"skynet",
+	}
+	goCompletionDir = []string{
+		filepath.Join(UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
+		filepath.Join(UserInfo.HomeDir, ".oh-my-zsh", "cache", "completions"),
+	}
+	shellNames = []string{
+		"configure-tags",
+		"git-browser",
+		"py-virtualenv-tool",
+		"spacevim-update",
+		"spider",
+		"trust-app",
 	}
 
 	// 定义一个 map[string]interface{} 类型的变量并赋值
