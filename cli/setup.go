@@ -27,8 +27,8 @@ var (
 
 	email = "email@example.com"
 
-	httpProxy  = "http://localhost:8080"
-	httpsProxy = "http://localhost:8080"
+	httpProxy  = "http://127.0.0.1:8080"
+	httpsProxy = "http://127.0.0.1:8080"
 	noProxy    = "localhost,127.0.0.1,.example.com"
 )
 
