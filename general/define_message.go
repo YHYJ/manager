@@ -33,3 +33,8 @@ var (
 	SelectAllTips    = "Select All"                                        // 提示词 - 全选
 	UninstallTips    = "Do you want to uninstall these software?"          // 提示词 - 卸载软件
 )
+
+var (
+	InstallTips = "Please install %s first" // 提示词 - 需要安装
+	InputTips   = "Please input '%s' value" // 提示词 - 输入
+)
