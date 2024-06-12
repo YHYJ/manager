@@ -112,7 +112,7 @@ func ProgramConfigurator(flags map[string]bool) {
 			CobraConfigFile   = filepath.Join(home, ".cobra.yaml") // 配置文件
 			// cobra 配置
 			cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
-			cobraAuthorName   = "YJ"
+			cobraAuthorName   = "User"
 			cobraAuthorEmail  = "email@example.com"
 			cobraLicense      = "GPLv3"
 			cobraUseViper     = "false"
