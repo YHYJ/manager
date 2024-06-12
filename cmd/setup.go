@@ -28,20 +28,38 @@ var setupCmd = &cobra.Command{
 			return
 		}
 
+		// 检查权限
+		isRoot := func() bool {
+			if general.GetVariable("SUDO_USER") != "" {
+				return true
+			}
+			return false
+		}()
+
+		var (
+			noticeSlogan []string // 提示标语
+		)
+
 		// 解析参数
 		allFlag, _ := cmd.Flags().GetBool("all")
 
 		// 根据参数执行操作
 		allFlags := make(map[string]bool)
 		if allFlag {
-			allFlags["chezmoiFlag"] = true
-			allFlags["cobraFlag"] = true
-			allFlags["dockerFlag"] = true
-			allFlags["frpcFlag"] = true
-			allFlags["gitFlag"] = true
-			allFlags["goFlag"] = true
-			allFlags["pipFlag"] = true
-			allFlags["systemcheckupdatesFlag"] = true
+			if isRoot {
+				allFlags["dockerFlag"] = true
+				allFlags["frpcFlag"] = true
+				allFlags["systemcheckupdatesFlag"] = true
+				noticeSlogan = append(noticeSlogan, "Please use non-root permissions to configure other")
+			} else {
+				allFlags["chezmoiFlag"] = true
+				allFlags["cobraFlag"] = true
+				allFlags["gitFlag"] = true
+				allFlags["goFlag"] = true
+				allFlags["pipFlag"] = true
+
+				noticeSlogan = append(noticeSlogan, "Please use non-root permissions to configure other")
+			}
 		} else {
 			allFlags["chezmoiFlag"], _ = cmd.Flags().GetBool("chezmoi")
 			allFlags["cobraFlag"], _ = cmd.Flags().GetBool("cobra")
@@ -53,9 +71,6 @@ var setupCmd = &cobra.Command{
 			allFlags["systemcheckupdatesFlag"], _ = cmd.Flags().GetBool("system-checkupdates")
 		}
 
-		var (
-			noticeSlogan []string // 提示标语
-		)
 		// 检查 allFlags 中的所有值是否都为 false
 		allFalse := true
 		for _, value := range allFlags {
