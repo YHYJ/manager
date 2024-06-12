@@ -19,9 +19,10 @@ import (
 )
 
 var (
-	home = general.UserInfo.HomeDir
-	name = general.GetHostname()
-	sep  = strings.Repeat(" ", 4)
+	home        = general.UserInfo.HomeDir
+	userName, _ = general.GetUserName()
+	name        = general.GetHostname()
+	sep         = strings.Repeat(" ", 4)
 
 	goBin = filepath.Join(home, ".go", "bin")
 
@@ -112,7 +113,7 @@ func ProgramConfigurator(flags map[string]bool) {
 			CobraConfigFile   = filepath.Join(home, ".cobra.yaml") // 配置文件
 			// cobra 配置
 			cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
-			cobraAuthorName   = "User"
+			cobraAuthorName   = userName
 			cobraAuthorEmail  = "email@example.com"
 			cobraLicense      = "GPLv3"
 			cobraUseViper     = "false"

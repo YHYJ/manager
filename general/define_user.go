@@ -15,7 +15,11 @@ import "os/user"
 //
 // 返回：
 //   - 用户名称
-func GetUserName() string {
-	userData, _ := user.Current() // 获取用户信息
-	return userData.Name
+//   - 错误信息
+func GetUserName() (string, error) {
+	userData, err := user.Current() // 获取用户信息
+	if err != nil {
+		return "", err
+	}
+	return userData.Name, nil
 }
