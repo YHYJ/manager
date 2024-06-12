@@ -173,7 +173,7 @@ func ProgramConfigurator(flags map[string]bool) {
 			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			general.HttpProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
 			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-			general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpsProxy)
+			general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
 			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			general.NoProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "NO_PROXY")), general.NoProxy)
 

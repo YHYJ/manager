@@ -58,7 +58,7 @@ var (
 	InstallMethod    = "release"                     // 默认安装方式
 
 	HttpProxy  = "http://127.0.0.1:8080"            // 默认 HTTP 代理
-	HttpsProxy = "http://127.0.0.1:8080"            // 默认 HTTPS 代理
+	HttpsProxy = HttpProxy                          // 默认 HTTPS 代理，与 HTTP 代理一致
 	NoProxy    = "localhost,127.0.0.1,.example.com" // 默认不代理的 URL
 )
 

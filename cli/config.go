@@ -35,7 +35,7 @@ func CreateConfigFile(configFile string) {
 			// 与用户交互获取配置信息
 			general.InstallMethod, _ = general.AskUser(general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")), general.AllInstallMethod)
 			general.HttpProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
-			general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpsProxy)
+			general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
 
 			if err := general.DeleteFile(configFile); err != nil {
 				color.Danger.Println(err)
@@ -55,7 +55,7 @@ func CreateConfigFile(configFile string) {
 	} else {
 		// 与用户交互获取代理配置
 		general.HttpProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
-		general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpsProxy)
+		general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
 
 		if err := general.CreateFile(configFile); err != nil {
 			color.Danger.Println(err)
