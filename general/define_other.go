@@ -73,3 +73,32 @@ func AskUser(question string, answer string) (string, error) {
 
 	return userAnswer, nil
 }
+
+// GetInput 获取用户输入
+//
+// 参数：
+//   - tips: 提示信息
+//   - default: 用户未输入时的默认值
+//
+// 返回：
+//   - 用户输入
+//   - 错误信息
+func GetInput(tips string, defaultValue string) (string, error) {
+	color.Printf("%s %s: ", tips, SecondaryText(color.Sprintf("(%s)", defaultValue)))
+
+	// 从标准输入中读取用户的回答
+	reader := bufio.NewReader(os.Stdin)
+	originalValue, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+
+	value := func() string {
+		if len(originalValue) <= 1 {
+			return defaultValue
+		}
+		return originalValue
+	}()
+
+	return value, nil
+}
