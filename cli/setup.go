@@ -148,12 +148,12 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "chezmoi"
 		descriptorText = "configuration file"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(ChezmoiConfigFile))
+		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(ChezmoiConfigFile))
 		if err := general.WriteFile(ChezmoiConfigFile, ChezmoiConfig, writeMode); err != nil {
 			color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 	}
 
@@ -162,12 +162,12 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "cobra-cli"
 		descriptorText = "configuration file"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(CobraConfigFile))
+		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(CobraConfigFile))
 		if err := general.WriteFile(CobraConfigFile, CobraConfig, writeMode); err != nil {
 			color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 	}
 
@@ -176,12 +176,12 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "docker"
 		descriptorText = "daemon configuration"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(DockerServiceConfigFile))
+		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(DockerServiceConfigFile))
 		if err := general.WriteFile(DockerServiceConfigFile, DockerServiceConfig, writeMode); err != nil {
 			color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 	}
 
@@ -190,12 +190,12 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "frpc"
 		descriptorText = "restart timing"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(FrpcConfigFile))
+		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(FrpcConfigFile))
 		if err := general.WriteFile(FrpcConfigFile, FrpcConfig, writeMode); err != nil {
 			color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 	}
 
@@ -204,12 +204,12 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "git"
 		descriptorText = "configuration file"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(GitConfigFile))
+		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(GitConfigFile))
 		if err := general.WriteFile(GitConfigFile, GitConfig, writeMode); err != nil {
 			color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 	}
 
@@ -218,12 +218,12 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "go"
 		descriptorText = "environment file"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(GolangConfigFile))
+		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(GolangConfigFile))
 		if err := general.WriteFile(GolangConfigFile, GolangConfig, writeMode); err != nil {
 			color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 	}
 
@@ -232,12 +232,12 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "pip"
 		descriptorText = "mirrors"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(PipConfigFile))
+		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(PipConfigFile))
 		if err := general.WriteFile(PipConfigFile, PipConfig, writeMode); err != nil {
 			color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 	}
 
@@ -249,25 +249,25 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectMinorName = "system-checkupdates timer"
 		descriptorText = "timer"
 		color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(SystemCheckupdatesTimerConfigFile))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(SystemCheckupdatesTimerConfigFile))
 		if err := general.WriteFile(SystemCheckupdatesTimerConfigFile, SystemCheckupdatesTimerConfig, writeMode); err != nil {
 			errorFormat = "%*s%s %s: %s\n"
 			color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
 			successFormat = "%*s%s %s: %s\n"
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 		// system-checkupdates service
 		subjectMinorName = "system-checkupdates service"
 		descriptorText = "service"
 		color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(SystemCheckupdatesServiceConfigFile))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(SystemCheckupdatesServiceConfigFile))
 		if err := general.WriteFile(SystemCheckupdatesServiceConfigFile, SystemCheckupdatesServiceConfig, writeMode); err != nil {
 			color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 		}
 	}
 }
