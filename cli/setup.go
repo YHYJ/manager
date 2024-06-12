@@ -25,8 +25,6 @@ var (
 
 	goBin = filepath.Join(home, ".go", "bin")
 
-	email = "email@example.com"
-
 	httpProxy  = "http://127.0.0.1:8080"
 	httpsProxy = "http://127.0.0.1:8080"
 	noProxy    = "localhost,127.0.0.1,.example.com"
@@ -61,7 +59,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "chezmoi"
 		descriptorText = "configuration file"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
 
 		// 配置项
 		var (
@@ -76,25 +74,25 @@ func ProgramConfigurator(flags map[string]bool) {
 
 		// 检测
 		if _, err := exec.LookPath(ChezmoiDependencies); err != nil {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
-			color.Printf(targetFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(ChezmoiConfigFile))
+			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(ChezmoiConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			chezmoiSourceDir, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "sourceDir")), chezmoiSourceDir)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			chezmoiAutoCommit, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "autoCommit")), chezmoiAutoCommit)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			chezmoiAutoPush, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "autoPush")), chezmoiAutoPush)
 
 			// 配置
 			ChezmoiConfigContent := color.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
 			if err := general.WriteFile(ChezmoiConfigFile, ChezmoiConfigContent, writeMode); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 		}
 	}
@@ -105,7 +103,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "cobra-cli"
 		descriptorText = "configuration file"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
 
 		// 配置项
 		var (
@@ -114,34 +112,35 @@ func ProgramConfigurator(flags map[string]bool) {
 			CobraConfigFile   = filepath.Join(home, ".cobra.yaml") // 配置文件
 			// cobra 配置
 			cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
-			cobraAuthor       = "YJ"
+			cobraAuthorName   = "YJ"
+			cobraAuthorEmail  = "email@example.com"
 			cobraLicense      = "GPLv3"
 			cobraUseViper     = "false"
 		)
 
 		// 检测
 		if _, err := exec.LookPath(CobraDependencies); err != nil {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
-			color.Printf(targetFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(CobraConfigFile))
+			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(CobraConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
-			cobraAuthor, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "authorName")), cobraAuthor)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
-			email, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "authorEmail")), email)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
+			cobraAuthorName, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "authorName")), cobraAuthorName)
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
+			cobraAuthorEmail, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "authorEmail")), cobraAuthorEmail)
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			cobraLicense, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "license")), cobraLicense)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			cobraUseViper, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "useViper")), cobraUseViper)
 
 			// 配置
-			CobraConfigContent := color.Sprintf(cobraConfigFormat, cobraAuthor, email, cobraLicense, cobraUseViper)
+			CobraConfigContent := color.Sprintf(cobraConfigFormat, cobraAuthorName, cobraAuthorEmail, cobraLicense, cobraUseViper)
 			if err := general.WriteFile(CobraConfigFile, CobraConfigContent, writeMode); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 		}
 	}
@@ -152,7 +151,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "docker"
 		descriptorText = "daemon configuration"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
 
 		// 配置项
 		var (
@@ -166,19 +165,19 @@ func ProgramConfigurator(flags map[string]bool) {
 
 		// 检测
 		if _, err := exec.LookPath(DockerDependencies); err != nil {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
-			color.Printf(targetFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(DockerServiceConfigFile))
+			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(DockerServiceConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			dockerServiceDataRoot, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "--data-root")), dockerServiceDataRoot)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			httpProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), httpProxy)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			httpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), httpsProxy)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			noProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "NO_PROXY")), noProxy)
 
 			// 需要获取交互结果的配置项
@@ -189,9 +188,9 @@ func ProgramConfigurator(flags map[string]bool) {
 			// 配置
 			DockerServiceConfigContent := color.Sprintf(dockerServiceConfigFormat, dockerHttpProxy, dockerHttpsProxy, dockerNoProxy, DockerDependencies, dockerServiceDataRoot)
 			if err := general.WriteFile(DockerServiceConfigFile, DockerServiceConfigContent, writeMode); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 		}
 	}
@@ -202,7 +201,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "frpc"
 		descriptorText = "restart timing"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
 
 		// 配置项
 		var (
@@ -216,21 +215,21 @@ func ProgramConfigurator(flags map[string]bool) {
 
 		// 检测
 		if _, err := exec.LookPath(FrpcDependencies); err != nil {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
-			color.Printf(targetFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(FrpcConfigFile))
+			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(FrpcConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			frpcRestart, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "Restart")), frpcRestart)
 
 			// 配置
 			FrpcConfigContent := color.Sprintf(frpcConfigFormat, frpcRestart)
 			if err := general.WriteFile(FrpcConfigFile, FrpcConfigContent, writeMode); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 		}
 	}
@@ -241,7 +240,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "git"
 		descriptorText = "configuration file"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
 
 		// 配置项
 		var (
@@ -250,6 +249,7 @@ func ProgramConfigurator(flags map[string]bool) {
 			GitConfigFile   = filepath.Join(home, ".gitconfig") // 配置文件
 			// git 配置
 			gitConfigFormat      = "[user]\n%sname = %s\n%semail = %s\n[core]\n%seditor = %s\n%sautocrlf = %s\n[merge]\n%stool = %s\n[color]\n%sui = %v\n[pull]\n%srebase = %v\n[filter \"lfs\"]\n%sclean = %s\n%ssmudge = %s\n%sprocess = %s\n%srequired = %v\n"
+			gitUserEmail         = "email@example.com"
 			gitCoreEditor        = "vim"
 			gitCoreAutoCRLF      = "input"
 			gitMergeTool         = "vimdiff"
@@ -263,41 +263,41 @@ func ProgramConfigurator(flags map[string]bool) {
 
 		// 检测
 		if _, err := exec.LookPath(GitDependencies); err != nil {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
-			color.Printf(targetFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(GitConfigFile))
+			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(GitConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			name, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[user].name")), name)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
-			email, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[user].email")), email)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
+			gitUserEmail, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[user].email")), gitUserEmail)
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitCoreEditor, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[core].editor")), gitCoreEditor)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitCoreAutoCRLF, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[core].autocrlf")), gitCoreAutoCRLF)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitMergeTool, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[merge].tool")), gitMergeTool)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitColorUI, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[color].ui")), gitColorUI)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitPullRebase, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[pull].rebase")), gitPullRebase)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitFilterLfsClean, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[filter \"lfs\"].clean")), gitFilterLfsClean)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitFilterLfsSmudge, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[filter \"lfs\"].smudge")), gitFilterLfsSmudge)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitFilterLfsProcess, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[filter \"lfs\"].process")), gitFilterLfsProcess)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			gitFilterLfsRequired, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[filter \"lfs\"].required")), gitFilterLfsRequired)
 
 			// 配置
-			GitConfigContent := color.Sprintf(gitConfigFormat, sep, name, sep, email, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
+			GitConfigContent := color.Sprintf(gitConfigFormat, sep, name, sep, gitUserEmail, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
 			if err := general.WriteFile(GitConfigFile, GitConfigContent, writeMode); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 		}
 	}
@@ -308,7 +308,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "go"
 		descriptorText = "environment file"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
 
 		// 配置项
 		var (
@@ -325,27 +325,27 @@ func ProgramConfigurator(flags map[string]bool) {
 
 		// 检测
 		if _, err := exec.LookPath(GolangDependencies); err != nil {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
-			color.Printf(targetFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(GolangConfigFile))
+			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(GolangConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			golangGO111MODULE, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "GO111MODULE")), golangGO111MODULE)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			golangGOPATH, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "GOPATH")), golangGOPATH)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			golangGOCACHE, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "GOCACHE")), golangGOCACHE)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			golangGOMODCACHE, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "GOMODCACHE")), golangGOMODCACHE)
 
 			// 配置
 			GolangConfigContent := color.Sprintf(golangConfigFormat, golangGO111MODULE, goBin, golangGOPATH, golangGOCACHE, golangGOMODCACHE)
 			if err := general.WriteFile(GolangConfigFile, GolangConfigContent, writeMode); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 		}
 	}
@@ -356,7 +356,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		subjectName = "pip"
 		descriptorText = "mirrors"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
 
 		// 配置项
 		var (
@@ -370,13 +370,13 @@ func ProgramConfigurator(flags map[string]bool) {
 
 		// 检测
 		if _, err := exec.LookPath(PipDependencies); err != nil {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
-			color.Printf(targetFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(PipConfigFile))
+			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(PipConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			pipIndexUrl, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "index-url")), pipIndexUrl)
 
 			// 需要获取交互结果的配置项
@@ -385,9 +385,9 @@ func ProgramConfigurator(flags map[string]bool) {
 			// 配置
 			PipConfigContent := color.Sprintf(pipConfigFormat, pipIndexUrl, pipTrustedHost)
 			if err := general.WriteFile(PipConfigFile, PipConfigContent, writeMode); err != nil {
-				color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 		}
 	}
@@ -423,66 +423,66 @@ func ProgramConfigurator(flags map[string]bool) {
 
 		// 检测
 		if _, err := exec.LookPath(SystemCheckupdatesDependencies); err != nil {
-			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
+			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
 			// ---------- Timer
 			subjectMinorName = "timer"
 			descriptorText = "timer"
-			color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-			color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
-			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(timerConfigFile))
+			color.Printf(subjectMinorNameFormat, 2, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
+			color.Printf(descriptorFormat, 4, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+			color.Printf(targetFileFormat, 4, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(timerConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			timerDescription, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Unit].Description")), timerDescription)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			timerOnBootSec, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Timer].OnBootSec")), timerOnBootSec)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			timerOnUnitInactiveSec, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Timer].OnUnitInactiveSec")), timerOnUnitInactiveSec)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			timerAccuracySec, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Timer].AccuracySec")), timerAccuracySec)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			timerPersistent, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Timer].Persistent")), timerPersistent)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			timerWantedBy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Install].WantedBy")), timerWantedBy)
 
 			// 配置
 			SystemCheckupdatesTimerConfigContent := color.Sprintf(timerConfigFormat, timerDescription, timerOnBootSec, timerOnUnitInactiveSec, timerAccuracySec, timerPersistent, timerWantedBy)
 			if err := general.WriteFile(timerConfigFile, SystemCheckupdatesTimerConfigContent, writeMode); err != nil {
 				errorFormat = "%*s%s %s: %s\n"
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 4, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
 				successFormat = "%*s%s %s: %s\n"
-				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 4, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 
 			// ---------- Service
 			subjectMinorName = "service"
 			descriptorText = "service"
-			color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-			color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
-			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(serviceConfigFile))
+			color.Printf(subjectMinorNameFormat, 2, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
+			color.Printf(descriptorFormat, 4, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
+			color.Printf(targetFileFormat, 4, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(serviceConfigFile))
 
 			// 交互
-			color.Printf(askItemTitleFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration"))
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			serviceDescription, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Unit].Description")), serviceDescription)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			serviceAfter, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Unit].After")), serviceAfter)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			serviceWants, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Unit].Wants")), serviceWants)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			serviceType, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Service].Type")), serviceType)
-			color.Printf(askItemsFormat, 2, " ", general.SuccessText("-"))
+			color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 			serviceExecStart, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Service].ExecStart")), serviceExecStart)
 
 			// 配置
 			SystemCheckupdatesServiceConfigContent := color.Sprintf(serviceConfigFormat, serviceDescription, serviceAfter, serviceWants, serviceType, serviceExecStart)
 			if err := general.WriteFile(serviceConfigFile, SystemCheckupdatesServiceConfigContent, writeMode); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+				color.Printf(errorFormat, 4, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
-				color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
+				color.Printf(successFormat, 4, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 			}
 		}
 	}
