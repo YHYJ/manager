@@ -18,55 +18,53 @@ import (
 )
 
 var (
-	home     = general.GetVariable("HOME")
-	hostname = general.GetHostname()
-	email    = "yj1516268@outlook.com"
-	sep      = strings.Repeat(" ", 4)
+	home       = general.GetVariable("HOME")
+	hostname   = general.GetHostname()
+	email      = "yj1516268@outlook.com"
+	sep        = strings.Repeat(" ", 4)
+	httpProxy  = "HTTP_PROXY=http://localhost:8080"
+	httpsProxy = "HTTPS_PROXY=http://localhost:8080"
+	noProxy    = "NO_PROXY=localhost,127.0.0.1,.example.com"
 
-	// chezmoi 的依赖项
-	ChezmoiDependencies = "/usr/bin/chezmoi"
+	// chezmoi 的依赖
+	ChezmoiDependencies = "/usr/bin/chezmoi"                                        // 主程序
+	ChezmoiConfigFile   = filepath.Join(home, ".config", "chezmoi", "chezmoi.toml") // 配置文件
 	// chezmoi 配置
 	chezmoiConfigFormat = "sourceDir = %s\n[git]\n%sautoCommit = %v\n%sautoPush = %v\n"
 	chezmoiSourceDir    = `"~/Documents/Repos/System/Profile"`
 	chezmoiAutoCommit   = false
 	chezmoiAutoPush     = false
 	ChezmoiConfig       = color.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
-	ChezmoiConfigFile   = filepath.Join(home, ".config", "chezmoi", "chezmoi.toml")
 
-	// cobra 的依赖项
-	CobraDependencies = filepath.Join(golangGOBIN, "cobra-cli")
+	// cobra 的依赖
+	CobraDependencies = filepath.Join(golangGOBIN, "cobra-cli") // 主程序
+	CobraConfigFile   = filepath.Join(home, ".cobra.yaml")      // 配置文件
 	// cobra 配置
 	cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
 	cobraAuthor       = "YJ"
 	cobraLicense      = "GPLv3"
 	cobraUseViper     = false
 	CobraConfig       = color.Sprintf(cobraConfigFormat, cobraAuthor, email, cobraLicense, cobraUseViper)
-	CobraConfigFile   = filepath.Join(home, ".cobra.yaml")
 
-	// docker service 和 mirrors 的依赖项
-	DockerDependencies = "/usr/bin/dockerd"
-	// docker 配置 - docker service
-	dockerServiceConfigFormat = "[Service]\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
-	dockerServiceExecStart    = "/usr/bin/dockerd"
+	// docker 的依赖
+	DockerDependencies      = "/usr/bin/dockerd"                                   // 主程序
+	DockerServiceConfigFile = "/etc/systemd/system/docker.service.d/override.conf" // 配置文件
+	// docker 配置
+	dockerServiceConfigFormat = "[Service]\nEnvironment=\"%s\"\nEnvironment=\"%s\"\nEnvironment=\"%s\"\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
 	dockerServiceDataRoot     = filepath.Join(home, "Documents", "Docker", "Root")
-	DockerServiceConfig       = color.Sprintf(dockerServiceConfigFormat, dockerServiceExecStart, dockerServiceDataRoot)
-	DockerServiceConfigFile   = "/etc/systemd/system/docker.service.d/override.conf"
-	// docker 配置 - docker mirrors
-	dockerMirrorsConfigFormat    = "{\n%s\"registry-mirrors\": %s\n}\n"
-	dockerMirrorsRegistryMirrors = []string{`"https://docker.mirrors.ustc.edu.cn"`}
-	DockerMirrorsConfig          = color.Sprintf(dockerMirrorsConfigFormat, sep, dockerMirrorsRegistryMirrors)
-	DockerMirrorsConfigFile      = "/etc/docker/daemon.json"
+	DockerServiceConfig       = color.Sprintf(dockerServiceConfigFormat, httpProxy, httpsProxy, noProxy, DockerDependencies, dockerServiceDataRoot)
 
-	// frpc 的依赖项
-	FrpcDependencies = "/usr/bin/frpc"
+	// frpc 的依赖
+	FrpcDependencies = "/usr/bin/frpc"                                    // 主程序
+	FrpcConfigFile   = "/etc/systemd/system/frpc.service.d/override.conf" // 配置文件
 	// frpc 配置
 	frpcConfigFormat = "[Service]\nRestart=\nRestart=%s\n"
 	frpcRestart      = "always"
 	FrpcConfig       = color.Sprintf(frpcConfigFormat, frpcRestart)
-	FrpcConfigFile   = "/etc/systemd/system/frpc.service.d/override.conf"
 
-	// git 的依赖项
-	GitDependencies = "/usr/bin/git"
+	// git 的依赖
+	GitDependencies = "/usr/bin/git"                    // 主程序
+	GitConfigFile   = filepath.Join(home, ".gitconfig") // 配置文件
 	// git 配置
 	gitConfigFormat      = "[user]\n%sname = %s\n%semail = %s\n[core]\n%seditor = %s\n%sautocrlf = %s\n[merge]\n%stool = %s\n[color]\n%sui = %v\n[pull]\n%srebase = %v\n[filter \"lfs\"]\n%sclean = %s\n%ssmudge = %s\n%sprocess = %s\n%srequired = %v\n"
 	gitCoreEditor        = "vim"
@@ -79,10 +77,10 @@ var (
 	gitFilterLfsProcess  = "git-lfs filter-process"
 	gitFilterLfsRequired = true
 	GitConfig            = color.Sprintf(gitConfigFormat, sep, hostname, sep, email, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
-	GitConfigFile        = filepath.Join(home, ".gitconfig")
 
-	// go 的依赖项
-	GolangDependencies = "/usr/bin/go"
+	// go 的依赖
+	GolangDependencies = "/usr/bin/go"                               // 主程序
+	GolangConfigFile   = filepath.Join(home, ".config", "go", "env") // 配置文件
 	// go 配置
 	golangConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
 	golangGO111MODULE  = "on"
@@ -91,20 +89,21 @@ var (
 	golangGOCACHE      = filepath.Join(home, ".cache", "go", "go-build")
 	golangGOMODCACHE   = filepath.Join(home, ".cache", "go", "pkg", "mod")
 	GolangConfig       = color.Sprintf(golangConfigFormat, golangGO111MODULE, golangGOBIN, golangGOPATH, golangGOCACHE, golangGOMODCACHE)
-	GolangConfigFile   = filepath.Join(home, ".config", "go", "env")
 
-	// pip 的依赖项
-	PipDependencies = "/usr/bin/pip"
+	// pip 的依赖
+	PipDependencies = "/usr/bin/pip"                                    // 主程序
+	PipConfigFile   = filepath.Join(home, ".config", "pip", "pip.conf") // 配置文件
 	// pip 配置
 	pipConfigFormat = "[global]\nindex-url = %s\ntrusted-host = %s\n"
 	pipIndexUrl     = "https://mirrors.aliyun.com/pypi/simple"
 	pipTrustedHost  = "mirrors.aliyun.com"
 	PipConfig       = color.Sprintf(pipConfigFormat, pipIndexUrl, pipTrustedHost)
-	PipConfigFile   = filepath.Join(home, ".config", "pip", "pip.conf")
 
-	// system-checkupdates timer 和 service 的依赖项
-	SystemCheckupdatesDependencies = "/usr/local/bin/system-checkupdates" // >= 3.0.0-20230313.1
-	// system-checkupdates 配置 - system-checkupdates timer
+	// system-checkupdates Timer 和 Service 的依赖
+	SystemCheckupdatesDependencies      = "/usr/local/bin/system-checkupdates"              // 主程序，需要版本 >= 3.0.0-20230313.1
+	SystemCheckupdatesTimerConfigFile   = "/etc/systemd/system/system-checkupdates.timer"   // Timer 配置文件
+	SystemCheckupdatesServiceConfigFile = "/etc/systemd/system/system-checkupdates.service" // Service 配置文件
+	// system-checkupdates 配置 - Timer
 	systemCheckupdatesTimerConfigFormat      = "[Unit]\nDescription=%s\n\n[Timer]\nOnBootSec=%s\nOnUnitInactiveSec=%s\nAccuracySec=%s\nPersistent=%v\n\n[Install]\nWantedBy=%s\n"
 	systemcheckupdatesTimerDescription       = "Timer for system-checkupdates"
 	systemcheckupdatesTimerOnBootSec         = "10min"
@@ -113,8 +112,7 @@ var (
 	systemcheckupdatesTimerPersistent        = true
 	systemcheckupdatesTimerWantedBy          = "timers.target"
 	SystemCheckupdatesTimerConfig            = color.Sprintf(systemCheckupdatesTimerConfigFormat, systemcheckupdatesTimerDescription, systemcheckupdatesTimerOnBootSec, systemcheckupdatesTimerOnUnitInactiveSec, systemcheckupdatesTimerAccuracySec, systemcheckupdatesTimerPersistent, systemcheckupdatesTimerWantedBy)
-	SystemCheckupdatesTimerConfigFile        = "/etc/systemd/system/system-checkupdates.timer"
-	// system-checkupdates 配置 - system-checkupdates service
+	// system-checkupdates 配置 - Service
 	systemCheckupdatesServiceConfigFormat = "[Unit]\nDescription=%s\nAfter=%s\nWants=%s\n\n[Service]\nType=%s\nExecStart=%s\n"
 	systemcheckupdatesServiceDescription  = "System checkupdates"
 	systemcheckupdatesServiceAfter        = "network.target"
@@ -122,7 +120,6 @@ var (
 	systemcheckupdatesServiceType         = "oneshot"
 	systemcheckupdatesServiceExecStart    = "/usr/local/bin/system-checkupdates --check"
 	SystemCheckupdatesServiceConfig       = color.Sprintf(systemCheckupdatesServiceConfigFormat, systemcheckupdatesServiceDescription, systemcheckupdatesServiceAfter, systemcheckupdatesServiceWants, systemcheckupdatesServiceType, systemcheckupdatesServiceExecStart)
-	SystemCheckupdatesServiceConfigFile   = "/etc/systemd/system/system-checkupdates.service"
 )
 
 // ProgramConfigurator 程序配置器
@@ -137,12 +134,14 @@ func ProgramConfigurator(flags map[string]bool) {
 		writeMode        string = "t"
 	)
 
-	// 定义输出格式
-	subjectMinorNameFormat := "%*s%s %s\n"
-	descriptorFormat := "%*s%s %s: %s %s %s\n"
-	configFileFormat := "%*s%s %s: %s\n"
-	errorFormat := "%*s%s %s: %s\n\n"
-	successFormat := "%*s%s %s: %s\n\n"
+	// 预定义输出格式
+	var (
+		subjectMinorNameFormat = "%*s%s %s\n"
+		descriptorFormat       = "%*s%s %s: %s %s %s\n"
+		configFileFormat       = "%*s%s %s: %s\n"
+		errorFormat            = "%*s%s %s: %s\n\n"
+		successFormat          = "%*s%s %s: %s\n\n"
+	)
 
 	// 配置 chezmoi
 	if flags["chezmoiFlag"] {
@@ -175,30 +174,14 @@ func ProgramConfigurator(flags map[string]bool) {
 	// 配置 docker
 	if flags["dockerFlag"] {
 		subjectName = "docker"
+		descriptorText = "daemon configuration"
 		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		// docker service
-		subjectMinorName = "docker service"
-		descriptorText = "root directory"
-		color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(DockerServiceConfigFile))
+		color.Printf(descriptorFormat, 1, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
+		color.Printf(configFileFormat, 1, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(DockerServiceConfigFile))
 		if err := general.WriteFile(DockerServiceConfigFile, DockerServiceConfig, writeMode); err != nil {
-			errorFormat = "%*s%s %s: %s\n"
-			color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
+			color.Printf(errorFormat, 1, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 		} else {
-			successFormat = "%*s%s %s: %s\n"
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
-		}
-		// docker mirrors
-		subjectMinorName = "docker mirrors"
-		descriptorText = "registry mirrors"
-		color.Printf(subjectMinorNameFormat, 1, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.CommentText("Set up"), general.CommentText(subjectName), general.CommentText(descriptorText))
-		color.Printf(configFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration file"), general.CommentText(DockerMirrorsConfigFile))
-		if err := general.WriteFile(DockerMirrorsConfigFile, DockerMirrorsConfig, writeMode); err != nil {
-			color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-		} else {
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
+			color.Printf(successFormat, 1, " ", general.SuccessText("-"), general.LightText("Status"), general.BgYellowText("Setup completed"))
 		}
 	}
 
