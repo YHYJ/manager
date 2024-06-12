@@ -53,13 +53,15 @@ func Delay(second float32) {
 //
 // 参数：
 //   - question: 问题
-//   - answer: 期望的回答（每个选项之间用斜线/隔开），例如 "y/N" 代表期望输入 y 或 n，其中大写字母代表默认值，示例是 N
+//   - answers: 期望回答的切片（最后一个选项是默认值），例如 [y, N] 代表期望输入 y 或 n，最后一个选项 N 是默认值（大写为了提示用户其为默认值）
 //
 // 返回：
 //   - 用户的回答
 //   - 错误信息
-func AskUser(question string, answer string) (string, error) {
-	color.Printf("%s [%s] ", question, answer)
+func AskUser(question string, answers []string) (string, error) {
+	viewAnswers := strings.Join(answers, "/")
+	// color.Printf("%s (%s) ", question, viewAnswers)
+	color.Printf("%s %s: ", question, SecondaryText(color.Sprintf("(%s)", viewAnswers)))
 
 	// 从标准输入中读取用户的回答
 	reader := bufio.NewReader(os.Stdin)
@@ -70,6 +72,15 @@ func AskUser(question string, answer string) (string, error) {
 
 	// 将用户的回答转换为小写并去除首尾空格
 	userAnswer = strings.TrimSpace(strings.ToLower(userAnswer))
+
+	// 检测输入是否符合要求，不符合则返回默认值
+	for _, answer := range answers {
+		if userAnswer == answer {
+			return userAnswer, nil
+		} else {
+			return answers[len(answers)-1], nil
+		}
+	}
 
 	return userAnswer, nil
 }
