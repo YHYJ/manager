@@ -81,7 +81,7 @@ func AskUser(question string, answer string) (string, error) {
 //   - default: 用户未输入时的默认值
 //
 // 返回：
-//   - 用户输入
+//   - 用户输入（去掉了最后的换行符）
 //   - 错误信息
 func GetInput(tips string, defaultValue string) (string, error) {
 	color.Printf("%s %s: ", tips, SecondaryText(color.Sprintf("(%s)", defaultValue)))
@@ -97,7 +97,7 @@ func GetInput(tips string, defaultValue string) (string, error) {
 		if len(originalValue) <= 1 {
 			return defaultValue
 		}
-		return originalValue
+		return strings.TrimSuffix(originalValue, "\n")
 	}()
 
 	return value, nil
