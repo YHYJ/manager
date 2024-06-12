@@ -60,7 +60,7 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	}
 
 	// 确认是否要卸载
-	answer, err := general.AskUser(general.QuestionText(general.UninstallTips), "y/N")
+	answer, err := general.AskUser(general.QuestionText(general.UninstallTips), []string{"y", "N"})
 	if err != nil {
 		color.Danger.Println(err)
 		return
@@ -149,7 +149,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 
 	// 确认是否要卸载
 	if len(selectedPrograms) != 0 {
-		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), "y/N")
+		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), []string{"y", "N"})
 		if err != nil {
 			color.Danger.Println(err)
 			return
@@ -254,7 +254,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 
 	// 确认是否要卸载
 	if len(selectedPrograms) != 0 {
-		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), "y/N")
+		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), []string{"y", "N"})
 		if err != nil {
 			color.Danger.Println(err)
 			return
