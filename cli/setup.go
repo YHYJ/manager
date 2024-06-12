@@ -60,7 +60,7 @@ func ProgramConfigurator(flags map[string]bool) {
 
 		// 配置项
 		var (
-			ChezmoiDependencies = "/usr/bin/chezmoi"                                        // 主程序
+			ChezmoiDependencies = "chezmoi"                                                 // 主程序
 			ChezmoiConfigFile   = filepath.Join(home, ".config", "chezmoi", "chezmoi.toml") // 配置文件
 			// chezmoi 配置
 			chezmoiConfigFormat = "sourceDir = %s\n[git]\n%sautoCommit = %v\n%sautoPush = %v\n"
@@ -105,7 +105,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		// 配置项
 		var (
 			// cobra 的依赖
-			CobraDependencies = filepath.Join(goBin, "cobra-cli")  // 主程序
+			CobraDependencies = "cobra-cli"                        // 主程序
 			CobraConfigFile   = filepath.Join(home, ".cobra.yaml") // 配置文件
 			// cobra 配置
 			cobraConfigFormat = "author: %s <%s>\nlicense: %s\nuseViper: %v\n"
@@ -153,7 +153,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		// 配置项
 		var (
 			// docker 的依赖
-			DockerDependencies      = "/usr/bin/dockerd"                                   // 主程序
+			DockerDependencies      = "dockerd"                                            // 主程序
 			DockerServiceConfigFile = "/etc/systemd/system/docker.service.d/override.conf" // 配置文件
 			// docker 配置
 			dockerServiceConfigFormat = "[Service]\nEnvironment=\"%s\"\nEnvironment=\"%s\"\nEnvironment=\"%s\"\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
@@ -161,7 +161,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		)
 
 		// 检测
-		if _, err := exec.LookPath(DockerDependencies); err != nil {
+		if dockerdAbsPath, err := exec.LookPath(DockerDependencies); err != nil {
 			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
 		} else {
 			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(DockerServiceConfigFile))
@@ -183,7 +183,7 @@ func ProgramConfigurator(flags map[string]bool) {
 			dockerNoProxy := color.Sprintf("NO_PROXY=%s", general.NoProxy)
 
 			// 配置
-			DockerServiceConfigContent := color.Sprintf(dockerServiceConfigFormat, dockerHttpProxy, dockerHttpsProxy, dockerNoProxy, DockerDependencies, dockerServiceDataRoot)
+			DockerServiceConfigContent := color.Sprintf(dockerServiceConfigFormat, dockerHttpProxy, dockerHttpsProxy, dockerNoProxy, dockerdAbsPath, dockerServiceDataRoot)
 			if err := general.WriteFile(DockerServiceConfigFile, DockerServiceConfigContent, writeMode); err != nil {
 				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 			} else {
@@ -203,7 +203,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		// 配置项
 		var (
 			// frpc 的依赖
-			FrpcDependencies = "/usr/bin/frpc"                                    // 主程序
+			FrpcDependencies = "frpc"                                             // 主程序
 			FrpcConfigFile   = "/etc/systemd/system/frpc.service.d/override.conf" // 配置文件
 			// frpc 配置
 			frpcConfigFormat = "[Service]\nRestart=\nRestart=%s\n"
@@ -242,7 +242,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		// 配置项
 		var (
 			// git 的依赖
-			GitDependencies = "/usr/bin/git"                    // 主程序
+			GitDependencies = "git"                             // 主程序
 			GitConfigFile   = filepath.Join(home, ".gitconfig") // 配置文件
 			// git 配置
 			gitConfigFormat      = "[user]\n%sname = %s\n%semail = %s\n[core]\n%seditor = %s\n%sautocrlf = %s\n[merge]\n%stool = %s\n[color]\n%sui = %v\n[pull]\n%srebase = %v\n[filter \"lfs\"]\n%sclean = %s\n%ssmudge = %s\n%sprocess = %s\n%srequired = %v\n"
@@ -310,7 +310,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		// 配置项
 		var (
 			// go 的依赖
-			GolangDependencies = "/usr/bin/go"                               // 主程序
+			GolangDependencies = "go"                                        // 主程序
 			GolangConfigFile   = filepath.Join(home, ".config", "go", "env") // 配置文件
 			// go 配置
 			golangConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
@@ -358,7 +358,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		// 配置项
 		var (
 			// pip 的依赖
-			PipDependencies = "/usr/bin/pip"                                    // 主程序
+			PipDependencies = "pip"                                             // 主程序
 			PipConfigFile   = filepath.Join(home, ".config", "pip", "pip.conf") // 配置文件
 			// pip 配置
 			pipConfigFormat = "[global]\nindex-url = %s\ntrusted-host = %s\n"
@@ -398,7 +398,7 @@ func ProgramConfigurator(flags map[string]bool) {
 		// 配置项
 		var (
 			// system-checkupdates Timer 和 Service 的依赖
-			SystemCheckupdatesDependencies = "/usr/local/bin/system-checkupdates"              // 主程序，需要版本 >= 3.0.0-20230313.1
+			SystemCheckupdatesDependencies = "system-checkupdates"                             // 主程序，需要版本 >= 3.0.0-20230313.1
 			timerConfigFile                = "/etc/systemd/system/system-checkupdates.timer"   // Timer 配置文件
 			serviceConfigFile              = "/etc/systemd/system/system-checkupdates.service" // Service 配置文件
 			// system-checkupdates 配置 - Timer
