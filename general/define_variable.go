@@ -53,6 +53,15 @@ var (
 	ConfigFile = filepath.Join(configDir, programDir, configFile) // 配置文件路径
 )
 
+var (
+	AllInstallMethod = []string{"release", "source"} // 所有安装方式，可选 release 或 source
+	InstallMethod    = "release"                     // 默认安装方式
+
+	HttpProxy  = "http://127.0.0.1:8080"            // 默认 HTTP 代理
+	HttpsProxy = "http://127.0.0.1:8080"            // 默认 HTTPS 代理
+	NoProxy    = "localhost,127.0.0.1,.example.com" // 默认不代理的 URL
+)
+
 // ---------- 变量相关函数
 
 // GetVariable 获取环境变量

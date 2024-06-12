@@ -166,16 +166,16 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	// 定义一个 map[string]interface{} 类型的变量并赋值
 	exampleConf := map[string]interface{}{
 		"variable": map[string]interface{}{ // 环境变量设置
-			"http_proxy":  "", // HTTP 代理
-			"https_proxy": "", // HTTPS 代理
+			"http_proxy":  HttpProxy,  // HTTP 代理
+			"https_proxy": HttpsProxy, // HTTPS 代理
 		},
 		"program": map[string]interface{}{
-			"method":       "release",   // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
-			"program_path": ProgramPath, // 程序安装路径
-			"release_temp": ReleaseTemp, // Release 安装方式的基础存储目录
-			"source_temp":  SourceTemp,  // Source 安装方式的基础存储目录
-			"pocket_path":  PocketPath,  // 记账文件路径
-			"pocket_file":  "files",     // 记账文件名
+			"method":       InstallMethod, // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
+			"program_path": ProgramPath,   // 程序安装路径
+			"release_temp": ReleaseTemp,   // Release 安装方式的基础存储目录
+			"source_temp":  SourceTemp,    // Source 安装方式的基础存储目录
+			"pocket_path":  PocketPath,    // 记账文件路径
+			"pocket_file":  "files",       // 记账文件名
 			"self": map[string]interface{}{ // 管理程序本身的配置
 				"name":            strings.ToLower(Name),           // 管理程序名
 				"release_api":     "https://api.github.com",        // Release 安装源 API 地址
