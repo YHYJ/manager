@@ -1,3 +1,5 @@
+//go:build windows
+
 /*
 File: setup.go
 Author: YJ
