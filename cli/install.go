@@ -28,7 +28,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Load config error (%s:%d): %s\n", fileName, lineNo+1, err)
 		return
 	}
 
@@ -62,7 +63,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 	case "release":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.ReleaseTemp); err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Create dir error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
 		}
 
@@ -224,7 +226,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					} else {
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-							color.Danger.Println(err)
+							fileName, lineNo := general.GetCallerInfo()
+							color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
 
 						// 为已安装的程序设置可执行权限
@@ -254,7 +257,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localResourcesDesktopFile, writeMode); err != nil {
-							color.Danger.Println(err)
+							fileName, lineNo := general.GetCallerInfo()
+							color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
 					}
 
@@ -298,7 +302,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							}
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localResourcesIconFile, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 						}
 					}
@@ -330,7 +335,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					} else {
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-							color.Danger.Println(err)
+							fileName, lineNo := general.GetCallerInfo()
+							color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
 
 						// 为已安装的程序设置可执行权限
@@ -360,7 +366,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localResourcesDesktopFile, writeMode); err != nil {
-							color.Danger.Println(err)
+							fileName, lineNo := general.GetCallerInfo()
+							color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
 					}
 
@@ -404,7 +411,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							}
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localResourcesIconFile, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 						}
 					}
@@ -427,7 +435,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, completionFile, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 
 							text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(general.AcsInstallSuccessMessage))
@@ -449,7 +458,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 	case "source":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.SourceTemp); err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Create dir error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
 		}
 
@@ -460,7 +470,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		// 请求 API - GitHub
 		body, err := general.RequestApi(goGithubLatestSourceTagApi)
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Request GitHub API error (%s:%d): %s\n", fileName, lineNo+1, err)
 			// 请求 API - Gitea
 			body, err = general.RequestApi(goGiteaLatestSourceTagApi)
 			if err != nil {
@@ -602,7 +613,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 
 							// 为已安装的程序设置可执行权限
@@ -657,7 +669,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 
 							// 为已安装的程序设置可执行权限
@@ -690,7 +703,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, completionFile, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 
 							text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(general.AcsInstallSuccessMessage))
@@ -723,7 +737,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Load config error (%s:%d): %s\n", fileName, lineNo+1, err)
 		return
 	}
 
@@ -755,7 +770,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	// 让用户选择需要安装/更新的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
 	// 对所选的程序进行排序
 	sort.Strings(selectedPrograms)
@@ -765,7 +781,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	case "release":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.ReleaseTemp); err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Create dir error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
 		}
 
@@ -930,7 +947,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 
 							// 为已安装的程序设置可执行权限
@@ -960,7 +978,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localResourcesDesktopFile, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 						}
 
@@ -1004,7 +1023,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								}
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, localResourcesIconFile, writeMode); err != nil {
-									color.Danger.Println(err)
+									fileName, lineNo := general.GetCallerInfo()
+									color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 								}
 							}
 						}
@@ -1033,7 +1053,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						} else {
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 
 							// 为已安装的程序设置可执行权限
@@ -1063,7 +1084,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 							// 记账
 							if err := general.WriteFileWithNewLine(pocketFile, localResourcesDesktopFile, writeMode); err != nil {
-								color.Danger.Println(err)
+								fileName, lineNo := general.GetCallerInfo()
+								color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 							}
 						}
 
@@ -1107,7 +1129,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								}
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, localResourcesIconFile, writeMode); err != nil {
-									color.Danger.Println(err)
+									fileName, lineNo := general.GetCallerInfo()
+									color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 								}
 							}
 						}
@@ -1129,7 +1152,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							} else {
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, completionFile, writeMode); err != nil {
-									color.Danger.Println(err)
+									fileName, lineNo := general.GetCallerInfo()
+									color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 								}
 
 								text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(general.AcsInstallSuccessMessage))
@@ -1152,7 +1176,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	case "source":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.SourceTemp); err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Create dir error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
 		}
 
@@ -1168,7 +1193,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			// 请求 API - GitHub
 			body, err := general.RequestApi(goGithubLatestSourceTagApi)
 			if err != nil {
-				color.Danger.Println(err)
+				fileName, lineNo := general.GetCallerInfo()
+				color.Danger.Printf("Request GitHub API error (%s:%d): %s\n", fileName, lineNo+1, err)
 				// 请求 API - Gitea
 				body, err = general.RequestApi(goGiteaLatestSourceTagApi)
 				if err != nil {
@@ -1312,7 +1338,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							} else {
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-									color.Danger.Println(err)
+									fileName, lineNo := general.GetCallerInfo()
+									color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 								}
 
 								// 为已安装的程序设置可执行权限
@@ -1364,7 +1391,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							} else {
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-									color.Danger.Println(err)
+									fileName, lineNo := general.GetCallerInfo()
+									color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 								}
 
 								// 为已安装的程序设置可执行权限
@@ -1397,7 +1425,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							} else {
 								// 记账
 								if err := general.WriteFileWithNewLine(pocketFile, completionFile, writeMode); err != nil {
-									color.Danger.Println(err)
+									fileName, lineNo := general.GetCallerInfo()
+									color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 								}
 
 								text := color.Sprintf("%s %s\n", general.SuccessFlag, general.SecondaryText(general.AcsInstallSuccessMessage))
@@ -1431,7 +1460,8 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Load config error (%s:%d): %s\n", fileName, lineNo+1, err)
 		return
 	}
 
@@ -1461,14 +1491,16 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 
 	// 创建临时目录
 	if err := general.CreateDir(config.Program.SourceTemp); err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Create dir error (%s:%d): %s\n", fileName, lineNo+1, err)
 		return
 	}
 
 	// 让用户选择需要安装/更新的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Shell.Names)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
 	// 对所选的程序进行排序
 	sort.Strings(selectedPrograms)
@@ -1484,7 +1516,8 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		// 请求 API - GitHub
 		body, err := general.RequestApi(shellGithubLatestHashApi)
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Request GitHub API error (%s:%d): %s\n", fileName, lineNo+1, err)
 			// 请求 API - Gitea
 			body, err = general.RequestApi(shellGiteaLatestHashApi)
 			if err != nil {
@@ -1526,7 +1559,8 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 			shellGithubBaseDownloadUrl := color.Sprintf(general.ShellGithubBaseDownloadUrlFormat, config.Program.Shell.GithubRaw, config.Program.Shell.GithubUsername, config.Program.Shell.Repo, config.Program.Shell.GithubBranch) // 脚本远端仓库基础地址
 			fileUrl := color.Sprintf("%s/%s", shellGithubBaseDownloadUrl, shellUrlFile)
 			if err := general.DownloadFile(fileUrl, scriptLocalPath, general.ProgressParameters); err != nil {
-				color.Danger.Println(err)
+				fileName, lineNo := general.GetCallerInfo()
+				color.Danger.Printf("Download file from GitHub error (%s:%d): %s\n", fileName, lineNo+1, err)
 				// 下载远端脚本 - Gitea
 				shellGiteaBaseDownloadUrl := color.Sprintf(general.ShellGiteaBaseDownloadUrlFormat, config.Program.Shell.GiteaRaw, config.Program.Shell.GiteaUsername, config.Program.Shell.Repo, config.Program.Shell.GiteaBranch) // 脚本远端仓库基础地址
 				fileUrl := color.Sprintf("%s/%s", shellGiteaBaseDownloadUrl, shellUrlFile)
@@ -1557,12 +1591,14 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 					} else {
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-							color.Danger.Println(err)
+							fileName, lineNo := general.GetCallerInfo()
+							color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
 
 						// 为已安装的脚本设置可执行权限
 						if err := os.Chmod(localProgram, 0755); err != nil {
-							color.Danger.Println(err)
+							fileName, lineNo := general.GetCallerInfo()
+							color.Danger.Printf("Change file mode error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
 						text := color.Sprintf("%s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(remoteHash[:6]), general.FgMagentaText("installed"))
 						color.Printf(text)
@@ -1592,12 +1628,14 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 					} else {
 						// 记账
 						if err := general.WriteFileWithNewLine(pocketFile, localProgram, writeMode); err != nil {
-							color.Danger.Println(err)
+							fileName, lineNo := general.GetCallerInfo()
+							color.Danger.Printf("Write file error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
 
 						// 为已更新的脚本设置可执行权限
 						if err := os.Chmod(localProgram, 0755); err != nil {
-							color.Danger.Println(err)
+							fileName, lineNo := general.GetCallerInfo()
+							color.Danger.Printf("Change file mode error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
 						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(localHash[:6]), general.FgWhiteText("-->"), general.NoteText(remoteHash[:6]), general.FgMagentaText("updated"))
 						color.Printf(text)

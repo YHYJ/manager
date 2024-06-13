@@ -29,20 +29,20 @@ import (
 // ReadFile 依次读取文件每行内容
 //
 // 参数：
-//   - filePath: 文件路径
+//   - file: 文件路径
 //
 // 返回：
 //   - 指定行的内容
-func ReadFile(filePath string) ([]string, error) {
+func ReadFile(file string) ([]string, error) {
 	// 打开文件
-	file, err := os.Open(filePath)
+	text, err := os.Open(file)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
+	defer text.Close()
 
 	// 创建一个 Scanner 对象
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(text)
 
 	// 存储读取到的每行内容的切片
 	var lines []string
@@ -63,21 +63,22 @@ func ReadFile(filePath string) ([]string, error) {
 // ReadFileLine 读取文件指定行
 //
 // 参数：
-//   - filePath: 文件路径
+//   - file: 文件路径
 //   - line: 行号
 //
 // 返回：
 //   - 指定行的内容
-func ReadFileLine(filePath string, line int) string {
+func ReadFileLine(file string, line int) string {
 	// 打开文件
-	file, err := os.Open(filePath)
+	text, err := os.Open(file)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := GetCallerInfo()
+		color.Danger.Printf("Open file error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
-	defer file.Close()
+	defer text.Close()
 
 	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(text)
 	// 行计数
 	count := 1
 	// 逐行读取，输出指定行
@@ -93,21 +94,22 @@ func ReadFileLine(filePath string, line int) string {
 // ReadFileKey 读取文件包含关键字的行
 //
 // 参数：
-//   - filePath: 文件路径
+//   - file: 文件路径
 //   - key: 关键字
 //
 // 返回：
 //   - 包含关键字的行的内容
-func ReadFileKey(filePath, key string) string {
+func ReadFileKey(file, key string) string {
 	// 打开文件
-	file, err := os.Open(filePath)
+	text, err := os.Open(file)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := GetCallerInfo()
+		color.Danger.Printf("Open file error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
-	defer file.Close()
+	defer text.Close()
 
 	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(text)
 	// 逐行读取，输出指定行
 	for scanner.Scan() {
 		if strings.Contains(scanner.Text(), key) {
@@ -120,21 +122,22 @@ func ReadFileKey(filePath, key string) string {
 // ReadFileCount 获取文件包含关键字的行的计数
 //
 // 参数：
-//   - filePath: 文件路径
+//   - file: 文件路径
 //   - key: 关键字
 //
 // 返回：
 //   - 包含关键字的行的数量
-func ReadFileCount(filePath, key string) int {
+func ReadFileCount(file, key string) int {
 	// 打开文件
-	file, err := os.Open(filePath)
+	text, err := os.Open(file)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := GetCallerInfo()
+		color.Danger.Printf("Open file error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
-	defer file.Close()
+	defer text.Close()
 
 	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(file)
+	scanner := bufio.NewScanner(text)
 	// 计数器
 	count := 0
 	// 逐行读取，输出指定行
@@ -193,18 +196,18 @@ func GetFileDir(filePath string) string {
 //   - 无法判断文件夹
 //
 // 参数：
-//   - filePath: 文件路径
+//   - file: 文件路径
 //
 // 返回：
 //   - 文件为空返回 true，否则返回 false
-func FileEmpty(filePath string) bool {
-	file, err := os.Open(filePath)
+func FileEmpty(file string) bool {
+	text, err := os.Open(file)
 	if err != nil {
 		return true
 	}
-	defer file.Close()
+	defer text.Close()
 
-	fi, err := file.Stat()
+	fi, err := text.Stat()
 	if err != nil {
 		return true
 	}
@@ -214,20 +217,20 @@ func FileEmpty(filePath string) bool {
 // EmptyFile 清空文件内容，文件不存在则创建
 //
 // 参数：
-//   - filePath: 文件路径
+//   - file: 文件路径
 //
 // 返回：
 //   - 错误信息
-func EmptyFile(filePath string) error {
+func EmptyFile(file string) error {
 	// 打开文件，如果不存在则创建，文件权限为读写
-	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0666)
+	text, err := os.OpenFile(file, os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0666)
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer text.Close()
 
 	// 清空文件内容
-	if err := file.Truncate(0); err != nil {
+	if err := text.Truncate(0); err != nil {
 		return err
 	}
 	return nil
@@ -238,18 +241,18 @@ func EmptyFile(filePath string) error {
 //   - 包括隐藏文件
 //
 // 参数：
-//   - dirPath: 文件夹路径
+//   - dir: 文件夹路径
 //
 // 返回：
 //   - 文件夹为空返回 true，否则返回 false
-func FolderEmpty(dirPath string) bool {
-	file, err := os.Open(dirPath)
+func FolderEmpty(dir string) bool {
+	text, err := os.Open(dir)
 	if err != nil {
 		return true
 	}
-	defer file.Close()
+	defer text.Close()
 
-	_, err = file.Readdir(1)
+	_, err = text.Readdir(1)
 	if err == io.EOF {
 		return true
 	}
@@ -259,23 +262,23 @@ func FolderEmpty(dirPath string) bool {
 // ListFolderFiles 列出指定文件夹下的所有文件
 //
 // 参数：
-//   - dirPath: 文件夹路径
+//   - dir: 文件夹路径
 //
 // 返回：
 //   - 文件列表
 //   - 错误信息
-func ListFolderFiles(dirPath string) ([]string, error) {
+func ListFolderFiles(dir string) ([]string, error) {
 	files := []string{}
 
 	// 打开文件夹
-	dir, err := os.Open(dirPath)
+	text, err := os.Open(dir)
 	if err != nil {
 		return files, err
 	}
-	defer dir.Close()
+	defer text.Close()
 
 	// 读取文件夹中的文件
-	fileInfos, err := dir.ReadDir(-1)
+	fileInfos, err := text.ReadDir(-1)
 	if err != nil {
 		return files, err
 	}
@@ -294,21 +297,21 @@ func ListFolderFiles(dirPath string) ([]string, error) {
 // CreateFile 创建文件，包括其父目录
 //
 // 参数：
-//   - filePath: 文件路径
+//   - file: 文件路径
 //
 // 返回：
 //   - 错误信息
-func CreateFile(filePath string) error {
-	if FileExist(filePath) {
+func CreateFile(file string) error {
+	if FileExist(file) {
 		return nil
 	}
 	// 创建父目录
-	parentPath := filepath.Dir(filePath)
+	parentPath := filepath.Dir(file)
 	if err := os.MkdirAll(parentPath, os.ModePerm); err != nil {
 		return err
 	}
 	// 创建文件
-	if _, err := os.Create(filePath); err != nil {
+	if _, err := os.Create(file); err != nil {
 		return err
 	}
 
@@ -318,15 +321,15 @@ func CreateFile(filePath string) error {
 // CreateDir 创建文件夹
 //
 // 参数：
-//   - dirPath: 文件夹路径
+//   - dir: 文件夹路径
 //
 // 返回：
 //   - 错误信息
-func CreateDir(dirPath string) error {
-	if FileExist(dirPath) {
+func CreateDir(dir string) error {
+	if FileExist(dir) {
 		return nil
 	}
-	return os.MkdirAll(dirPath, os.ModePerm)
+	return os.MkdirAll(dir, os.ModePerm)
 }
 
 // GoToDir 进到指定文件夹
@@ -344,7 +347,7 @@ func GoToDir(dirPath string) error {
 //
 // 参数：
 //   - filePath: 文件路径
-//   - content: 写入内容
+//   - content: 内容
 //   - mode: 写入模式，追加('a', O_APPEND, 默认)或覆盖('t', O_TRUNC)
 //
 // 返回：

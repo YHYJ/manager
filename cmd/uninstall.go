@@ -45,7 +45,8 @@ var uninstallCmd = &cobra.Command{
 		// 读取配置文件
 		configTree, err := general.GetTomlConfig(configFile)
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Get config error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
 		}
 

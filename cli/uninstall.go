@@ -27,7 +27,8 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Load config error (%s:%d): %s\n", fileName, lineNo+1, err)
 		return
 	}
 
@@ -54,7 +55,8 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	if general.FileExist(pocketFile) {                                // 读取记账文件内容
 		pocketLines, err = general.ReadFile(pocketFile)
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Read file error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
 		}
 	}
@@ -62,7 +64,8 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	// 确认是否要卸载
 	answer, err := general.AskUser(general.QuestionText(general.UninstallTips), []string{"y", "N"})
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Ask user error (%s:%d): %s\n", fileName, lineNo+1, err)
 		return
 	}
 	switch answer {
@@ -121,7 +124,8 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Load config error (%s:%d): %s\n", fileName, lineNo+1, err)
 		return
 	}
 
@@ -142,7 +146,8 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	// 让用户选择需要卸载的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
 	// 对所选的程序进行排序
 	sort.Strings(selectedPrograms)
@@ -151,7 +156,8 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	if len(selectedPrograms) != 0 {
 		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), []string{"y", "N"})
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Ask user error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
 		}
 		switch answer {
@@ -178,7 +184,8 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 		if general.FileExist(pocketFile) {                                // 读取记账文件内容
 			pocketLines, err = general.ReadFile(pocketFile)
 			if err != nil {
-				color.Danger.Println(err)
+				fileName, lineNo := general.GetCallerInfo()
+				color.Danger.Printf("Read file error (%s:%d): %s\n", fileName, lineNo+1, err)
 				continue
 			}
 		}
@@ -226,7 +233,8 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	// 获取配置项
 	config, err := general.LoadConfigToStruct(configTree)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Load config error (%s:%d): %s\n", fileName, lineNo+1, err)
 		return
 	}
 
@@ -247,7 +255,8 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	// 让用户选择需要卸载的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
 	if err != nil {
-		color.Danger.Println(err)
+		fileName, lineNo := general.GetCallerInfo()
+		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
 	// 对所选的程序进行排序
 	sort.Strings(selectedPrograms)
@@ -256,7 +265,8 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	if len(selectedPrograms) != 0 {
 		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), []string{"y", "N"})
 		if err != nil {
-			color.Danger.Println(err)
+			fileName, lineNo := general.GetCallerInfo()
+			color.Danger.Printf("Ask user error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
 		}
 		switch answer {
@@ -283,7 +293,8 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 		if general.FileExist(pocketFile) {                                // 读取记账文件内容
 			pocketLines, err = general.ReadFile(pocketFile)
 			if err != nil {
-				color.Danger.Println(err)
+				fileName, lineNo := general.GetCallerInfo()
+				color.Danger.Printf("Read file error (%s:%d): %s\n", fileName, lineNo+1, err)
 				continue
 			}
 		}
