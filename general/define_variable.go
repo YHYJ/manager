@@ -56,7 +56,9 @@ var (
 var (
 	AllInstallMethod = []string{"release", "source"} // 所有安装方式，可选 release 或 source
 	InstallMethod    = "release"                     // 默认安装方式
+)
 
+var (
 	HttpProxy  = "http://127.0.0.1:8080"            // 默认 HTTP 代理
 	HttpsProxy = HttpProxy                          // 默认 HTTPS 代理，与 HTTP 代理一致
 	NoProxy    = "localhost,127.0.0.1,.example.com" // 默认不代理的 URL
@@ -88,6 +90,9 @@ func GetVariable(key string) string {
 //   - 系统语言，目前仅支持 zh 或 en
 func GetLanguage() string {
 	language := GetVariable("LANGUAGE")
+	if language == "" {
+		language = GetVariable("LANG")
+	}
 	if strings.Contains(language, "zh") {
 		return "zh"
 	} else {
