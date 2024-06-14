@@ -56,7 +56,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 	// 记账文件
 	pocketFile := filepath.Join(config.Program.PocketPath, name, config.Program.PocketFile) // 记账文件路径
-	var writeMode string = "a"                                                              // 写入模式
+	var writeMode = "a"                                                                     // 写入模式
 
 	// 使用配置的安装方式进行安装
 	switch strings.ToLower(config.Program.Method) {
@@ -790,7 +790,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		for _, program := range selectedPrograms {
 			// 记账文件
 			pocketFile := filepath.Join(config.Program.PocketPath, program, config.Program.PocketFile) // 记账文件路径
-			var writeMode string = "a"                                                                 // 写入模式
+			var writeMode = "a"                                                                        // 写入模式
 
 			// API
 			goGithubLatestReleaseTagApi := color.Sprintf(general.GoLatestReleaseTagApiFormat, config.Program.Go.ReleaseApi, config.Program.Go.GithubUsername, program) // 请求远端仓库最新 Tag
@@ -1185,7 +1185,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		for _, program := range selectedPrograms {
 			// 记账文件
 			pocketFile := filepath.Join(config.Program.PocketPath, program, config.Program.PocketFile) // 记账文件路径
-			var writeMode string = "a"                                                                 // 写入模式
+			var writeMode = "a"                                                                        // 写入模式
 
 			// API
 			goGithubLatestSourceTagApi := color.Sprintf(general.GoLatestSourceTagApiFormat, config.Program.Go.GithubApi, config.Program.Go.GithubUsername, program) // 请求远端仓库最新 Tag
@@ -1508,7 +1508,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	for _, program := range selectedPrograms {
 		// 记账文件
 		pocketFile := filepath.Join(config.Program.PocketPath, program, config.Program.PocketFile) // 记账文件路径
-		var writeMode string = "a"                                                                 // 写入模式
+		var writeMode = "a"                                                                        // 写入模式
 
 		// API
 		shellGithubLatestHashApi := color.Sprintf(general.ShellLatestHashApiFormat, config.Program.Shell.GithubApi, config.Program.Shell.GithubUsername, config.Program.Shell.Repo, config.Program.Shell.Dir, program) // 请求远端仓库最新脚本的 Hash 值
