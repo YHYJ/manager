@@ -27,6 +27,8 @@ var (
 	sep         = strings.Repeat(" ", 4)
 
 	goBin = filepath.Join(home, ".go", "bin")
+
+	NoProxy = "localhost,127.0.0.1,.example.com" // 默认不代理的 URL
 )
 
 // ProgramConfigurator 程序配置器
@@ -188,12 +190,12 @@ func ProgramConfigurator(flags map[string]bool) {
 				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 				general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
 				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				general.NoProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "NO_PROXY")), general.NoProxy)
+				NoProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "NO_PROXY")), NoProxy)
 
 				// 需要获取交互结果的配置项
 				dockerHttpProxy := color.Sprintf("HTTP_PROXY=%s", general.HttpProxy)
 				dockerHttpsProxy := color.Sprintf("HTTPS_PROXY=%s", general.HttpsProxy)
-				dockerNoProxy := color.Sprintf("NO_PROXY=%s", general.NoProxy)
+				dockerNoProxy := color.Sprintf("NO_PROXY=%s", NoProxy)
 
 				// 配置
 				DockerServiceConfigContent := color.Sprintf(dockerServiceConfigFormat, dockerHttpProxy, dockerHttpsProxy, dockerNoProxy, dockerdAbsPath, dockerServiceDataRoot)
