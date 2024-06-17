@@ -20,6 +20,16 @@ import (
 	"github.com/pelletier/go-toml"
 )
 
+var (
+	AllInstallMethod = []string{"release", "source"} // 所有安装方式，可选 release 或 source
+	InstallMethod    = "release"                     // 默认安装方式
+)
+
+var (
+	HttpProxy  = "http://127.0.0.1:8080" // 默认 HTTP 代理
+	HttpsProxy = HttpProxy               // 默认 HTTPS 代理，与 HTTP 代理一致
+)
+
 // 用于转换 Toml 配置树的结构体
 type Config struct {
 	Program  ProgramConfig  `toml:"program"`
