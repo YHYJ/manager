@@ -36,10 +36,6 @@ var setupCmd = &cobra.Command{
 			return false
 		}()
 
-		var (
-			noticeSlogan []string // 提示标语
-		)
-
 		// 解析参数
 		allFlag, _ := cmd.Flags().GetBool("all")
 
@@ -50,7 +46,7 @@ var setupCmd = &cobra.Command{
 				allFlags["dockerFlag"] = true
 				allFlags["frpcFlag"] = true
 				allFlags["systemcheckupdatesFlag"] = true
-				noticeSlogan = append(noticeSlogan, "Please use non-root permissions to configure other")
+				general.Notifier = append(general.Notifier, "Please use non-root permissions to configure other")
 			} else {
 				allFlags["chezmoiFlag"] = true
 				allFlags["cobraFlag"] = true
@@ -58,7 +54,7 @@ var setupCmd = &cobra.Command{
 				allFlags["goFlag"] = true
 				allFlags["pipFlag"] = true
 
-				noticeSlogan = append(noticeSlogan, "Please use non-root permissions to configure other")
+				general.Notifier = append(general.Notifier, "Please use non-root permissions to configure other")
 			}
 		} else {
 			allFlags["chezmoiFlag"], _ = cmd.Flags().GetBool("chezmoi")
@@ -81,19 +77,14 @@ var setupCmd = &cobra.Command{
 		}
 		if allFalse {
 			cmd.Help()
-			noticeSlogan = append(noticeSlogan, "Please refer to the above help information")
+			general.Notifier = append(general.Notifier, "Please refer to the above help information")
 		}
 
 		// 调用程序配置器
 		cli.ProgramConfigurator(allFlags)
 
-		// 输出标语
-		if len(noticeSlogan) > 0 {
-			color.Println()
-			for _, slogan := range noticeSlogan {
-				color.Notice.Tips(general.PrimaryText(slogan))
-			}
-		}
+		// 显示通知
+		general.Notification()
 	},
 }
 

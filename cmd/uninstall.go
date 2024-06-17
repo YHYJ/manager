@@ -34,12 +34,8 @@ var uninstallCmd = &cobra.Command{
 			goFlag, shellFlag = true, true
 		}
 
-		var (
-			noticeSlogan []string // 提示标语
-		)
 		if selfFlag && (goFlag || shellFlag) {
-			noticeSlogan = append(noticeSlogan, "'--self' cannot be mixed with other Flags")
-			goFlag, shellFlag = false, false
+			general.Notifier = append(general.Notifier, "'--self' cannot be mixed with other Flags")
 		}
 
 		// 读取配置文件
@@ -68,13 +64,8 @@ var uninstallCmd = &cobra.Command{
 			cli.UninstallShellBasedProgram(configTree)
 		}
 
-		// 输出标语
-		if len(noticeSlogan) > 0 {
-			color.Println()
-			for _, slogan := range noticeSlogan {
-				color.Notice.Tips(general.PrimaryText(slogan))
-			}
-		}
+		// 显示通知
+		general.Notification()
 	},
 }
 
