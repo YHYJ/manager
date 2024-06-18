@@ -37,21 +37,19 @@ var (
 func ProgramConfigurator(flags map[string]bool) {
 	// 预定义变量
 	var (
-		subjectName      string
-		descriptorText   string
-		subjectMinorName string
-		writeMode        string = "t"
+		subjectName    string
+		descriptorText string
+		writeMode      string = "t"
 	)
 
 	// 预定义输出格式
 	var (
-		subjectMinorNameFormat = "%*s%s %s\n"
-		descriptorFormat       = "%*s%s %s: %s %s %s\n"
-		targetFileFormat       = "%*s%s %s: %s\n"
-		askItemTitleFormat     = "%*s%s %s:\n"
-		askItemsFormat         = "%*s%s "
-		errorFormat            = "%*s%s %s: %s\n\n"
-		successFormat          = "%*s%s %s: %s\n\n"
+		descriptorFormat   = "%*s%s %s: %s %s %s\n"
+		targetFileFormat   = "%*s%s %s: %s\n"
+		askItemTitleFormat = "%*s%s %s:\n"
+		askItemsFormat     = "%*s%s "
+		errorFormat        = "%*s%s %s: %s\n\n"
+		successFormat      = "%*s%s %s: %s\n\n"
 	)
 
 	// 配置 chezmoi
@@ -146,103 +144,6 @@ func ProgramConfigurator(flags map[string]bool) {
 				// 配置
 				CobraConfigContent := color.Sprintf(cobraConfigFormat, cobraAuthorName, cobraAuthorEmail, cobraLicense, cobraUseViper)
 				if err := general.WriteFile(CobraConfigFile, CobraConfigContent, writeMode); err != nil {
-					color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-				} else {
-					color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
-				}
-			}
-		}
-	}
-
-	// 配置 docker
-	if flags["dockerFlag"] {
-		// 提示
-		subjectName = "docker"
-		descriptorText = "daemon configuration"
-		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
-
-		// 配置项
-		var (
-			// docker 的依赖
-			DockerDependencies      = "dockerd"                                            // 主程序
-			DockerServiceConfigFile = "/etc/systemd/system/docker.service.d/override.conf" // 配置文件
-			// docker 配置
-			dockerServiceConfigFormat = "[Service]\nEnvironment=\"%s\"\nEnvironment=\"%s\"\nEnvironment=\"%s\"\nExecStart=\nExecStart=%s --data-root=%s -H fd://\n"
-			dockerServiceDataRoot     = filepath.Join(home, "Documents", "Docker", "Root")
-		)
-
-		// 检测
-		if dockerdAbsPath, err := exec.LookPath(DockerDependencies); err != nil {
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
-		} else {
-			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(DockerServiceConfigFile))
-			// 创建配置文件
-			if err := general.CreateFile(DockerServiceConfigFile); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				// 交互
-				color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				dockerServiceDataRoot, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "--data-root")), dockerServiceDataRoot)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				general.HttpProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				NoProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "NO_PROXY")), NoProxy)
-
-				// 需要获取交互结果的配置项
-				dockerHttpProxy := color.Sprintf("HTTP_PROXY=%s", general.HttpProxy)
-				dockerHttpsProxy := color.Sprintf("HTTPS_PROXY=%s", general.HttpsProxy)
-				dockerNoProxy := color.Sprintf("NO_PROXY=%s", NoProxy)
-
-				// 配置
-				DockerServiceConfigContent := color.Sprintf(dockerServiceConfigFormat, dockerHttpProxy, dockerHttpsProxy, dockerNoProxy, dockerdAbsPath, dockerServiceDataRoot)
-				if err := general.WriteFile(DockerServiceConfigFile, DockerServiceConfigContent, writeMode); err != nil {
-					color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-				} else {
-					color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
-				}
-			}
-		}
-	}
-
-	// 配置 frpc
-	if flags["frpcFlag"] {
-		// 提示
-		subjectName = "frpc"
-		descriptorText = "restart timing"
-		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
-
-		// 配置项
-		var (
-			// frpc 的依赖
-			FrpcDependencies = "frpc"                                             // 主程序
-			FrpcConfigFile   = "/etc/systemd/system/frpc.service.d/override.conf" // 配置文件
-			// frpc 配置
-			frpcConfigFormat = "[Service]\nRestart=\nRestart=%s\n"
-			frpcRestart      = "always"
-		)
-
-		// 检测
-		if _, err := exec.LookPath(FrpcDependencies); err != nil {
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
-		} else {
-			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(FrpcConfigFile))
-			// 创建配置文件
-			if err := general.CreateFile(FrpcConfigFile); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				// 交互
-				color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				frpcRestart, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "Restart")), frpcRestart)
-
-				// 配置
-				FrpcConfigContent := color.Sprintf(frpcConfigFormat, frpcRestart)
-				if err := general.WriteFile(FrpcConfigFile, FrpcConfigContent, writeMode); err != nil {
 					color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 				} else {
 					color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
@@ -416,109 +317,6 @@ func ProgramConfigurator(flags map[string]bool) {
 					color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
 				} else {
 					color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
-				}
-			}
-		}
-	}
-
-	// 配置 system-checkupdates
-	if flags["systemcheckupdatesFlag"] {
-		// 提示
-		subjectName = "system-checkupdates"
-		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-
-		// 配置项
-		var (
-			// system-checkupdates Timer 和 Service 的依赖
-			SystemCheckupdatesDependencies = "system-checkupdates"                             // 主程序，需要版本 >= 3.0.0-20230313.1
-			timerConfigFile                = "/etc/systemd/system/system-checkupdates.timer"   // Timer 配置文件
-			serviceConfigFile              = "/etc/systemd/system/system-checkupdates.service" // Service 配置文件
-			// system-checkupdates 配置 - Timer
-			timerConfigFormat      = "[Unit]\nDescription=%s\n\n[Timer]\nOnBootSec=%s\nOnUnitInactiveSec=%s\nAccuracySec=%s\nPersistent=%v\n\n[Install]\nWantedBy=%s\n"
-			timerDescription       = "Timer for system-checkupdates"
-			timerOnBootSec         = "10min"
-			timerOnUnitInactiveSec = "2h"
-			timerAccuracySec       = "30min"
-			timerPersistent        = "true"
-			timerWantedBy          = "timers.target"
-			// system-checkupdates 配置 - Service
-			serviceConfigFormat = "[Unit]\nDescription=%s\nAfter=%s\nWants=%s\n\n[Service]\nType=%s\nExecStart=%s\n"
-			serviceDescription  = "System checkupdates"
-			serviceAfter        = "network.target"
-			serviceWants        = "network.target"
-			serviceType         = "oneshot"
-			serviceExecStart    = "/usr/local/bin/system-checkupdates --check"
-		)
-
-		// 检测
-		if _, err := exec.LookPath(SystemCheckupdatesDependencies); err != nil {
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
-		} else {
-			// ---------- Timer
-			subjectMinorName = "timer"
-			descriptorText = "timer"
-			color.Printf(subjectMinorNameFormat, 2, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-			color.Printf(descriptorFormat, 4, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
-			color.Printf(targetFileFormat, 4, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(timerConfigFile))
-			// 创建配置文件
-			if err := general.CreateFile(timerConfigFile); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				// 交互
-				color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				timerDescription, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Unit].Description")), timerDescription)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				timerOnBootSec, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Timer].OnBootSec")), timerOnBootSec)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				timerOnUnitInactiveSec, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Timer].OnUnitInactiveSec")), timerOnUnitInactiveSec)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				timerAccuracySec, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Timer].AccuracySec")), timerAccuracySec)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				timerPersistent, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Timer].Persistent")), timerPersistent)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				timerWantedBy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Install].WantedBy")), timerWantedBy)
-
-				// 配置
-				SystemCheckupdatesTimerConfigContent := color.Sprintf(timerConfigFormat, timerDescription, timerOnBootSec, timerOnUnitInactiveSec, timerAccuracySec, timerPersistent, timerWantedBy)
-				if err := general.WriteFile(timerConfigFile, SystemCheckupdatesTimerConfigContent, writeMode); err != nil {
-					errorFormat = "%*s%s %s: %s\n"
-					color.Printf(errorFormat, 4, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-				} else {
-					successFormat = "%*s%s %s: %s\n"
-					color.Printf(successFormat, 4, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
-				}
-			}
-
-			// ---------- Service
-			subjectMinorName = "service"
-			descriptorText = "service"
-			color.Printf(subjectMinorNameFormat, 2, " ", general.SuccessText("-"), general.FgBlueText(subjectMinorName))
-			color.Printf(descriptorFormat, 4, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
-			color.Printf(targetFileFormat, 4, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(serviceConfigFile))
-			// 创建配置文件
-			if err := general.CreateFile(serviceConfigFile); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				// 交互
-				color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				serviceDescription, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Unit].Description")), serviceDescription)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				serviceAfter, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Unit].After")), serviceAfter)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				serviceWants, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Unit].Wants")), serviceWants)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				serviceType, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Service].Type")), serviceType)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				serviceExecStart, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[Service].ExecStart")), serviceExecStart)
-
-				// 配置
-				SystemCheckupdatesServiceConfigContent := color.Sprintf(serviceConfigFormat, serviceDescription, serviceAfter, serviceWants, serviceType, serviceExecStart)
-				if err := general.WriteFile(serviceConfigFile, SystemCheckupdatesServiceConfigContent, writeMode); err != nil {
-					color.Printf(errorFormat, 4, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-				} else {
-					color.Printf(successFormat, 4, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
 				}
 			}
 		}
