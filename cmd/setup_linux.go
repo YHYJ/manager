@@ -1,5 +1,7 @@
+//go:build linux
+
 /*
-File: setup.go
+File: setup_linux.go
 Author: YJ
 Email: yj1516268@outlook.com
 Created Time: 2023]-06-08 13:43:59
@@ -10,7 +12,6 @@ Description: 执行子命令 'setup'
 package cmd
 
 import (
-	"github.com/gookit/color"
 	"github.com/spf13/cobra"
 	"github.com/yhyj/manager/cli"
 	"github.com/yhyj/manager/general"
@@ -19,15 +20,9 @@ import (
 // setupCmd represents the setup command
 var setupCmd = &cobra.Command{
 	Use:   "setup",
-	Short: "Set up installed programs/scripts (Linux/macOS only)",
-	Long:  `Set up installed self-developed programs/scripts (Linux/macOS only).`,
+	Short: "Set up installed programs/scripts",
+	Long:  `Set up installed self-developed programs/scripts.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// 检查平台
-		if general.Platform != "linux" && general.Platform != "darwin" {
-			color.Warn.Println("Only Linux and macOS are supported")
-			return
-		}
-
 		// 检查权限
 		isRoot := func() bool {
 			if general.GetVariable("SUDO_USER") != "" {
