@@ -29,16 +29,12 @@ var setupCmd = &cobra.Command{
 		// 根据参数执行操作
 		allFlags := make(map[string]bool)
 		if allFlag {
-			allFlags["chezmoiFlag"] = true
 			allFlags["cobraFlag"] = true
 			allFlags["gitFlag"] = true
-			allFlags["goFlag"] = true
 			allFlags["pipFlag"] = true
 		} else {
-			allFlags["chezmoiFlag"], _ = cmd.Flags().GetBool("chezmoi")
 			allFlags["cobraFlag"], _ = cmd.Flags().GetBool("cobra")
 			allFlags["gitFlag"], _ = cmd.Flags().GetBool("git")
-			allFlags["goFlag"], _ = cmd.Flags().GetBool("go")
 			allFlags["pipFlag"], _ = cmd.Flags().GetBool("pip")
 		}
 
@@ -65,10 +61,8 @@ var setupCmd = &cobra.Command{
 
 func init() {
 	setupCmd.Flags().BoolP("all", "", false, "Set up all programs/scripts")
-	setupCmd.Flags().BoolP("chezmoi", "", false, "Set up chezmoi")
 	setupCmd.Flags().BoolP("cobra", "", false, "Set up cobra-cli")
 	setupCmd.Flags().BoolP("git", "", false, "Set up git and generate SSH keys")
-	setupCmd.Flags().BoolP("go", "", false, "Set up golang")
 	setupCmd.Flags().BoolP("pip", "", false, "Set up the mirror source used by pip")
 
 	setupCmd.Flags().BoolP("help", "h", false, "help for setup command")

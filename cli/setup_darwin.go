@@ -20,20 +20,20 @@ import (
 	"github.com/yhyj/manager/general"
 )
 
-var (
-	home        = general.UserInfo.HomeDir
-	userName, _ = general.GetUserName()
-	name        = general.GetHostname()
-	sep         = strings.Repeat(" ", 4)
-
-	goBin = filepath.Join(home, ".go", "bin")
-)
-
 // ProgramConfigurator 程序配置器
 // 参数：
 //   - flags: 系统信息各部分的开关
 func ProgramConfigurator(flags map[string]bool) {
 	// 预定义变量
+	var (
+		home        = general.UserInfo.HomeDir
+		userName, _ = general.GetUserName()
+		name        = general.GetHostname()
+		sep         = strings.Repeat(" ", 4)
+
+		goBin = filepath.Join(home, ".go", "bin")
+	)
+
 	var (
 		subjectName    string
 		descriptorText string
