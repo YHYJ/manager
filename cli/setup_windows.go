@@ -27,8 +27,6 @@ var (
 	sep         = strings.Repeat(" ", 4)
 
 	goBin = filepath.Join(home, ".go", "bin")
-
-	NoProxy = "localhost,127.0.0.1,.example.com" // 默认不代理的 URL
 )
 
 // ProgramConfigurator 程序配置器
@@ -51,54 +49,6 @@ func ProgramConfigurator(flags map[string]bool) {
 		errorFormat        = "%*s%s %s: %s\n\n"
 		successFormat      = "%*s%s %s: %s\n\n"
 	)
-
-	// 配置 chezmoi
-	if flags["chezmoiFlag"] {
-		// 提示
-		subjectName = "chezmoi"
-		descriptorText = "configuration file"
-		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
-
-		// 配置项
-		var (
-			ChezmoiDependencies = "chezmoi"                                                 // 主程序
-			ChezmoiConfigFile   = filepath.Join(home, ".config", "chezmoi", "chezmoi.toml") // 配置文件
-			// chezmoi 配置
-			chezmoiConfigFormat = "sourceDir = %s\n[git]\n%sautoCommit = %v\n%sautoPush = %v\n"
-			chezmoiSourceDir    = `"~/Documents/Repos/System/Profile"`
-			chezmoiAutoCommit   = "false"
-			chezmoiAutoPush     = "false"
-		)
-
-		// 检测
-		if _, err := exec.LookPath(ChezmoiDependencies); err != nil {
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
-		} else {
-			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(ChezmoiConfigFile))
-			// 创建配置文件
-			if err := general.CreateFile(ChezmoiConfigFile); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				// 交互
-				color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				chezmoiSourceDir, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "sourceDir")), chezmoiSourceDir)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				chezmoiAutoCommit, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "autoCommit")), chezmoiAutoCommit)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				chezmoiAutoPush, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "autoPush")), chezmoiAutoPush)
-
-				// 配置
-				ChezmoiConfigContent := color.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
-				if err := general.WriteFile(ChezmoiConfigFile, ChezmoiConfigContent, writeMode); err != nil {
-					color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-				} else {
-					color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
-				}
-			}
-		}
-	}
 
 	// 配置 cobra
 	if flags["cobraFlag"] {
@@ -224,58 +174,6 @@ func ProgramConfigurator(flags map[string]bool) {
 		}
 	}
 
-	// 配置 golang
-	if flags["goFlag"] {
-		// 提示
-		subjectName = "go"
-		descriptorText = "environment file"
-		color.Printf("%s %s\n", general.SuccessText("==>"), general.FgBlueText(subjectName))
-		color.Printf(descriptorFormat, 2, " ", general.SuccessText("-"), general.LightText("Descriptor"), general.SecondaryText("Set up"), general.SecondaryText(subjectName), general.SecondaryText(descriptorText))
-
-		// 配置项
-		var (
-			// go 的依赖
-			GolangDependencies = "go"                                        // 主程序
-			GolangConfigFile   = filepath.Join(home, ".config", "go", "env") // 配置文件
-			// go 配置
-			golangConfigFormat = "GO111MODULE=%s\nGOBIN=%s\nGOPATH=%s\nGOCACHE=%s\nGOMODCACHE=%s\n"
-			golangGO111MODULE  = "on"
-			golangGOPATH       = filepath.Join(home, ".go")
-			golangGOCACHE      = filepath.Join(home, ".cache", "go", "go-build")
-			golangGOMODCACHE   = filepath.Join(home, ".cache", "go", "pkg", "mod")
-		)
-
-		// 检测
-		if _, err := exec.LookPath(GolangDependencies); err != nil {
-			color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.NoticeText(color.Sprintf(general.InstallTips, subjectName)))
-		} else {
-			color.Printf(targetFileFormat, 2, " ", general.SuccessText("-"), general.LightText("Target file"), general.CommentText(GolangConfigFile))
-			// 创建配置文件
-			if err := general.CreateFile(GolangConfigFile); err != nil {
-				color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-			} else {
-				// 交互
-				color.Printf(askItemTitleFormat, 2, " ", general.SuccessText("-"), general.LightText("Configuration"))
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				golangGO111MODULE, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "GO111MODULE")), golangGO111MODULE)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				golangGOPATH, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "GOPATH")), golangGOPATH)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				golangGOCACHE, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "GOCACHE")), golangGOCACHE)
-				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
-				golangGOMODCACHE, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "GOMODCACHE")), golangGOMODCACHE)
-
-				// 配置
-				GolangConfigContent := color.Sprintf(golangConfigFormat, golangGO111MODULE, goBin, golangGOPATH, golangGOCACHE, golangGOMODCACHE)
-				if err := general.WriteFile(GolangConfigFile, GolangConfigContent, writeMode); err != nil {
-					color.Printf(errorFormat, 2, " ", general.SuccessText("-"), general.LightText("Error"), general.DangerText(err.Error()))
-				} else {
-					color.Printf(successFormat, 2, " ", general.SuccessText("-"), general.LightText("Status"), general.SuccessFlag)
-				}
-			}
-		}
-	}
-
 	// 配置 pip
 	if flags["pipFlag"] {
 		// 提示
@@ -287,8 +185,8 @@ func ProgramConfigurator(flags map[string]bool) {
 		// 配置项
 		var (
 			// pip 的依赖
-			PipDependencies = "pip"                                             // 主程序
-			PipConfigFile   = filepath.Join(home, ".config", "pip", "pip.conf") // 配置文件
+			PipDependencies = "pip"                                 // 主程序
+			PipConfigFile   = filepath.Join(home, "pip", "pip.ini") // 配置文件
 			// pip 配置
 			pipConfigFormat = "[global]\nindex-url = %s\ntrusted-host = %s\n"
 			pipIndexUrl     = "https://mirrors.aliyun.com/pypi/simple"
