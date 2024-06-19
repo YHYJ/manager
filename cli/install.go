@@ -764,7 +764,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 开始安装提示
-	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs %s", general.FgCyanText("golang-based"), general.SecondaryText("(", installedNum, "/", totalNum, ")"))
+	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs: %d/%d", general.FgCyanText("golang-based"), installedNum, totalNum)
 	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
 
 	// 让用户选择需要安装/更新的程序
@@ -1486,7 +1486,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 开始安装提示
-	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs %s", general.FgCyanText("shell-based"), general.SecondaryText("(", installedNum, "/", totalNum, ")"))
+	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs: %d/%d", general.FgCyanText("shell-based"), installedNum, totalNum)
 	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
 
 	// 创建临时目录

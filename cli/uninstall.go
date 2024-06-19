@@ -141,7 +141,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	// 开始卸载提示
 	totalNum := len(config.Program.Shell.Names) // 总程序数
 	installedNum := len(installedPrograms)      // 已安装程序数
-	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs %s", general.FgCyanText("golang-based"), general.SecondaryText("(", installedNum, "/", totalNum, ")"))
+	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs: %d/%d", general.FgCyanText("golang-based"), installedNum, totalNum)
 
 	// 让用户选择需要卸载的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
@@ -250,7 +250,7 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	// 开始卸载提示
 	totalNum := len(config.Program.Shell.Names) // 总程序数
 	installedNum := len(installedPrograms)      // 已安装程序数
-	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs %s", general.FgCyanText("shell-based"), general.SecondaryText("(", installedNum, "/", totalNum, ")"))
+	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs: %d/%d", general.FgCyanText("shell-based"), installedNum, totalNum)
 
 	// 让用户选择需要卸载的程序
 	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
