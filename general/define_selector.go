@@ -6,7 +6,7 @@ Created Time: 2024-04-10 13:33:59
 
 Description: 定义选择器
 
-- Update, View 等方法通过 model 与用户进行交互
+- Init, Update, View 是不可或缺的方法
 */
 
 package general
@@ -74,15 +74,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "up", "k":
 			// 光标向上移动，循环
 			m.cursor--
-			if m.cursor < 0 {
-				m.cursor = len(m.choices) - 1
-			}
+			m.fixCursor()
 		case "down", "j":
 			// 光标向下移动，循环
 			m.cursor++
-			if m.cursor >= len(m.choices) {
-				m.cursor = 0
-			}
+			m.fixCursor()
 		case " ":
 			if m.cursor == 0 { // 选中“全选”项
 				// 在全选和取消全选之间切换
@@ -151,6 +147,15 @@ func (m model) View() string {
 	}
 	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(selectorType))))
 	return s.String()
+}
+
+// fixCursor 修正光标位置
+func (m *model) fixCursor() {
+	if m.cursor > len(m.choices)-1 {
+		m.cursor = 0
+	} else if m.cursor < 0 {
+		m.cursor = len(m.choices) - 1
+	}
 }
 
 // MultipleSelectionFilter 多选筛选器，接受一个可选项切片，返回一个已选项切片，允许全选
