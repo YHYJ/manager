@@ -22,20 +22,20 @@ import (
 var quietKey = "q"                // 默认的退出键
 var selectorType = "program name" // 选择器主题
 
-// model 结构体，选择器的数据
+// model 结构体，选择器的数据模型
 type model struct {
 	choices  []string         // 所有选项
 	cursor   int              // 光标当前所在选项的索引
 	selected map[int]struct{} // 已选中选项，key 为选项 choices 的索引。使用 map 便于判断指定选项是否已被选中
 }
 
-// initialModel 初始化 model
+// initialModel 初始化选择器数据模型
 //
 // 参数：
 //   - choices: 可选项
 //
 // 返回：
-//   - model
+//   - 初始化后的选择器数据模型
 func initialModel(choices []string) model {
 	allChoices := []string{color.Sprintf("%s%s", SelectAllFlag, FgLightYellowText(SelectAllTips))}
 	allChoices = append(allChoices, choices...)
@@ -47,20 +47,20 @@ func initialModel(choices []string) model {
 	}
 }
 
-// Init model 结构体的初始化方法，是 BubbleTea 框架中的一个特殊方法
+// Init 选择器数据模型的初始化方法，是 BubbleTea 框架中的一个特殊方法
 func (m model) Init() tea.Cmd {
 	// 返回 nil 意味着不需要 I/O 操作
 	return nil
 }
 
-// Update model 结构体的更新方法，是 BubbleTea 框架中的一个特殊方法
+// Update 选择器数据模型的更新方法，是 BubbleTea 框架中的一个特殊方法
 //
 // 参数：
 //   - msg: 包含来自 I/O 操作结果的数据，出发更新功能，并以此出触发 UI 绘制
 //
 // 返回：
-//   - model: 更新后的 model
-//   - tea.Cmd: 一个 I/O 操作，完成后会返回一条消息，如果为 nil 则被视为无操作
+//   - 更新后的数据模型
+//   - 一个 I/O 操作，完成后会返回一条消息，如果为 nil 则被视为无操作
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	// 监控按键事件
@@ -104,14 +104,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 	}
-	// 将更新后的 model 返回给 BubbleTea 进行处理
+	// 将更新后的选择器数据模型返回给 BubbleTea 进行处理
 	return m, nil
 }
 
-// View model 结构体的视图方法，是 BubbleTea 框架中的一个特殊方法
+// View 选择器数据模型的视图方法，是 BubbleTea 框架中的一个特殊方法
 //
 // 返回：
-//   - string: 绘制内容
+//   - 绘制内容
 func (m model) View() string {
 	// 构建显示内容
 	s := strings.Builder{}
@@ -169,14 +169,14 @@ func (m *model) fixCursor() {
 func MultipleSelectionFilter(choices []string) ([]string, error) {
 	program := tea.NewProgram(initialModel(choices))
 
-	// 返回 tea.Model
+	// 返回选择器数据模型
 	initModel, err := program.Run()
 	if err != nil {
 		return nil, err
 	}
 
 	selectedChoices := []string{}
-	// 将 tea.Model 断言为自定义 model
+	// 将选择器数据模型断言为自定义类型
 	if myModel, ok := initModel.(model); ok {
 		if len(myModel.choices)-1 > 0 { // -1 除去 "Select All" 的干扰
 			for index := range myModel.selected {
