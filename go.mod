@@ -8,10 +8,10 @@ require (
 	github.com/charmbracelet/bubbletea v0.26.4
 	github.com/cheggaaa/pb/v3 v3.1.5
 	github.com/go-git/go-git/v5 v5.12.0
-	github.com/godbus/dbus/v5 v5.1.0
 	github.com/gookit/color v1.5.4
 	github.com/pelletier/go-toml v1.9.5
 	github.com/spf13/cobra v1.8.0
+	golang.org/x/term v0.20.0
 )
 
 require (
