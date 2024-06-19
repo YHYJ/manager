@@ -48,19 +48,16 @@ var installCmd = &cobra.Command{
 
 		// 安装/更新管理程序本身
 		if selfFlag {
-			color.Println()
 			cli.InstallSelfProgram(configTree)
 		}
 
 		// 安装/更新基于 golang 的程序
 		if goFlag {
-			color.Println()
 			cli.InstallGolangBasedProgram(configTree)
 		}
 
 		// 安装/更新基于 shell 的程序
 		if shellFlag {
-			color.Println()
 			cli.InstallShellBasedProgram(configTree)
 		}
 
