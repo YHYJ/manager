@@ -44,29 +44,32 @@ var keyMap = map[string]string{
 
 // model 结构体，选择器的数据模型
 type model struct {
-	choices  []string         // 所有选项
-	cursor   int              // 光标当前所在选项的索引
-	selected map[int]struct{} // 已选中选项，key 为选项 choices 的索引。使用 map 便于判断指定选项是否已被选中
-	ready    bool             // 模型是否准备好
-	viewport viewport.Model   // 视图窗口
-	builder  strings.Builder  // 用于构建字符串
+	choices   []string         // 所有选项
+	cursor    int              // 光标当前所在选项的索引
+	selected  map[int]struct{} // 已选中选项，key 为选项 choices 的索引。使用 map 便于判断指定选项是否已被选中
+	negatives string           // 希望选择器在运行后输出的信息
+	ready     bool             // 模型是否准备好
+	viewport  viewport.Model   // 视图窗口
+	builder   strings.Builder  // 用于构建字符串
 }
 
 // initialModel 初始化选择器数据模型
 //
 // 参数：
 //   - choices: 可选项
+//   - negatives: 希望选择器在运行后输出的信息
 //
 // 返回：
 //   - 初始化后的选择器数据模型
-func initialModel(choices []string) *model {
+func initialModel(choices []string, negatives string) *model {
 	allChoices := []string{color.Sprintf("%s%s", SelectAllFlag, FgLightYellowText(SelectAllTips))}
 	allChoices = append(allChoices, choices...)
 
 	return &model{
-		choices:  allChoices,
-		cursor:   0,
-		selected: make(map[int]struct{}),
+		choices:   allChoices,
+		cursor:    0,
+		selected:  make(map[int]struct{}),
+		negatives: negatives,
 	}
 }
 
@@ -178,6 +181,7 @@ func (m *model) View() string {
 //   - 头部内容
 func (m *model) headerView() string {
 	s := strings.Builder{}
+	s.WriteString(m.negatives)
 	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(selectorType))))
 	s.WriteString(color.Sprintf(QuestionText(MultiSelectTips), selectorType))
 	s.WriteString(color.Sprintf(SecondaryText(KeyTips), keyMap[selectKey], keyMap[enterKey], keyMap[quietKey]))
@@ -288,13 +292,14 @@ func (m *model) getOptimalViewportHeight(msg tea.WindowSizeMsg) int {
 //
 // 参数：
 //   - choices: 可选项
+//   - negatives: 希望选择器在运行后输出的信息
 //
 // 返回：
 //   - 已选项
 //   - 错误信息
-func MultipleSelectionFilter(choices []string) ([]string, error) {
+func MultipleSelectionFilter(choices []string, negatives string) ([]string, error) {
 	program := tea.NewProgram(
-		initialModel(choices),
+		initialModel(choices, negatives),
 		tea.WithAltScreen(), // 启动程序时启用备用屏幕缓冲区，即程序以全窗口模式启动
 	)
 

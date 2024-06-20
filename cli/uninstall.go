@@ -141,10 +141,11 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	// 开始卸载提示
 	totalNum := len(config.Program.Shell.Names) // 总程序数
 	installedNum := len(installedPrograms)      // 已安装程序数
-	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs: %d/%d", general.FgCyanText("golang-based"), installedNum, totalNum)
+	negatives := strings.Builder{}
+	negatives.WriteString(color.Sprintf("%s Uninstall \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("golang-based"), installedNum, totalNum))
 
 	// 让用户选择需要卸载的程序
-	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
+	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms, negatives.String())
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
@@ -175,7 +176,7 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 	// 设置文本参数
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
-	// 遍历所选脚本名
+	// 遍历所选程序名
 	for _, program := range selectedPrograms {
 		// 记账文件
 		pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
@@ -250,10 +251,11 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 	// 开始卸载提示
 	totalNum := len(config.Program.Shell.Names) // 总程序数
 	installedNum := len(installedPrograms)      // 已安装程序数
-	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs: %d/%d", general.FgCyanText("shell-based"), installedNum, totalNum)
+	negatives := strings.Builder{}
+	negatives.WriteString(color.Sprintf("%s Uninstall \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("shell-based"), installedNum, totalNum))
 
 	// 让用户选择需要卸载的程序
-	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms)
+	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms, negatives.String())
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)

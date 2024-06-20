@@ -764,11 +764,12 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 开始安装提示
-	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs: %d/%d", general.FgCyanText("golang-based"), installedNum, totalNum)
-	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+	negatives := strings.Builder{}
+	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("golang-based"), installedNum, totalNum))
+	negatives.WriteString(color.Sprintf("%s Installation path: %s\n", general.InfoText("INFO:"), general.PrimaryText(config.Program.ProgramPath)))
 
 	// 让用户选择需要安装/更新的程序
-	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names)
+	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names, negatives.String())
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
@@ -1486,8 +1487,9 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 开始安装提示
-	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs: %d/%d", general.FgCyanText("shell-based"), installedNum, totalNum)
-	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+	negatives := strings.Builder{}
+	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("shell-based"), installedNum, totalNum))
+	negatives.WriteString(color.Sprintf("%s Installation path: %s\n", general.InfoText("INFO:"), general.PrimaryText(config.Program.ProgramPath)))
 
 	// 创建临时目录
 	if err := general.CreateDir(config.Program.SourceTemp); err != nil {
@@ -1497,7 +1499,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 让用户选择需要安装/更新的程序
-	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Shell.Names)
+	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Shell.Names, negatives.String())
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
