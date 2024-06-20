@@ -48,19 +48,16 @@ var uninstallCmd = &cobra.Command{
 
 		// 卸载管理程序本身
 		if selfFlag {
-			color.Println()
 			cli.UninstallSelfProgram(configTree)
 		}
 
 		// 卸载基于 golang 的程序
 		if goFlag {
-			color.Println()
 			cli.UninstallGolangBasedProgram(configTree)
 		}
 
 		// 卸载基于 shell 的程序
 		if shellFlag {
-			color.Println()
 			cli.UninstallShellBasedProgram(configTree)
 		}
 
