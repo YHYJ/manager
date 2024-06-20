@@ -11,7 +11,6 @@ package cli
 
 import (
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/gookit/color"
@@ -150,8 +149,6 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
-	// 对所选的程序进行排序
-	sort.Strings(selectedPrograms)
 
 	// 确认是否要卸载
 	if len(selectedPrograms) != 0 {
@@ -260,8 +257,6 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
-	// 对所选的程序进行排序
-	sort.Strings(selectedPrograms)
 
 	// 确认是否要卸载
 	if len(selectedPrograms) != 0 {

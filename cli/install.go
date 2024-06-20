@@ -12,7 +12,6 @@ package cli
 import (
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/gookit/color"
@@ -774,8 +773,6 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
-	// 对所选的程序进行排序
-	sort.Strings(selectedPrograms)
 
 	// 使用配置的安装方式进行安装
 	switch strings.ToLower(config.Program.Method) {
@@ -1504,8 +1501,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Danger.Printf("Filter error (%s:%d): %s\n", fileName, lineNo+1, err)
 	}
-	// 对所选的程序进行排序
-	sort.Strings(selectedPrograms)
+
 	// 遍历所选脚本名
 	for _, program := range selectedPrograms {
 		// 记账文件
