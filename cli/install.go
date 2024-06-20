@@ -753,9 +753,9 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	// 设置文本参数
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
-	// 检测主文件是否存在为已安装程序计数
-	totalNum := len(config.Program.Go.Names) // 总程序数
-	installedNum := 0                        // 已安装程序数
+	// 为已安装程序计数
+	totalNum := len(config.Program.Go.Names) // 更新总程序数
+	installedNum := 0                        // 更新已安装程序数
 	for _, program := range config.Program.Go.Names {
 		programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
 		if general.FileExist(programMainFile) {
@@ -1475,9 +1475,9 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	// 设置文本参数
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
-	// 检测主文件是否存在为已安装程序计数
-	totalNum := len(config.Program.Shell.Names) // 总程序数
-	installedNum := 0                           // 已安装程序数
+	// 为已安装程序计数
+	totalNum := len(config.Program.Shell.Names) // 更新总程序数
+	installedNum := 0                           // 更新已安装程序数
 	for _, program := range config.Program.Shell.Names {
 		programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
 		if general.FileExist(programMainFile) {
