@@ -29,7 +29,7 @@ var (
 var (
 	MultiSelectTips  = "Please select from the %s below (multi-select)\n"  // 提示词 - 多选
 	SingleSelectTips = "Please select from the %s below (single-select)\n" // 提示词 - 单选
-	QuietTips        = "Press '%s' to quit\n"                              // 提示词 - 退出
+	KeyTips          = "Press '%s' to select, '%s' to run, '%s' to quit\n" // 提示词 - 按键
 	SelectOneTips    = "Select %s"                                         // 提示词 - 单选
 	SelectAllTips    = "Select All"                                        // 提示词 - 全选
 	UninstallTips    = "Do you want to uninstall these software?"          // 提示词 - 卸载软件
