@@ -29,15 +29,6 @@ var uninstallCmd = &cobra.Command{
 		selfFlag, _ := cmd.Flags().GetBool("self")
 		shellFlag, _ := cmd.Flags().GetBool("shell")
 
-		// 根据参数执行操作
-		if allFlag {
-			goFlag, shellFlag = true, true
-		}
-
-		if selfFlag && (goFlag || shellFlag) {
-			general.Notifier = append(general.Notifier, "'--self' cannot be mixed with other Flags")
-		}
-
 		// 读取配置文件
 		configTree, err := general.GetTomlConfig(configFile)
 		if err != nil {
@@ -46,19 +37,24 @@ var uninstallCmd = &cobra.Command{
 			return
 		}
 
+		// 根据参数执行操作
+		if allFlag {
+			goFlag, shellFlag = true, true
+		}
+
 		// 卸载管理程序本身
 		if selfFlag {
-			cli.UninstallSelfProgram(configTree)
+			cli.UninstallSelf(configTree)
 		}
 
 		// 卸载基于 golang 的程序
 		if goFlag {
-			cli.UninstallGolangBasedProgram(configTree)
+			cli.Uninstall(configTree, "go")
 		}
 
 		// 卸载基于 shell 的程序
 		if shellFlag {
-			cli.UninstallShellBasedProgram(configTree)
+			cli.Uninstall(configTree, "shell")
 		}
 
 		// 显示通知
@@ -67,7 +63,7 @@ var uninstallCmd = &cobra.Command{
 }
 
 func init() {
-	uninstallCmd.Flags().BoolP("self", "", false, "Uninstall itself (Can only be called alone)")
+	uninstallCmd.Flags().BoolP("self", "", false, "Uninstall itself")
 	uninstallCmd.Flags().BoolP("all", "", false, "Uninstall all software and scripts")
 	uninstallCmd.Flags().BoolP("go", "", false, "Uninstall golang-based software")
 	uninstallCmd.Flags().BoolP("shell", "", false, "Uninstall shell scripts")

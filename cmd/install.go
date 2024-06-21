@@ -20,7 +20,7 @@ import (
 var installCmd = &cobra.Command{
 	Use:   "install",
 	Short: "Install or update software and scripts (Use SSH key)",
-	Long:  `Install or update software and scripts from github/gitea using SSH key`,
+	Long:  `Install or update software and scripts from source/release using SSH key`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// 解析参数
 		configFile, _ := cmd.Flags().GetString("config")
@@ -29,21 +29,17 @@ var installCmd = &cobra.Command{
 		selfFlag, _ := cmd.Flags().GetBool("self")
 		shellFlag, _ := cmd.Flags().GetBool("shell")
 
-		// 根据参数执行操作
-		if allFlag {
-			goFlag, shellFlag = true, true
-		}
-
-		if selfFlag && (goFlag || shellFlag) {
-			general.Notifier = append(general.Notifier, "'--self' cannot be mixed with other Flags")
-		}
-
 		// 读取配置文件
 		configTree, err := general.GetTomlConfig(configFile)
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
 			color.Danger.Printf("Get config error (%s:%d): %s\n", fileName, lineNo+1, err)
 			return
+		}
+
+		// 根据参数执行操作
+		if allFlag {
+			goFlag, shellFlag = true, true
 		}
 
 		// 安装/更新管理程序本身
@@ -67,7 +63,7 @@ var installCmd = &cobra.Command{
 }
 
 func init() {
-	installCmd.Flags().BoolP("self", "", false, "Install or update itself (Can only be called alone)")
+	installCmd.Flags().BoolP("self", "", false, "Install or update itself")
 	installCmd.Flags().BoolP("all", "", false, "Install or update all software and scripts")
 	installCmd.Flags().BoolP("go", "", false, "Install or update golang-based software")
 	installCmd.Flags().BoolP("shell", "", false, "Install or update shell scripts")
