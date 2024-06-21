@@ -19,8 +19,8 @@ import (
 // installCmd represents the install command
 var installCmd = &cobra.Command{
 	Use:   "install",
-	Short: "Install or update software and scripts",
-	Long:  `Install or update my software and scripts.`,
+	Short: "Install or update software and scripts (Use SSH key)",
+	Long:  `Install or update software and scripts from github/gitea using SSH key`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// 解析参数
 		configFile, _ := cmd.Flags().GetString("config")
