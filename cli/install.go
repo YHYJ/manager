@@ -45,7 +45,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 	// 开始安装提示
 	color.Info.Tips("Install \x1b[3m%s\x1b[0m programs", general.FgCyanText(config.Program.Self.Name))
-	color.Info.Tips("%s: %s", general.FgWhiteText("Installation path"), general.PrimaryText(config.Program.ProgramPath))
+	color.Info.Tips("Installation path: %s", general.PrimaryText(config.Program.ProgramPath))
 	color.Printf("%s\n", strings.Repeat(general.Separator1st, general.SeparatorBaseLength))
 
 	// 程序文件
@@ -100,7 +100,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 		// 比较远端和本地版本
 		if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText(general.LatestVersionMessage))
+			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.LatestVersionMessage)
 			color.Printf(text)
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -438,7 +438,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					}
 					// 本次更新结束分隔符
-					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("-->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
+					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.Indicator, general.NoteText(remoteTag), general.FgMagentaText("updated"))
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				}
@@ -524,7 +524,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 
 		// 比较远端和本地版本
 		if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText(general.LatestVersionMessage))
+			text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.LatestVersionMessage)
 			color.Printf(text)
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -720,7 +720,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						}
 					}
 					// 本次更新结束分隔符
-					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.FgWhiteText("-->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
+					text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgYellowText(localVersion), general.Indicator, general.NoteText(remoteTag), general.FgMagentaText("updated"))
 					color.Printf(text)
 					textLength = general.RealLength(text) // 分隔符长度
 				}
@@ -859,7 +859,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 
 			// 比较远端和本地版本
 			if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-				text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(program), general.FgYellowText(localVersion), general.FgWhiteText(general.LatestVersionMessage))
+				text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(program), general.FgYellowText(localVersion), general.LatestVersionMessage)
 				color.Printf(text)
 				textLength = general.RealLength(text) // 分隔符长度
 			} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -1190,7 +1190,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						}
 						// 本次更新结束分隔符
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(localVersion), general.FgWhiteText("-->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(localVersion), general.Indicator, general.NoteText(remoteTag), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
@@ -1283,7 +1283,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 
 			// 比较远端和本地版本
 			if remoteTag == localVersion { // 版本一致，则输出无需更新信息
-				text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(program), general.FgYellowText(localVersion), general.FgWhiteText(general.LatestVersionMessage))
+				text := color.Sprintf("%s %s %s %s\n", general.LatestFlag, general.FgGreenText(program), general.FgYellowText(localVersion), general.LatestVersionMessage)
 				color.Printf(text)
 				textLength = general.RealLength(text) // 分隔符长度
 			} else { // 版本不一致，则安装或更新程序，并输出已安装/更新信息
@@ -1476,7 +1476,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 							}
 						}
 						// 本次更新结束分隔符
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(localVersion), general.FgWhiteText("-->"), general.NoteText(remoteTag), general.FgMagentaText("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(localVersion), general.Indicator, general.NoteText(remoteTag), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
@@ -1619,7 +1619,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 
 		// 比较远端和本地脚本 Hash
 		if remoteHash == localHash { // Hash 一致，则输出无需更新信息
-			text := color.Sprintf("%s %s %s\n", general.LatestFlag, general.FgGreenText(program), general.FgWhiteText(general.LatestVersionMessage))
+			text := color.Sprintf("%s %s %s\n", general.LatestFlag, general.FgGreenText(program), general.LatestVersionMessage)
 			color.Printf(text)
 			textLength = general.RealLength(text) // 分隔符长度
 		} else { // Hash 不一致，则更新脚本，并输出已更新信息
@@ -1712,7 +1712,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 							fileName, lineNo := general.GetCallerInfo()
 							color.Danger.Printf("Change file mode error (%s:%d): %s\n", fileName, lineNo+1, err)
 						}
-						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(localHash[:6]), general.FgWhiteText("-->"), general.NoteText(remoteHash[:6]), general.FgMagentaText("updated"))
+						text := color.Sprintf("%s %s %s %s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgYellowText(localHash[:6]), general.Indicator, general.NoteText(remoteHash[:6]), general.FgMagentaText("updated"))
 						color.Printf(text)
 						textLength = general.RealLength(text) // 分隔符长度
 					}
