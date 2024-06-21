@@ -73,7 +73,7 @@ func ReadFileLine(file string, line int) string {
 	text, err := os.Open(file)
 	if err != nil {
 		fileName, lineNo := GetCallerInfo()
-		color.Danger.Printf("Open file error (%s:%d): %s\n", fileName, lineNo+1, err)
+		color.Printf("%s %s -> Unable to open file: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
 	defer text.Close()
 
@@ -104,7 +104,7 @@ func ReadFileKey(file, key string) string {
 	text, err := os.Open(file)
 	if err != nil {
 		fileName, lineNo := GetCallerInfo()
-		color.Danger.Printf("Open file error (%s:%d): %s\n", fileName, lineNo+1, err)
+		color.Printf("%s %s -> Unable to open file: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
 	defer text.Close()
 
@@ -132,7 +132,7 @@ func ReadFileCount(file, key string) int {
 	text, err := os.Open(file)
 	if err != nil {
 		fileName, lineNo := GetCallerInfo()
-		color.Danger.Printf("Open file error (%s:%d): %s\n", fileName, lineNo+1, err)
+		color.Printf("%s %s -> Unable to open file: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
 	defer text.Close()
 
