@@ -19,8 +19,8 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "manager",
-	Short: "Self-developed program manager",
-	Long:  `manager for self-developed programs, including installation and configuration.`,
+	Short: "Customized software and script manager",
+	Long:  `Customized software and script management and configuration.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

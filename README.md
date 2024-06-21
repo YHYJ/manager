@@ -42,7 +42,7 @@
 
 ---
 
-我的程序管理器，支持 Linux、macOS 和 Windows
+自定义软件和脚本管理器，支持 Linux、macOS 和 Windows
 
 ## Install
 
