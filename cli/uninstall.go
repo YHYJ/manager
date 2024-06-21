@@ -84,7 +84,8 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 	// 卸载程序
 	for _, pocketLine := range pocketLines {
 		if err := general.Uninstall(pocketLine); err != nil {
-			text := color.Sprintf("%s\n", general.DangerText(err))
+			fileName, lineNo := general.GetCallerInfo()
+			text := color.Danger.Sprintf("Uninstall error (%s:%d): %s\n", fileName, lineNo+1, err)
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
@@ -96,7 +97,8 @@ func UninstallSelfProgram(configTree *toml.Tree) {
 
 	// 删除记账文件
 	if err := general.DeleteFile(pocketDir); err != nil {
-		text := color.Sprintf("%s\n", general.DangerText(err))
+		fileName, lineNo := general.GetCallerInfo()
+		text := color.Danger.Sprintf("Uninstall error (%s:%d): %s\n", fileName, lineNo+1, err)
 		color.Printf(text)
 		// 分隔符和延时（延时使输出更加顺畅）
 		textLength = general.RealLength(text) // 分隔符长度
@@ -191,7 +193,8 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 		// 卸载程序
 		for _, pocketLine := range pocketLines {
 			if err := general.Uninstall(pocketLine); err != nil {
-				text := color.Sprintf("%s\n", general.DangerText(err))
+				fileName, lineNo := general.GetCallerInfo()
+				text := color.Danger.Sprintf("Uninstall error (%s:%d): %s\n", fileName, lineNo+1, err)
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -203,7 +206,8 @@ func UninstallGolangBasedProgram(configTree *toml.Tree) {
 
 		// 删除记账文件
 		if err := general.DeleteFile(pocketDir); err != nil {
-			text := color.Sprintf("%s\n", general.DangerText(err))
+			fileName, lineNo := general.GetCallerInfo()
+			text := color.Danger.Sprintf("Uninstall error (%s:%d): %s\n", fileName, lineNo+1, err)
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
@@ -299,7 +303,8 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 		// 卸载程序
 		for _, pocketLine := range pocketLines {
 			if err := general.Uninstall(pocketLine); err != nil {
-				text := color.Sprintf("%s\n", general.DangerText(err))
+				fileName, lineNo := general.GetCallerInfo()
+				text := color.Danger.Sprintf("Uninstall error (%s:%d): %s\n", fileName, lineNo+1, err)
 				color.Printf(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
@@ -311,7 +316,8 @@ func UninstallShellBasedProgram(configTree *toml.Tree) {
 
 		// 删除记账文件
 		if err := general.DeleteFile(pocketDir); err != nil {
-			text := color.Sprintf("%s\n", general.DangerText(err))
+			fileName, lineNo := general.GetCallerInfo()
+			text := color.Danger.Sprintf("Uninstall error (%s:%d): %s\n", fileName, lineNo+1, err)
 			color.Printf(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
