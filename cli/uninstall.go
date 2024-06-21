@@ -74,7 +74,7 @@ func UninstallSelf(configTree *toml.Tree) {
 		return
 	default:
 		color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
-		color.Warn.Tips("%s", "Unexpected answer")
+		color.Warn.Tips("%s: %s", "Unexpected answer", answer)
 		return
 	}
 
@@ -181,7 +181,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 			return
 		default:
 			color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
-			color.Warn.Tips("%s", "Unexpected answer")
+			color.Warn.Tips("%s: %s", "Unexpected answer", answer)
 			return
 		}
 	}
