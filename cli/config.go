@@ -52,8 +52,7 @@ func CreateConfigFile(configFile string) {
 				color.Printf("%s %s -> Unable to create file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				return
 			}
-			_, err := general.WriteTomlConfig(configFile)
-			if err != nil {
+			if _, err := general.WriteTomlConfig(configFile); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
 				color.Printf("%s %s -> Unable to write file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				return
@@ -76,8 +75,7 @@ func CreateConfigFile(configFile string) {
 			color.Printf("%s %s -> Unable to create file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
-		_, err := general.WriteTomlConfig(configFile)
-		if err != nil {
+		if _, err := general.WriteTomlConfig(configFile); err != nil {
 			fileName, lineNo := general.GetCallerInfo()
 			color.Printf("%s %s -> Unable to write file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
@@ -98,10 +96,9 @@ func OpenConfigFile(configFile string) {
 		editor := general.GetVariable("EDITOR")
 		if editor == "" {
 			editor = "vim"
-			err := general.RunCommand(editor, []string{configFile})
-			if err != nil {
+			if err := general.RunCommand(editor, []string{configFile}); err != nil {
 				editor = "vi"
-				if err = general.RunCommand(editor, []string{configFile}); err != nil {
+				if err := general.RunCommand(editor, []string{configFile}); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
 					color.Printf("%s %s -> Unable to open file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				}

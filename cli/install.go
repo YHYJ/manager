@@ -204,8 +204,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			}
 			if verificationResult { // 压缩包校验通过
 				// 解压压缩包
-				err := general.UnzipFile(archiveLocalPath, goReleaseTempDir)
-				if err != nil {
+				if err := general.UnzipFile(archiveLocalPath, goReleaseTempDir); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
 					text := color.Sprintf("%s %s -> Unable to unzip: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 					color.Printf(text)
@@ -289,8 +288,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							return
 						}
 						if !general.FileExist(localResourcesIconFolder) {
-							err := general.CreateDir(localResourcesIconFolder)
-							if err != nil {
+							if err := general.CreateDir(localResourcesIconFolder); err != nil {
 								fileName, lineNo := general.GetCallerInfo()
 								text := color.Sprintf("%s %s -> Unable to create folder: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 								color.Printf(text)
@@ -405,8 +403,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							return
 						}
 						if !general.FileExist(localResourcesIconFolder) {
-							err := general.CreateDir(localResourcesIconFolder)
-							if err != nil {
+							if err := general.CreateDir(localResourcesIconFolder); err != nil {
 								fileName, lineNo := general.GetCallerInfo()
 								text := color.Sprintf("%s %s -> Unable to create folder: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 								color.Printf(text)
@@ -963,8 +960,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				}
 				if verificationResult { // 压缩包校验通过
 					// 解压压缩包
-					err := general.UnzipFile(archiveLocalPath, goReleaseTempDir)
-					if err != nil {
+					if err := general.UnzipFile(archiveLocalPath, goReleaseTempDir); err != nil {
 						fileName, lineNo := general.GetCallerInfo()
 						text := color.Sprintf("%s %s -> Unable to unzip: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 						color.Printf(text)
@@ -1048,8 +1044,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								continue
 							}
 							if !general.FileExist(localResourcesIconFolder) {
-								err := general.CreateDir(localResourcesIconFolder)
-								if err != nil {
+								if err := general.CreateDir(localResourcesIconFolder); err != nil {
 									fileName, lineNo := general.GetCallerInfo()
 									text := color.Sprintf("%s %s -> Unable to create folder: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 									color.Printf(text)
@@ -1161,8 +1156,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 								continue
 							}
 							if !general.FileExist(localResourcesIconFolder) {
-								err := general.CreateDir(localResourcesIconFolder)
-								if err != nil {
+								if err := general.CreateDir(localResourcesIconFolder); err != nil {
 									fileName, lineNo := general.GetCallerInfo()
 									text := color.Sprintf("%s %s -> Unable to create folder: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 									color.Printf(text)

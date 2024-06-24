@@ -252,8 +252,7 @@ func FolderEmpty(dir string) bool {
 	}
 	defer text.Close()
 
-	_, err = text.Readdir(1)
-	if err == io.EOF {
+	if _, err = text.Readdir(1); err == io.EOF {
 		return true
 	}
 	return false
@@ -474,15 +473,13 @@ func CompareFile(file1Path string, file2Path string) (bool, error) {
 			buffer2 := make([]byte, size)
 
 			// 从文件中读取指定大小的内容到 buffer
-			_, err := file1.ReadAt(buffer1, offset)
-			if err != nil && err != io.EOF {
+			if _, err := file1.ReadAt(buffer1, offset); err != nil && err != io.EOF {
 				errCh <- err
 				return
 			}
 
 			// 从文件中读取指定大小的内容到 buffer
-			_, err = file2.ReadAt(buffer2, offset)
-			if err != nil && err != io.EOF {
+			if _, err = file2.ReadAt(buffer2, offset); err != nil && err != io.EOF {
 				errCh <- err
 				return
 			}
@@ -613,8 +610,7 @@ func unzipZip(filePath, outputDir string) error {
 	fileNameWithoutExt := strings.TrimSuffix(fileNameWithExt, fileExt) // 不带后缀的文件名
 	outputTo := filepath.Join(outputDir, fileNameWithoutExt)
 	for _, file := range reader.File {
-		err := extractZipFile(file, outputTo)
-		if err != nil {
+		if err := extractZipFile(file, outputTo); err != nil {
 			return err
 		}
 	}
@@ -722,8 +718,7 @@ func unzipTarGz(filePath, outputDir string) error {
 			return err
 		}
 
-		err = extractTarFile(header, tarReader, outputTo)
-		if err != nil {
+		if err = extractTarFile(header, tarReader, outputTo); err != nil {
 			return err
 		}
 	}

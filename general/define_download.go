@@ -58,8 +58,7 @@ func DownloadFile(url string, outputFile string, progressParameters map[string]s
 
 	if progressParameters["view"] == "0" {
 		// 将响应主体复制到文件
-		_, err = io.Copy(file, resp.Body)
-		if err != nil {
+		if _, err = io.Copy(file, resp.Body); err != nil {
 			return fmt.Errorf("Error writing download file: %s", err)
 		}
 	} else {
@@ -73,8 +72,7 @@ func DownloadFile(url string, outputFile string, progressParameters map[string]s
 		reader := bar.NewProxyReader(resp.Body)
 
 		// 将响应主体复制到文件
-		_, err = io.Copy(file, reader)
-		if err != nil {
+		if _, err = io.Copy(file, reader); err != nil {
 			return fmt.Errorf("Error writing download file: %s", err)
 		}
 

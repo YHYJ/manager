@@ -39,8 +39,7 @@ func Install(sourceFile, targetFile string, perm os.FileMode) error {
 	defer tFile.Close()
 
 	// 复制文件内容
-	_, err = io.Copy(tFile, sFile)
-	if err != nil {
+	if _, err = io.Copy(tFile, sFile); err != nil {
 		return err
 	}
 	return nil
