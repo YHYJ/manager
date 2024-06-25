@@ -811,8 +811,11 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 留屏信息
-	negatives.WriteString(color.Sprintf("%s Selected: %s\n", general.InfoText("INFO:"), general.FgCyanText(strings.Join(selectedPrograms, ", "))))
-	color.Println(negatives.String())
+	if len(selectedPrograms) > 0 {
+		negatives.WriteString(color.Sprintf("%s Selected: %s\n", general.InfoText("INFO:"), general.FgCyanText(strings.Join(selectedPrograms, ", "))))
+		color.Println(negatives.String())
+		color.Printf("%s\n", strings.Repeat(general.Separator1st, general.SeparatorBaseLength))
+	}
 
 	// 使用配置的安装方式进行安装
 	switch strings.ToLower(config.Program.Method) {
