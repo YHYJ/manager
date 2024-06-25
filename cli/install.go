@@ -789,18 +789,18 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
 	// 为已安装程序计数
-	totalNum := len(config.Program.Go.Names) // 更新总程序数
-	installedNum := 0                        // 更新已安装程序数
+	totalNum := len(config.Program.Go.Names) // 总程序数
+	installedProgram := make([]string, 0)    // 已安装程序名
 	for _, program := range config.Program.Go.Names {
 		programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
 		if general.FileExist(programMainFile) {
-			installedNum++
+			installedProgram = append(installedProgram, program)
 		}
 	}
 
 	// 开始安装提示
 	negatives := strings.Builder{}
-	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("golang-based"), installedNum, totalNum))
+	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("golang-based"), len(installedProgram), totalNum))
 	negatives.WriteString(color.Sprintf("%s Installation path: %s\n", general.InfoText("INFO:"), general.PrimaryText(config.Program.ProgramPath)))
 
 	// 让用户选择需要安装/更新的程序
@@ -809,6 +809,10 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s -> Unable to start selector: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
+
+	// 留屏信息
+	negatives.WriteString(color.Sprintf("%s Selected: %s\n", general.InfoText("INFO:"), general.FgCyanText(strings.Join(selectedPrograms, ", "))))
+	color.Println(negatives.String())
 
 	// 使用配置的安装方式进行安装
 	switch strings.ToLower(config.Program.Method) {
@@ -1546,18 +1550,18 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
 	// 为已安装程序计数
-	totalNum := len(config.Program.Shell.Names) // 更新总程序数
-	installedNum := 0                           // 更新已安装程序数
+	totalNum := len(config.Program.Shell.Names) // 总程序数
+	installedProgram := make([]string, 0)       // 已安装程序名
 	for _, program := range config.Program.Shell.Names {
 		programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
 		if general.FileExist(programMainFile) {
-			installedNum++
+			installedProgram = append(installedProgram, program)
 		}
 	}
 
 	// 开始安装提示
 	negatives := strings.Builder{}
-	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("shell-based"), installedNum, totalNum))
+	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("shell-based"), len(installedProgram), totalNum))
 	negatives.WriteString(color.Sprintf("%s Installation path: %s\n", general.InfoText("INFO:"), general.PrimaryText(config.Program.ProgramPath)))
 
 	// 创建临时目录
@@ -1573,6 +1577,10 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s -> Unable to start selector: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
+
+	// 留屏信息
+	negatives.WriteString(color.Sprintf("%s Selected: %s\n", general.InfoText("INFO:"), general.FgCyanText(strings.Join(selectedPrograms, ", "))))
+	color.Println(negatives.String())
 
 	// 遍历所选脚本名
 	for _, program := range selectedPrograms {
