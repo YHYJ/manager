@@ -166,9 +166,17 @@ func Uninstall(configTree *toml.Tree, category string) {
 		color.Printf("%s %s -> Unable to start selector: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
 
-	// 确认是否要卸载
-	if len(selectedPrograms) != 0 {
-		answer, err := general.AskUser(general.QuestionText(general.UninstallTips), []string{"y", "N"})
+	// 留屏信息
+	negatives.WriteString(color.Sprintf("%s Selected: %s\n", general.InfoText("INFO:"), general.FgCyanText(strings.Join(selectedPrograms, ", "))))
+	color.Println(negatives.String())
+
+	// 设置文本参数
+	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+
+	// 遍历所选程序/脚本名
+	for _, program := range selectedPrograms {
+		// 确认是否要卸载
+		answer, err := general.AskUser(general.QuestionText(color.Sprintf(general.UninstallTips, program)), []string{"y", "N"})
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
 			color.Printf("%s %s -> Unable to get answers: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
@@ -177,36 +185,35 @@ func Uninstall(configTree *toml.Tree, category string) {
 		switch answer {
 		case "y":
 			color.Printf("%s\n", strings.Repeat(general.Separator2st, len(general.UninstallTips)))
-		case "n":
-			return
-		default:
-			color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
-			color.Warn.Tips("%s: %s", "Unexpected answer", answer)
-			return
-		}
-	}
-
-	// 设置文本参数
-	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
-
-	// 遍历所选程序/脚本名
-	for _, program := range selectedPrograms {
-		// 记账文件
-		pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
-		pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
-		pocketLines := make([]string, 0)                                  // 记账文件内容
-		if general.FileExist(pocketFile) {                                // 读取记账文件内容
-			pocketLines, err = general.ReadFile(pocketFile)
-			if err != nil {
-				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s -> Unable to read file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-				continue
+			// 记账文件
+			pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
+			pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
+			pocketLines := make([]string, 0)                                  // 记账文件内容
+			if general.FileExist(pocketFile) {                                // 读取记账文件内容
+				pocketLines, err = general.ReadFile(pocketFile)
+				if err != nil {
+					fileName, lineNo := general.GetCallerInfo()
+					color.Printf("%s %s -> Unable to read file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+					continue
+				}
 			}
-		}
 
-		// 卸载程序
-		for _, pocketLine := range pocketLines {
-			if err := general.Uninstall(pocketLine); err != nil {
+			// 卸载程序
+			for _, pocketLine := range pocketLines {
+				if err := general.Uninstall(pocketLine); err != nil {
+					fileName, lineNo := general.GetCallerInfo()
+					text := color.Sprintf("%s %s -> Unable to uninstall: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+					color.Printf(text)
+					// 分隔符和延时（延时使输出更加顺畅）
+					textLength = general.RealLength(text) // 分隔符长度
+					general.PrintDelimiter(textLength)    // 分隔符
+					general.Delay(0.1)                    // 0.1s
+					return
+				}
+			}
+
+			// 删除记账文件
+			if err := general.DeleteFile(pocketDir); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
 				text := color.Sprintf("%s %s -> Unable to uninstall: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				color.Printf(text)
@@ -216,27 +223,21 @@ func Uninstall(configTree *toml.Tree, category string) {
 				general.Delay(0.1)                    // 0.1s
 				return
 			}
-		}
 
-		// 删除记账文件
-		if err := general.DeleteFile(pocketDir); err != nil {
-			fileName, lineNo := general.GetCallerInfo()
-			text := color.Sprintf("%s %s -> Unable to uninstall: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			// 本次卸载结束分隔符
+			text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
 			color.Printf(text)
-			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
-			general.PrintDelimiter(textLength)    // 分隔符
-			general.Delay(0.1)                    // 0.1s
-			return
+
+			// 分隔符和延时（延时使输出更加顺畅）
+			general.PrintDelimiter(textLength) // 分隔符
+			general.Delay(0.1)                 // 0.01s
+		case "n":
+			continue
+		default:
+			color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
+			color.Warn.Tips("%s: %s", "Unexpected answer", answer)
+			continue
 		}
-
-		// 本次卸载结束分隔符
-		text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
-		color.Printf(text)
-		textLength = general.RealLength(text) // 分隔符长度
-
-		// 分隔符和延时（延时使输出更加顺畅）
-		general.PrintDelimiter(textLength) // 分隔符
-		general.Delay(0.1)                 // 0.01s
 	}
 }
