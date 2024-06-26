@@ -32,23 +32,23 @@ func UninstallSelf(configTree *toml.Tree) {
 	}
 
 	// 程序文件
-	name := config.Program.Self.Name // 程序名
+	program := config.Program.Self.Name // 程序名
 
 	// 开始卸载提示
-	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs", general.FgCyanText(name))
+	color.Info.Tips("Uninstall \x1b[3m%s\x1b[0m programs", general.FgCyanText(program))
 
 	// 检测主文件是否存在来决定是否在选项中显示
-	programMainFile := filepath.Join(config.Program.ProgramPath, name) // 程序主文件路径
+	programMainFile := filepath.Join(config.Program.ProgramPath, program) // 程序主文件路径
 	if general.FileExist(programMainFile) {
 		color.Printf("%s\n", strings.Repeat(general.Separator2st, general.SeparatorBaseLength))
 	} else {
 		color.Printf("%s\n", strings.Repeat(general.Separator3st, general.SeparatorBaseLength))
-		color.Warn.Tips("Program \x1b[3m%s\x1b[0m is not installed", general.FgCyanText(name))
+		color.Warn.Tips("Program \x1b[3m%s\x1b[0m is not installed", general.FgCyanText(program))
 		return
 	}
 
 	// 记账文件
-	pocketDir := filepath.Join(config.Program.PocketPath, name)       // 记账文件夹路径
+	pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
 	pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
 	pocketLines := make([]string, 0)                                  // 记账文件内容
 	if general.FileExist(pocketFile) {                                // 读取记账文件内容
@@ -61,7 +61,8 @@ func UninstallSelf(configTree *toml.Tree) {
 	}
 
 	// 确认是否要卸载
-	answer, err := general.AskUser(general.QuestionText(general.UninstallTips), []string{"y", "N"})
+	question := color.Sprintf(general.UninstallTips, program)
+	answer, err := general.AskUser(general.QuestionText(question), []string{"y", "N"})
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s -> Unable to get answers: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
@@ -69,11 +70,11 @@ func UninstallSelf(configTree *toml.Tree) {
 	}
 	switch answer {
 	case "y":
-		color.Printf("%s\n", strings.Repeat(general.Separator2st, len(general.UninstallTips)))
+		color.Printf("%s\n", strings.Repeat(general.Separator2st, len(question)))
 	case "n":
 		return
 	default:
-		color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
+		color.Printf("%s\n", strings.Repeat(general.Separator3st, len(question)))
 		color.Warn.Tips("%s: %s", "Unexpected answer", answer)
 		return
 	}
@@ -108,7 +109,7 @@ func UninstallSelf(configTree *toml.Tree) {
 	}
 
 	// 本次卸载结束分隔符
-	text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(name), general.FgMagentaText("uninstalled"))
+	text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
 	color.Printf(text)
 	textLength = general.RealLength(text) // 分隔符长度
 
@@ -167,8 +168,11 @@ func Uninstall(configTree *toml.Tree, category string) {
 	}
 
 	// 留屏信息
-	negatives.WriteString(color.Sprintf("%s Selected: %s\n", general.InfoText("INFO:"), general.FgCyanText(strings.Join(selectedPrograms, ", "))))
-	color.Println(negatives.String())
+	if len(selectedPrograms) > 0 {
+		negatives.WriteString(color.Sprintf("%s Selected: %s\n", general.InfoText("INFO:"), general.FgCyanText(strings.Join(selectedPrograms, ", "))))
+		negatives.WriteString(color.Sprintf("%s", strings.Repeat(general.Separator1st, general.SeparatorBaseLength)))
+		color.Println(negatives.String())
+	}
 
 	// 设置文本参数
 	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
@@ -176,7 +180,8 @@ func Uninstall(configTree *toml.Tree, category string) {
 	// 遍历所选程序/脚本名
 	for _, program := range selectedPrograms {
 		// 确认是否要卸载
-		answer, err := general.AskUser(general.QuestionText(color.Sprintf(general.UninstallTips, program)), []string{"y", "N"})
+		question := color.Sprintf(general.UninstallTips, program)
+		answer, err := general.AskUser(general.QuestionText(question), []string{"y", "N"})
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
 			color.Printf("%s %s -> Unable to get answers: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
@@ -184,7 +189,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 		}
 		switch answer {
 		case "y":
-			color.Printf("%s\n", strings.Repeat(general.Separator2st, len(general.UninstallTips)))
+			color.Printf("%s\n", strings.Repeat(general.Separator2st, len(question)))
 			// 记账文件
 			pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
 			pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
