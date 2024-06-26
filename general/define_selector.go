@@ -58,6 +58,7 @@ type model struct {
 //
 // 参数：
 //   - choices: 可选项
+//   - highlights: 高亮项
 //   - negatives: 希望选择器在运行后输出的信息
 //
 // 返回：
