@@ -804,7 +804,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 	negatives.WriteString(color.Sprintf("%s Installation path: %s\n", general.InfoText("INFO:"), general.PrimaryText(config.Program.ProgramPath)))
 
 	// 让用户选择需要安装/更新的程序
-	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names, negatives.String())
+	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Go.Names, installedProgram, negatives.String())
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s -> Unable to start selector: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
@@ -1575,7 +1575,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 	}
 
 	// 让用户选择需要安装/更新的程序
-	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Shell.Names, negatives.String())
+	selectedPrograms, err := general.MultipleSelectionFilter(config.Program.Shell.Names, installedProgram, negatives.String())
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s -> Unable to start selector: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)

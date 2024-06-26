@@ -161,7 +161,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 	negatives.WriteString(color.Sprintf("%s Uninstall %s programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText(category, "-based"), installedNum, totalNum))
 
 	// 让用户选择需要卸载的程序
-	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms, negatives.String())
+	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms, []string{}, negatives.String())
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s -> Unable to start selector: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
