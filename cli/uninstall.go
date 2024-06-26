@@ -91,7 +91,7 @@ func UninstallSelf(configTree *toml.Tree) {
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
 			general.PrintDelimiter(textLength)    // 分隔符
-			general.Delay(0.1)                    // 0.1s
+			general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 			return
 		}
 	}
@@ -104,7 +104,7 @@ func UninstallSelf(configTree *toml.Tree) {
 		// 分隔符和延时（延时使输出更加顺畅）
 		textLength = general.RealLength(text) // 分隔符长度
 		general.PrintDelimiter(textLength)    // 分隔符
-		general.Delay(0.1)                    // 0.1s
+		general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 		return
 	}
 
@@ -115,7 +115,7 @@ func UninstallSelf(configTree *toml.Tree) {
 
 	// 分隔符和延时（延时使输出更加顺畅）
 	general.PrintDelimiter(textLength) // 分隔符
-	general.Delay(0.1)                 // 0.01s
+	general.Delay(general.DelayTime)   // 添加一个延时，使输出更加顺畅
 }
 
 // Uninstall 卸载指定程序
@@ -212,7 +212,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
 					general.PrintDelimiter(textLength)    // 分隔符
-					general.Delay(0.1)                    // 0.1s
+					general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 					return
 				}
 			}
@@ -225,7 +225,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
 				general.PrintDelimiter(textLength)    // 分隔符
-				general.Delay(0.1)                    // 0.1s
+				general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 				return
 			}
 
@@ -236,7 +236,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 
 			// 分隔符和延时（延时使输出更加顺畅）
 			general.PrintDelimiter(textLength) // 分隔符
-			general.Delay(0.1)                 // 0.01s
+			general.Delay(general.DelayTime)   // 添加一个延时，使输出更加顺畅
 		case "n":
 			continue
 		default:

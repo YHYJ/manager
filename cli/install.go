@@ -79,7 +79,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
 			general.PrintDelimiter(textLength)    // 分隔符
-			general.Delay(0.1)                    // 0.1s
+			general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 			return
 		}
 		// 获取远端版本（用于 release 安装方法）
@@ -91,7 +91,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
 			general.PrintDelimiter(textLength)    // 分隔符
-			general.Delay(0.1)                    // 0.1s
+			general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 			return
 		}
 
@@ -114,7 +114,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
 					general.PrintDelimiter(textLength)    // 分隔符
-					general.Delay(0.1)                    // 0.1s
+					general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 					return
 				}
 			}
@@ -140,7 +140,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
 				general.PrintDelimiter(textLength)    // 分隔符
-				general.Delay(0.1)                    // 0.1s
+				general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 				return
 			}
 
@@ -158,7 +158,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
 				general.PrintDelimiter(textLength)    // 分隔符
-				general.Delay(0.1)                    // 0.1s
+				general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 				return
 			}
 			// 下载 Release 文件
@@ -175,7 +175,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
 				general.PrintDelimiter(textLength)    // 分隔符
-				general.Delay(0.1)                    // 0.1s
+				general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 				return
 			}
 
@@ -187,7 +187,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
 				general.PrintDelimiter(textLength)    // 分隔符
-				general.Delay(0.1)                    // 0.1s
+				general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 				return
 			}
 			// 使用校验文件校验下载的压缩包
@@ -199,7 +199,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
 				general.PrintDelimiter(textLength)    // 分隔符
-				general.Delay(0.1)                    // 0.1s
+				general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 				return
 			}
 			if verificationResult { // 压缩包校验通过
@@ -211,7 +211,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
 					general.PrintDelimiter(textLength)    // 分隔符
-					general.Delay(0.1)                    // 0.1s
+					general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 					return
 				}
 				archivedProgram := filepath.Join(goReleaseTempDir, archiveFileNameWithoutFileType, name)                // 解压得到的程序
@@ -229,7 +229,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
-						general.Delay(0.1)                    // 0.1s
+						general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 						return
 					} else {
 						// 记账
@@ -246,7 +246,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							general.Delay(0.1)                    // 0.1s
+							general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 							return
 						}
 					}
@@ -262,7 +262,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							general.Delay(0.1)                    // 0.1s
+							general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 							return
 						}
 						// 记账
@@ -284,7 +284,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							general.Delay(0.1)                    // 0.1s
+							general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 							return
 						}
 						if !general.FileExist(localResourcesIconFolder) {
@@ -295,7 +295,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								general.Delay(0.1)                    // 0.1s
+								general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 								return
 							}
 						}
@@ -309,7 +309,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								general.Delay(0.1)                    // 0.1s
+								general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 								continue
 							}
 							// 记账
@@ -332,7 +332,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
-						general.Delay(0.1)                    // 0.1s
+						general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 						return
 					}
 
@@ -344,7 +344,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 						// 分隔符和延时（延时使输出更加顺畅）
 						textLength = general.RealLength(text) // 分隔符长度
 						general.PrintDelimiter(textLength)    // 分隔符
-						general.Delay(0.1)                    // 0.1s
+						general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 						return
 					} else {
 						// 记账
@@ -361,7 +361,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							general.Delay(0.1)                    // 0.1s
+							general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 							return
 						}
 					}
@@ -377,7 +377,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							general.Delay(0.1)                    // 0.1s
+							general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 							return
 						}
 						// 记账
@@ -399,7 +399,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 							// 分隔符和延时（延时使输出更加顺畅）
 							textLength = general.RealLength(text) // 分隔符长度
 							general.PrintDelimiter(textLength)    // 分隔符
-							general.Delay(0.1)                    // 0.1s
+							general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 							return
 						}
 						if !general.FileExist(localResourcesIconFolder) {
@@ -410,7 +410,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								general.Delay(0.1)                    // 0.1s
+								general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 								return
 							}
 						}
@@ -424,7 +424,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 								// 分隔符和延时（延时使输出更加顺畅）
 								textLength = general.RealLength(text) // 分隔符长度
 								general.PrintDelimiter(textLength)    // 分隔符
-								general.Delay(0.1)                    // 0.1s
+								general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 								continue
 							}
 							// 记账
@@ -473,7 +473,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		}
 		// 分隔符和延时（延时使输出更加顺畅）
 		general.PrintDelimiter(textLength) // 分隔符
-		general.Delay(0.1)                 // 0.01s
+		general.Delay(general.DelayTime)   // 0添加一个延时，使输出更加顺畅
 	case "source":
 		// 创建临时目录
 		if err := general.CreateDir(config.Program.SourceTemp); err != nil {
@@ -500,7 +500,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
 				general.PrintDelimiter(textLength)    // 分隔符
-				general.Delay(0.1)                    // 0.1s
+				general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 				return
 			}
 		}
