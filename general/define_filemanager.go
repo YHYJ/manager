@@ -22,8 +22,6 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-
-	"github.com/gookit/color"
 )
 
 // ReadFile 依次读取文件每行内容
@@ -60,95 +58,6 @@ func ReadFile(file string) ([]string, error) {
 	return lines, nil
 }
 
-// ReadFileLine 读取文件指定行
-//
-// 参数：
-//   - file: 文件路径
-//   - line: 行号
-//
-// 返回：
-//   - 指定行的内容
-func ReadFileLine(file string, line int) string {
-	// 打开文件
-	text, err := os.Open(file)
-	if err != nil {
-		fileName, lineNo := GetCallerInfo()
-		color.Printf("%s %s -> Unable to open file: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-	}
-	defer text.Close()
-
-	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(text)
-	// 行计数
-	count := 1
-	// 逐行读取，输出指定行
-	for scanner.Scan() {
-		if line == count {
-			return scanner.Text()
-		}
-		count++
-	}
-	return ""
-}
-
-// ReadFileKey 读取文件包含关键字的行
-//
-// 参数：
-//   - file: 文件路径
-//   - key: 关键字
-//
-// 返回：
-//   - 包含关键字的行的内容
-func ReadFileKey(file, key string) string {
-	// 打开文件
-	text, err := os.Open(file)
-	if err != nil {
-		fileName, lineNo := GetCallerInfo()
-		color.Printf("%s %s -> Unable to open file: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-	}
-	defer text.Close()
-
-	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(text)
-	// 逐行读取，输出指定行
-	for scanner.Scan() {
-		if strings.Contains(scanner.Text(), key) {
-			return scanner.Text()
-		}
-	}
-	return ""
-}
-
-// ReadFileCount 获取文件包含关键字的行的计数
-//
-// 参数：
-//   - file: 文件路径
-//   - key: 关键字
-//
-// 返回：
-//   - 包含关键字的行的数量
-func ReadFileCount(file, key string) int {
-	// 打开文件
-	text, err := os.Open(file)
-	if err != nil {
-		fileName, lineNo := GetCallerInfo()
-		color.Printf("%s %s -> Unable to open file: %s\n", DangerText("Error:"), SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-	}
-	defer text.Close()
-
-	// 创建一个扫描器对象按行遍历
-	scanner := bufio.NewScanner(text)
-	// 计数器
-	count := 0
-	// 逐行读取，输出指定行
-	for scanner.Scan() {
-		if strings.Contains(scanner.Text(), key) {
-			count++
-		}
-	}
-	return count
-}
-
 // FileExist 判断文件是否存在
 //
 // 参数：
@@ -161,57 +70,6 @@ func FileExist(filePath string) bool {
 		return false
 	}
 	return true
-}
-
-// GetAbsPath 获取指定文件的绝对路径
-//
-// 参数：
-//   - filePath: 文件路径
-//
-// 返回：
-//   - 文件的绝对路径
-func GetAbsPath(filePath string) string {
-	// 获取绝对路径
-	absPath, err := filepath.Abs(filePath)
-	if err != nil {
-		return ""
-	} else {
-		return absPath
-	}
-}
-
-// GetFileDir 获取文件所在目录
-//
-// 参数：
-//   - filePath: 文件路径
-//
-// 返回：
-//   - 文件所在目录
-func GetFileDir(filePath string) string {
-	return filepath.Dir(filePath)
-}
-
-// FileEmpty 判断文件是否为空
-//
-//   - 无法判断文件夹
-//
-// 参数：
-//   - file: 文件路径
-//
-// 返回：
-//   - 文件为空返回 true，否则返回 false
-func FileEmpty(file string) bool {
-	text, err := os.Open(file)
-	if err != nil {
-		return true
-	}
-	defer text.Close()
-
-	fi, err := text.Stat()
-	if err != nil {
-		return true
-	}
-	return fi.Size() == 0
 }
 
 // EmptyFile 清空文件内容，文件不存在则创建
@@ -234,28 +92,6 @@ func EmptyFile(file string) error {
 		return err
 	}
 	return nil
-}
-
-// FolderEmpty 判断文件夹是否为空
-//
-//   - 包括隐藏文件
-//
-// 参数：
-//   - dir: 文件夹路径
-//
-// 返回：
-//   - 文件夹为空返回 true，否则返回 false
-func FolderEmpty(dir string) bool {
-	text, err := os.Open(dir)
-	if err != nil {
-		return true
-	}
-	defer text.Close()
-
-	if _, err = text.Readdir(1); err == io.EOF {
-		return true
-	}
-	return false
 }
 
 // ListFolderFiles 列出指定文件夹下的所有文件
