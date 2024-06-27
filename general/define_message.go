@@ -27,19 +27,16 @@ var (
 )
 
 var (
-	MultiSelectTips  = "Please select from the following %s (multi-select)\n"  // 提示词 - 多选
-	SingleSelectTips = "Please select from the following %s (single-select)\n" // 提示词 - 单选
-	KeyTips          = "Press '%s' to select, '%s' to run, '%s' to quit\n"     // 提示词 - 按键
-	SelectOneTips    = "Select %s"                                             // 提示词 - 单选
-	SelectAllTips    = "Select All"                                            // 提示词 - 全选
-	UninstallTips    = "Do you want to uninstall '%s'?"                          // 提示词 - 卸载软件
-)
-
-var (
-	OverWriteTips = "%s file already exists, do you want to overwrite it?" // 提示词 - 文件已存在是否覆写
-)
-
-var (
-	InstallTips = "Please install %s first" // 提示词 - 需要安装
-	InputTips   = "Please input '%s' value" // 提示词 - 输入
+	MultiSelectTips     = "Please select from the following %s (multi-select)\n"                                    // 提示词 - 多选
+	SingleSelectTips    = "Please select from the following %s (single-select)\n"                                   // 提示词 - 单选
+	KeyTips             = "Press '%s' to select, '%s' to run, '%s' to quit\n"                                       // 提示词 - 按键
+	SelectOneTips       = "Select %s"                                                                               // 提示词 - 单选
+	SelectAllTips       = "Select All"                                                                              // 提示词 - 全选
+	UninstallTips       = "Do you want to uninstall '%s'?"                                                          // 提示词 - 卸载软件
+	OverWriteTips       = "%s file already exists, do you want to overwrite it?"                                    // 提示词 - 文件已存在是否覆写
+	InstallTips         = "Please install %s first"                                                                 // 提示词 - 需要安装
+	InputTips           = "Please input '%s' value"                                                                 // 提示词 - 输入
+	RestartServiceTips  = "Service '%s' modified, restart it?"                                                      // 提示词 - 重启服务
+	EnableServiceTips   = "Service '%s' disabled, enable it?"                                                       // 提示词 - 启用服务
+	NotFoundServiceTips = "Not find the '%s' service, please check /etc/systemd/system and /usr/lib/systemd/system" // 提示词 - 未找到服务
 )
