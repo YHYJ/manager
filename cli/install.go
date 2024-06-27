@@ -96,7 +96,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		}
 
 		// 获取本地程序版本信息
-		localVersion, commandErr := general.RunCommandGetResult(localProgram, programVersionArgs)
+		localVersion, _, commandErr := general.RunCommand(localProgram, programVersionArgs)
 
 		// 比较远端和本地版本
 		if remoteTag == localVersion { // 版本一致，则输出无需更新信息
@@ -445,7 +445,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					if general.FileExist(completionDir) {
 						completionFile := filepath.Join(completionDir, color.Sprintf("_%s", name))
 						generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s", localProgram, completionFile)}
-						if err := general.RunCommand("bash", generateArgs); err != nil {
+						if _, _, err := general.RunCommand("bash", generateArgs); err != nil {
 							text := color.Sprintf("%s %s\n", general.ErrorFlag, general.DangerText(general.AcsInstallFailedMessage))
 							color.Printf(text)
 							textLength = general.RealLength(text) // 分隔符长度
@@ -518,7 +518,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 		}
 
 		// 获取本地程序版本信息
-		localVersion, commandErr := general.RunCommandGetResult(localProgram, programVersionArgs)
+		localVersion, _, commandErr := general.RunCommand(localProgram, programVersionArgs)
 
 		// 比较远端和本地版本
 		if remoteTag == localVersion { // 版本一致，则输出无需更新信息
@@ -578,7 +578,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 			// 编译生成程序
 			if general.FileExist("Makefile") { // Makefile 文件存在则使用 make 编译
 				makeArgs := []string{}
-				if err := general.RunCommand("make", makeArgs); err != nil {
+				if _, _, err := general.RunCommand("make", makeArgs); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
 					text := color.Sprintf("%s %s -> Unable to build: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 					color.Printf(text)
@@ -590,7 +590,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				}
 			} else if general.FileExist("main.go") { // Makefile 文件不存在则使用 `go build` 命令编译
 				buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", name}
-				if err := general.RunCommand("go", buildArgs); err != nil {
+				if _, _, err := general.RunCommand("go", buildArgs); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
 					text := color.Sprintf("%s %s -> Unable to build: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 					color.Printf(text)
@@ -618,7 +618,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				if commandErr != nil { // 不存在，安装
 					if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令安装
 						makeArgs := []string{"install"}
-						if err := general.RunCommand("make", makeArgs); err != nil {
+						if _, _, err := general.RunCommand("make", makeArgs); err != nil {
 							fileName, lineNo := general.GetCallerInfo()
 							text := color.Sprintf("%s %s -> Unable to install: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 							color.Printf(text)
@@ -665,7 +665,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 				} else { // 存在，更新
 					if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令更新
 						makeArgs := []string{"install"}
-						if err := general.RunCommand("make", makeArgs); err != nil {
+						if _, _, err := general.RunCommand("make", makeArgs); err != nil {
 							fileName, lineNo := general.GetCallerInfo()
 							text := color.Sprintf("%s %s -> Unable to install: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 							color.Printf(text)
@@ -728,7 +728,7 @@ func InstallSelfProgram(configTree *toml.Tree) {
 					if general.FileExist(completionDir) {
 						completionFile := filepath.Join(completionDir, color.Sprintf("_%s", name))
 						generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s", localProgram, completionFile)}
-						if err := general.RunCommand("bash", generateArgs); err != nil {
+						if _, _, err := general.RunCommand("bash", generateArgs); err != nil {
 							text := color.Sprintf("%s %s\n", general.ErrorFlag, general.DangerText(general.AcsInstallFailedMessage))
 							color.Printf(text)
 							textLength = general.RealLength(text) // 分隔符长度
@@ -863,7 +863,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			// 获取本地程序版本信息
 			localProgram := filepath.Join(config.Program.ProgramPath, program) // 本地程序路径
 			programVersionArgs := []string{"version", "--only"}                // 获取本地程序版本信息的参数
-			localVersion, commandErr := general.RunCommandGetResult(localProgram, programVersionArgs)
+			localVersion, _, commandErr := general.RunCommand(localProgram, programVersionArgs)
 
 			// 比较远端和本地版本
 			if remoteTag == localVersion { // 版本一致，则输出无需更新信息
@@ -1204,7 +1204,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						if general.FileExist(completionDir) {
 							completionFile := filepath.Join(completionDir, color.Sprintf("_%s", program))
 							generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s", localProgram, completionFile)}
-							if err := general.RunCommand("bash", generateArgs); err != nil {
+							if _, _, err := general.RunCommand("bash", generateArgs); err != nil {
 								text := color.Sprintf("%s %s\n", general.ErrorFlag, general.DangerText(general.AcsInstallFailedMessage))
 								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1285,7 +1285,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 			// 获取本地程序版本信息
 			localProgram := filepath.Join(config.Program.ProgramPath, program) // 本地程序路径
 			programVersionArgs := []string{"version", "--only"}                // 获取本地程序版本信息的参数
-			localVersion, commandErr := general.RunCommandGetResult(localProgram, programVersionArgs)
+			localVersion, _, commandErr := general.RunCommand(localProgram, programVersionArgs)
 
 			// 比较远端和本地版本
 			if remoteTag == localVersion { // 版本一致，则输出无需更新信息
@@ -1343,7 +1343,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 				// 编译生成程序
 				if general.FileExist("Makefile") { // Makefile 文件存在则使用 make 编译
 					makeArgs := []string{}
-					if err := general.RunCommand("make", makeArgs); err != nil {
+					if _, _, err := general.RunCommand("make", makeArgs); err != nil {
 						fileName, lineNo := general.GetCallerInfo()
 						text := color.Sprintf("%s %s -> Unable to build: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 						color.Printf(text)
@@ -1355,7 +1355,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					}
 				} else if general.FileExist("main.go") { // Makefile 文件不存在则使用 `go build` 命令编译
 					buildArgs := []string{"build", "-trimpath", "-ldflags=-s -w", "-o", program}
-					if err := general.RunCommand("go", buildArgs); err != nil {
+					if _, _, err := general.RunCommand("go", buildArgs); err != nil {
 						fileName, lineNo := general.GetCallerInfo()
 						text := color.Sprintf("%s %s -> Unable to build: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 						color.Printf(text)
@@ -1385,7 +1385,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					if commandErr != nil { // 不存在，安装
 						if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令安装
 							makeArgs := []string{"install"}
-							if err := general.RunCommand("make", makeArgs); err != nil {
+							if _, _, err := general.RunCommand("make", makeArgs); err != nil {
 								fileName, lineNo := general.GetCallerInfo()
 								text := color.Sprintf("%s %s -> Unable to install: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 								color.Printf(text)
@@ -1432,7 +1432,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 					} else { // 存在，更新
 						if general.FileExist("Makefile") { // Makefile 文件存在则使用 `make install` 命令更新
 							makeArgs := []string{"install"}
-							if err := general.RunCommand("make", makeArgs); err != nil {
+							if _, _, err := general.RunCommand("make", makeArgs); err != nil {
 								fileName, lineNo := general.GetCallerInfo()
 								text := color.Sprintf("%s %s -> Unable to install: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 								color.Printf(text)
@@ -1492,7 +1492,7 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 						if general.FileExist(completionDir) {
 							completionFile := filepath.Join(completionDir, color.Sprintf("_%s", program))
 							generateArgs := []string{"-c", color.Sprintf("%s completion zsh > %s", localProgram, completionFile)}
-							if err := general.RunCommand("bash", generateArgs); err != nil {
+							if _, _, err := general.RunCommand("bash", generateArgs); err != nil {
 								text := color.Sprintf("%s %s\n", general.ErrorFlag, general.DangerText(general.AcsInstallFailedMessage))
 								color.Printf(text)
 								textLength = general.RealLength(text) // 分隔符长度
@@ -1631,7 +1631,7 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		// 获取本地脚本 Hash
 		localProgram := filepath.Join(config.Program.ProgramPath, program) // 本地程序路径
 		programVersionArgs := []string{"hash-object", localProgram}        // 获取本地程序版本信息的参数
-		localHash, commandErr := general.RunCommandGetResult("git", programVersionArgs)
+		localHash, _, commandErr := general.RunCommand("git", programVersionArgs)
 
 		// 比较远端和本地脚本 Hash
 		if remoteHash == localHash { // Hash 一致，则输出无需更新信息
