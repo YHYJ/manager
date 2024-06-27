@@ -31,14 +31,14 @@ func RunCommandGetResult(command string, args []string) (string, error) {
 
 	// 定义命令
 	cmd := exec.Command(command, args...)
+
 	// 执行命令并获取命令输出
 	output, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
+
 	// 类型转换消除乱码和格式问题
 	result := strings.TrimRight(string(output), "\n")
-	return result, nil
+
+	return result, err
 }
 
 // RunCommand 运行命令不返回命令的输出
