@@ -96,15 +96,15 @@ func OpenConfigFile(configFile string) {
 		editor := general.GetVariable("EDITOR")
 		if editor == "" {
 			editor = "vim"
-			if _, _, err := general.RunCommand(editor, []string{configFile}); err != nil {
+			if _, _, err := general.RunCommandToBuffer(editor, []string{configFile}); err != nil {
 				editor = "vi"
-				if _, _, err := general.RunCommand(editor, []string{configFile}); err != nil {
+				if _, _, err := general.RunCommandToBuffer(editor, []string{configFile}); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
 					color.Printf("%s %s -> Unable to open file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				}
 			}
 		} else {
-			if _, _, err := general.RunCommand(editor, []string{configFile}); err != nil {
+			if _, _, err := general.RunCommandToBuffer(editor, []string{configFile}); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
 				color.Printf("%s %s -> Unable to open file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			}

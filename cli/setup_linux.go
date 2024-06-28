@@ -552,13 +552,13 @@ func rebirth(name string, margin, coefficient int) {
 
 	// 重新加载 systemd 管理器配置
 	reloadArgs := []string{"daemon-reload"} // 重载服务配置
-	if _, _, err := general.RunCommand("systemctl", reloadArgs); err != nil {
+	if _, _, err := general.RunCommandToBuffer("systemctl", reloadArgs); err != nil {
 		color.Printf(noResultFormat, cMargin, " ", general.SuccessText("-"), general.ErrorFlag, general.DangerText(err))
 	}
 
 	// 询问是否需要启用/重启服务
 	checkStatusArgs := []string{"is-enabled", name} // 检测服务启用状态
-	status, _, _ := general.RunCommand("systemctl", checkStatusArgs)
+	status, _, _ := general.RunCommandToBuffer("systemctl", checkStatusArgs)
 	switch status {
 	case "enabled":
 		color.Printf(askItemsFormat, cMargin, " ", general.SuccessText("-"))
@@ -572,7 +572,7 @@ func rebirth(name string, margin, coefficient int) {
 		case "y":
 			// 重启服务
 			restartArgs := []string{"restart", name}
-			if _, stderr, err := general.RunCommand("systemctl", restartArgs); err != nil {
+			if _, stderr, err := general.RunCommandToBuffer("systemctl", restartArgs); err != nil {
 				color.Printf(noResultFormat, cMargin, " ", general.SuccessText("-"), general.ErrorFlag, general.DangerText(stderr))
 			} else {
 				color.Printf(yesResultFormat, cMargin, " ", general.SuccessText("-"), general.SuccessFlag)
@@ -594,7 +594,7 @@ func rebirth(name string, margin, coefficient int) {
 		case "y":
 			// 启用服务（并立即运行）
 			enableArgs := []string{"enable", "--now", name}
-			if _, stderr, err := general.RunCommand("systemctl", enableArgs); err != nil {
+			if _, stderr, err := general.RunCommandToBuffer("systemctl", enableArgs); err != nil {
 				color.Printf(noResultFormat, cMargin, " ", general.SuccessText("-"), general.ErrorFlag, general.DangerText(stderr))
 			} else {
 				color.Printf(yesResultFormat, cMargin, " ", general.SuccessText("-"), general.SuccessFlag)

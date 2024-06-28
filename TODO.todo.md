@@ -1,4 +1,3 @@
-- [ ] RunCommandGetResult 合并到 RunCommand (2024-06-27 13:40)
 - [X] 优化输出信息 (2023-06-16 13:40)
 - [X] 完成install --script部分 (2023-06-16 16:36)
 - [X] 默认配置项增加'go.fallbacksource'和'shell.fallbacksource' (2023-07-12 16:18)
@@ -23,3 +22,4 @@
     - [X] 指针在最底下继续向下移动时依次上移显示 (2024-05-23 19:52)
 - [X] 检查 'if err' (2024-06-21 16:59)
 - [X] 'setup' 子命令对适用的项目增加配置完后询问是否重启/使能的功能 (2024-06-14 15:29)
+- [X] RunCommandGetResult 更新为 RunCommandToOS，RunCommand 更新为 RunCommandToBuffer (2024-06-27 13:40)
