@@ -11,6 +11,7 @@ package cli
 
 import (
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/gookit/color"
@@ -154,6 +155,9 @@ func Uninstall(configTree *toml.Tree, category string) {
 		}
 	}
 
+	// 显示项排序
+	sort.Strings(installedPrograms)
+
 	// 开始卸载提示
 	totalNum := len(programNames)          // 总程序数
 	installedNum := len(installedPrograms) // 已安装程序数
@@ -161,11 +165,14 @@ func Uninstall(configTree *toml.Tree, category string) {
 	negatives.WriteString(color.Sprintf("%s Uninstall %s programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText(category, "-based"), installedNum, totalNum))
 
 	// 让用户选择需要卸载的程序
-	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms, []string{}, negatives.String())
+	selectedPrograms, err := general.MultipleSelectionFilter(installedPrograms, installedPrograms, negatives.String())
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
+
+	// 选择项排序
+	sort.Strings(selectedPrograms)
 
 	// 留屏信息
 	if len(selectedPrograms) > 0 {

@@ -12,6 +12,7 @@ package cli
 import (
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/gookit/color"
@@ -798,6 +799,9 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		}
 	}
 
+	// 显示项排序
+	sort.Strings(config.Program.Go.Names)
+
 	// 开始安装提示
 	negatives := strings.Builder{}
 	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("golang-based"), len(installedProgram), totalNum))
@@ -809,6 +813,9 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
+
+	// 选择项排序
+	sort.Strings(selectedPrograms)
 
 	// 留屏信息
 	if len(selectedPrograms) > 0 {
@@ -1562,6 +1569,9 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		}
 	}
 
+	// 显示项排序
+	sort.Strings(config.Program.Shell.Names)
+
 	// 开始安装提示
 	negatives := strings.Builder{}
 	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("shell-based"), len(installedProgram), totalNum))
@@ -1580,6 +1590,9 @@ func InstallShellBasedProgram(configTree *toml.Tree) {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 	}
+
+	// 选择项排序
+	sort.Strings(selectedPrograms)
 
 	// 留屏信息
 	if len(selectedPrograms) > 0 {
