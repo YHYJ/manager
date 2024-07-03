@@ -31,7 +31,7 @@ func CreateConfigFile(configFile string) {
 		overWrite, err := general.AskUser(general.QuestionText(question), []string{"y", "N"})
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s -> Unable to get answers: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
 
@@ -44,17 +44,17 @@ func CreateConfigFile(configFile string) {
 
 			if err := general.DeleteFile(configFile); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s -> Unable to delete file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				return
 			}
 			if err := general.CreateFile(configFile); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s -> Unable to create file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				return
 			}
 			if _, err := general.WriteTomlConfig(configFile); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s -> Unable to write file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				return
 			}
 			color.Printf("Create %s: %s\n", general.PrimaryText(configFile), general.SuccessText("file overwritten"))
@@ -72,12 +72,12 @@ func CreateConfigFile(configFile string) {
 
 		if err := general.CreateFile(configFile); err != nil {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s -> Unable to create file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
 		if _, err := general.WriteTomlConfig(configFile); err != nil {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s -> Unable to write file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
 		color.Printf("Create %s: %s\n", general.PrimaryText(configFile), general.SuccessText("file created"))
@@ -100,13 +100,13 @@ func OpenConfigFile(configFile string) {
 				editor = "vi"
 				if _, _, err := general.RunCommandToBuffer(editor, []string{configFile}); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
-					color.Printf("%s %s -> Unable to open file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+					color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 				}
 			}
 		} else {
 			if _, _, err := general.RunCommandToBuffer(editor, []string{configFile}); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s -> Unable to open file: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			}
 		}
 	}
@@ -128,12 +128,12 @@ func PrintConfigFile(configFile string) {
 		configTree, err := general.GetTomlConfig(configFile)
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s -> Unable to get config: %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		} else {
 			color.Println(general.PrimaryText(configTree))
 		}
 	} else {
 		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s -> %s\n", general.DangerText("Error:"), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), configFileNotFoundMessage)
+		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), configFileNotFoundMessage)
 	}
 }
