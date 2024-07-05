@@ -63,10 +63,10 @@ var uninstallCmd = &cobra.Command{
 }
 
 func init() {
-	uninstallCmd.Flags().BoolP("self", "", false, "Uninstall itself")
-	uninstallCmd.Flags().BoolP("all", "", false, "Uninstall all software and scripts")
-	uninstallCmd.Flags().BoolP("go", "", false, "Uninstall golang-based software")
-	uninstallCmd.Flags().BoolP("shell", "", false, "Uninstall shell scripts")
+	uninstallCmd.Flags().Bool("self", false, "Uninstall itself")
+	uninstallCmd.Flags().Bool("all", false, "Uninstall all software and scripts")
+	uninstallCmd.Flags().Bool("go", false, "Uninstall golang-based software")
+	uninstallCmd.Flags().Bool("shell", false, "Uninstall shell scripts")
 
 	uninstallCmd.Flags().BoolP("help", "h", false, "help for uninstall command")
 	rootCmd.AddCommand(uninstallCmd)

@@ -63,10 +63,10 @@ var installCmd = &cobra.Command{
 }
 
 func init() {
-	installCmd.Flags().BoolP("self", "", false, "Install or update itself")
-	installCmd.Flags().BoolP("all", "", false, "Install or update all software and scripts")
-	installCmd.Flags().BoolP("go", "", false, "Install or update golang-based software")
-	installCmd.Flags().BoolP("shell", "", false, "Install or update shell scripts")
+	installCmd.Flags().Bool("self", false, "Install or update itself")
+	installCmd.Flags().Bool("all", false, "Install or update all software and scripts")
+	installCmd.Flags().Bool("go", false, "Install or update golang-based software")
+	installCmd.Flags().Bool("shell", false, "Install or update shell scripts")
 
 	installCmd.Flags().BoolP("help", "h", false, "help for install command")
 	rootCmd.AddCommand(installCmd)

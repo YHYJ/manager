@@ -64,12 +64,12 @@ var setupCmd = &cobra.Command{
 }
 
 func init() {
-	setupCmd.Flags().BoolP("all", "", false, "Set up all programs/scripts")
-	setupCmd.Flags().BoolP("chezmoi", "", false, "Set up chezmoi")
-	setupCmd.Flags().BoolP("cobra", "", false, "Set up cobra-cli")
-	setupCmd.Flags().BoolP("git", "", false, "Set up git and generate SSH keys")
-	setupCmd.Flags().BoolP("go", "", false, "Set up golang")
-	setupCmd.Flags().BoolP("pip", "", false, "Set up the mirror source used by pip")
+	setupCmd.Flags().Bool("all", false, "Set up all programs/scripts")
+	setupCmd.Flags().Bool("chezmoi", false, "Set up chezmoi")
+	setupCmd.Flags().Bool("cobra", false, "Set up cobra-cli")
+	setupCmd.Flags().Bool("git", false, "Set up git and generate SSH keys")
+	setupCmd.Flags().Bool("go", false, "Set up golang")
+	setupCmd.Flags().Bool("pip", false, "Set up the mirror source used by pip")
 
 	setupCmd.Flags().BoolP("help", "h", false, "help for setup command")
 	rootCmd.AddCommand(setupCmd)

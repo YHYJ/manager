@@ -84,15 +84,15 @@ var setupCmd = &cobra.Command{
 }
 
 func init() {
-	setupCmd.Flags().BoolP("all", "", false, "Set up all programs/scripts")
-	setupCmd.Flags().BoolP("chezmoi", "", false, "Set up chezmoi")
-	setupCmd.Flags().BoolP("cobra", "", false, "Set up cobra-cli")
-	setupCmd.Flags().BoolP("docker", "", false, "Set up docker (need to be root)")
-	setupCmd.Flags().BoolP("frpc", "", false, "Set up frpc restart timing (need to be root)")
-	setupCmd.Flags().BoolP("git", "", false, "Set up git and generate SSH keys")
-	setupCmd.Flags().BoolP("go", "", false, "Set up golang")
-	setupCmd.Flags().BoolP("pip", "", false, "Set up the mirror source used by pip")
-	setupCmd.Flags().BoolP("system-checkupdates", "", false, "Set up system-checkupdates (need to be root)")
+	setupCmd.Flags().Bool("all", false, "Set up all programs/scripts")
+	setupCmd.Flags().Bool("chezmoi", false, "Set up chezmoi")
+	setupCmd.Flags().Bool("cobra", false, "Set up cobra-cli")
+	setupCmd.Flags().Bool("docker", false, "Set up docker (need to be root)")
+	setupCmd.Flags().Bool("frpc", false, "Set up frpc restart timing (need to be root)")
+	setupCmd.Flags().Bool("git", false, "Set up git and generate SSH keys")
+	setupCmd.Flags().Bool("go", false, "Set up golang")
+	setupCmd.Flags().Bool("pip", false, "Set up the mirror source used by pip")
+	setupCmd.Flags().Bool("system-checkupdates", false, "Set up system-checkupdates (need to be root)")
 
 	setupCmd.Flags().BoolP("help", "h", false, "help for setup command")
 	rootCmd.AddCommand(setupCmd)
