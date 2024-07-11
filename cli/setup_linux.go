@@ -273,10 +273,11 @@ func ProgramConfigurator(flags map[string]bool) {
 			GitDependencies = "git"                             // 主程序
 			GitConfigFile   = filepath.Join(home, ".gitconfig") // 配置文件
 			// git 配置
-			gitConfigFormat      = "[user]\n%sname = %s\n%semail = %s\n[core]\n%seditor = %s\n%sautocrlf = %s\n[merge]\n%stool = %s\n[color]\n%sui = %v\n[pull]\n%srebase = %v\n[filter \"lfs\"]\n%sclean = %s\n%ssmudge = %s\n%sprocess = %s\n%srequired = %v\n"
+			gitConfigFormat      = "[user]\n%sname = %s\n%semail = %s\n[core]\n%seditor = %s\n%sautocrlf = %s\n[diff]\n%sexternal = %s\n[merge]\n%stool = %s\n[color]\n%sui = %v\n[pull]\n%srebase = %v\n[filter \"lfs\"]\n%sclean = %s\n%ssmudge = %s\n%sprocess = %s\n%srequired = %v\n"
 			gitUserEmail         = "email@example.com"
 			gitCoreEditor        = "vim"
 			gitCoreAutoCRLF      = "input"
+			gitDiffExternal      = "difft"
 			gitMergeTool         = "vimdiff"
 			gitColorUI           = "true"
 			gitPullRebase        = "false"
@@ -306,6 +307,8 @@ func ProgramConfigurator(flags map[string]bool) {
 				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 				gitCoreAutoCRLF, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[core].autocrlf")), gitCoreAutoCRLF)
 				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
+				gitDiffExternal, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[diff].external")), gitDiffExternal)
+				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 				gitMergeTool, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[merge].tool")), gitMergeTool)
 				color.Printf(askItemsFormat, 4, " ", general.SuccessText("-"))
 				gitColorUI, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[color].ui")), gitColorUI)
@@ -321,7 +324,7 @@ func ProgramConfigurator(flags map[string]bool) {
 				gitFilterLfsRequired, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "[filter \"lfs\"].required")), gitFilterLfsRequired)
 
 				// 配置
-				GitConfigContent := color.Sprintf(gitConfigFormat, sep, hostname, sep, gitUserEmail, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
+				GitConfigContent := color.Sprintf(gitConfigFormat, sep, hostname, sep, gitUserEmail, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitDiffExternal, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
 				if err := general.WriteFile(GitConfigFile, GitConfigContent, writeMode); err != nil {
 					color.Printf(noResultFormat, 4, " ", general.SuccessText("-"), general.ErrorFlag, general.DangerText(err))
 				} else {
