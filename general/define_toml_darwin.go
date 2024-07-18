@@ -175,6 +175,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		"curator",
 		"eniac",
 		"skynet",
+		"wocker",
 	}
 	goCompletionDir = []string{
 		filepath.Join(UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),

@@ -180,6 +180,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		"scleaner",
 		"skynet",
 		"trash",
+		"wocker",
 	}
 	goCompletionDir = []string{
 		filepath.Join(UserInfo.HomeDir, ".cache", "oh-my-zsh", "completions"),
@@ -190,7 +191,6 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		"git-browser",
 		"open",
 		"py-virtualenv-tool",
-		"save-docker-images",
 		"spacevim-update",
 		"spider",
 		"system-checkupdates",

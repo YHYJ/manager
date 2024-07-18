@@ -162,15 +162,14 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		PocketPath  = ""         // 定义在不同平台的记账文件路径
 		goNames     = []string{} // 定义在不同平台可用的程序
 	)
-	if Platform == "windows" {
-		ProgramPath = filepath.Join(GetVariable("ProgramFiles"), Name)
-		ReleaseTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "release")
-		SourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "source")
-		PocketPath = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "local")
-		goNames = []string{
-			name,
-			"skynet",
-		}
+	ProgramPath = filepath.Join(GetVariable("ProgramFiles"), Name)
+	ReleaseTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "release")
+	SourceTemp = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "source")
+	PocketPath = filepath.Join(UserInfo.HomeDir, "AppData", "Local", "Temp", name, "local")
+	goNames = []string{
+		name,
+		"skynet",
+		"wocker",
 	}
 
 	// 定义一个 map[string]interface{} 类型的变量并赋值

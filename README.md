@@ -152,7 +152,6 @@ curl -fsSL https://raw.githubusercontent.com/YHYJ/manager/main/install.sh | sudo
       "collect-system",
       "configure-dtags",
       "py-virtualenv-tool",
-      "save-docker-images",
       "sfm",
       "spacevim-update",
       "spider",
