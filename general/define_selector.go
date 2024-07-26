@@ -24,7 +24,7 @@ import (
 const (
 	selectKey = " "     // 默认的选择键
 	enterKey  = "enter" // 默认的确认键
-	quietKey  = "q"     // 默认的退出键
+	quitKey   = "q"     // 默认的退出键
 
 	selectorType = "program name" // 选择器主题
 )
@@ -39,7 +39,7 @@ var keyMap = map[string]string{
 		return UpperFirstChar(key)
 	}(),
 	enterKey: UpperFirstChar(enterKey),
-	quietKey: quietKey,
+	quitKey:  quitKey,
 }
 
 // model 结构体，选择器的数据模型
@@ -101,7 +101,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg: // 监控按键事件
 		// 对按下的相应按键做出对应反应
 		switch msg.String() {
-		case quietKey, "ctrl+c", "esc": // 按下退出键
+		case quitKey, "ctrl+c", "esc": // 按下退出键
 			// 退出前取消所有选中
 			m.selected = make(map[int]struct{})
 			return m, tea.Quit
@@ -191,7 +191,7 @@ func (m *model) headerView() string {
 	s.WriteString(m.negatives)
 	s.WriteString(color.Sprintf("%s\n", strings.Repeat(Separator1st, len(MultiSelectTips)+len(selectorType))))
 	s.WriteString(color.Sprintf(QuestionText(MultiSelectTips), selectorType))
-	s.WriteString(color.Sprintf(SecondaryText(KeyTips), keyMap[selectKey], keyMap[enterKey], keyMap[quietKey]))
+	s.WriteString(color.Sprintf(SecondaryText(KeyTips), keyMap[selectKey], keyMap[enterKey], keyMap[quitKey]))
 	s.WriteString(color.Sprintf("%s", strings.Repeat(Separator1st, len(MultiSelectTips)+len(selectorType))))
 
 	return s.String()
