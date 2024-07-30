@@ -66,7 +66,8 @@ func CreateConfigFile(configFile string) {
 			return
 		}
 	} else {
-		// 与用户交互获取代理配置
+		// 与用户交互获取配置信息
+		general.InstallMethod, _ = general.AskUser(general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")), general.AllInstallMethod)
 		general.HttpProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
 		general.HttpsProxy, _ = general.GetInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
 
