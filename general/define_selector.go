@@ -108,12 +108,12 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "up", "k": // 按下光标上移键
 			// 光标向上移动，到达上边界后循环
 			m.cursor--
-			m.fixCursor()
+			m.fixCursor(0, len(m.choices)-1)
 			m.fixViewport(false)
 		case "down", "j": // 按下光标下移键
 			// 光标向下移动，到达下边界后循环
 			m.cursor++
-			m.fixCursor()
+			m.fixCursor(0, len(m.choices)-1)
 			m.fixViewport(false)
 		case "pgup", "u":
 			m.viewport.LineUp(1)
@@ -257,11 +257,15 @@ func (m *model) footerView() string {
 }
 
 // fixCursor 修正光标位置，防止越界
-func (m *model) fixCursor() {
-	if m.cursor > len(m.choices)-1 {
+//
+// 参数：
+//   - minIndex: 最小光标索引
+//   - maxIndex: 最大光标索引
+func (m *model) fixCursor(minIndex, maxIndex int) {
+	if m.cursor > maxIndex {
 		m.cursor = 0
-	} else if m.cursor < 0 {
-		m.cursor = len(m.choices) - 1
+	} else if m.cursor < minIndex {
+		m.cursor = maxIndex
 	}
 }
 
