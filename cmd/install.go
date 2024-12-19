@@ -36,6 +36,13 @@ var installCmd = &cobra.Command{
 			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
+		// 获取配置项
+		config, err := general.LoadConfigToStruct(configTree)
+		if err != nil {
+			fileName, lineNo := general.GetCallerInfo()
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			return
+		}
 
 		// 根据参数执行操作
 		if allFlag {
@@ -44,17 +51,17 @@ var installCmd = &cobra.Command{
 
 		// 安装/更新管理程序本身
 		if selfFlag {
-			cli.InstallSelfProgram(configTree)
+			cli.InstallSelfProgram(config)
 		}
 
 		// 安装/更新基于 golang 的程序
 		if goFlag {
-			cli.InstallGolangBasedProgram(configTree)
+			cli.InstallGolangBasedProgram(config)
 		}
 
 		// 安装/更新基于 shell 的程序
 		if shellFlag {
-			cli.InstallShellBasedProgram(configTree)
+			cli.InstallShellBasedProgram(config)
 		}
 
 		// 显示通知

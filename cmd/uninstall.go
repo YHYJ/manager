@@ -36,6 +36,13 @@ var uninstallCmd = &cobra.Command{
 			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
+		// 获取配置项
+		config, err := general.LoadConfigToStruct(configTree)
+		if err != nil {
+			fileName, lineNo := general.GetCallerInfo()
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			return
+		}
 
 		// 根据参数执行操作
 		if allFlag {
@@ -44,17 +51,17 @@ var uninstallCmd = &cobra.Command{
 
 		// 卸载管理程序本身
 		if selfFlag {
-			cli.UninstallSelf(configTree)
+			cli.UninstallSelf(config)
 		}
 
 		// 卸载基于 golang 的程序
 		if goFlag {
-			cli.Uninstall(configTree, "go")
+			cli.Uninstall(config, "go")
 		}
 
 		// 卸载基于 shell 的程序
 		if shellFlag {
-			cli.Uninstall(configTree, "shell")
+			cli.Uninstall(config, "shell")
 		}
 
 		// 显示通知

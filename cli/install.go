@@ -16,23 +16,14 @@ import (
 	"strings"
 
 	"github.com/gookit/color"
-	"github.com/pelletier/go-toml"
 	"github.com/yhyj/manager/general"
 )
 
 // InstallSelfProgram 安装/更新管理程序本身
 //
 // 参数：
-//   - configTree: 解析 toml 配置文件得到的配置树
-func InstallSelfProgram(configTree *toml.Tree) {
-	// 获取配置项
-	config, err := general.LoadConfigToStruct(configTree)
-	if err != nil {
-		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-		return
-	}
-
+//   - config: 解析 toml 配置文件得到的配置项
+func InstallSelfProgram(config *general.Config) {
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -768,16 +759,8 @@ func InstallSelfProgram(configTree *toml.Tree) {
 // InstallGolangBasedProgram 安装/更新基于 Golang 的程序
 //
 // 参数：
-//   - configTree: 解析 toml 配置文件得到的配置树
-func InstallGolangBasedProgram(configTree *toml.Tree) {
-	// 获取配置项
-	config, err := general.LoadConfigToStruct(configTree)
-	if err != nil {
-		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-		return
-	}
-
+//   - config: 解析 toml 配置文件得到的配置项
+func InstallGolangBasedProgram(config *general.Config) {
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)
@@ -1539,16 +1522,8 @@ func InstallGolangBasedProgram(configTree *toml.Tree) {
 // InstallShellBasedProgram 安装/更新基于 Shell 的程序
 //
 // 参数：
-//   - configTree: 解析 toml 配置文件得到的配置树
-func InstallShellBasedProgram(configTree *toml.Tree) {
-	// 获取配置项
-	config, err := general.LoadConfigToStruct(configTree)
-	if err != nil {
-		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-		return
-	}
-
+//   - config: 解析 toml 配置文件得到的配置项
+func InstallShellBasedProgram(config *general.Config) {
 	// 设置代理
 	general.SetVariable("http_proxy", config.Variable.HTTPProxy)
 	general.SetVariable("https_proxy", config.Variable.HTTPSProxy)

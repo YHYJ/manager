@@ -15,23 +15,14 @@ import (
 	"strings"
 
 	"github.com/gookit/color"
-	"github.com/pelletier/go-toml"
 	"github.com/yhyj/manager/general"
 )
 
 // UninstallSelf 卸载管理程序本身
 //
 // 参数：
-//   - configTree: 解析 toml 配置文件得到的配置树
-func UninstallSelf(configTree *toml.Tree) {
-	// 获取配置项
-	config, err := general.LoadConfigToStruct(configTree)
-	if err != nil {
-		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-		return
-	}
-
+//   - config: 解析 toml 配置文件得到的配置项
+func UninstallSelf(config *general.Config) {
 	// 程序文件
 	program := config.Program.Self.Name // 程序名
 
@@ -48,18 +39,8 @@ func UninstallSelf(configTree *toml.Tree) {
 		return
 	}
 
-	// 记账文件
-	pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
-	pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
-	pocketLines := make([]string, 0)                                  // 记账文件内容
-	if general.FileExist(pocketFile) {                                // 读取记账文件内容
-		pocketLines, err = general.ReadFile(pocketFile)
-		if err != nil {
-			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-			return
-		}
-	}
+	// 设置文本参数
+	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
 
 	// 确认是否要卸载
 	question := color.Sprintf(general.UninstallTips, program)
@@ -71,21 +52,36 @@ func UninstallSelf(configTree *toml.Tree) {
 	}
 	switch answer {
 	case "y":
+		// 记账文件
+		pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
+		pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
+		pocketLines := make([]string, 0)                                  // 记账文件内容
+		if general.FileExist(pocketFile) {                                // 读取记账文件内容
+			pocketLines, err = general.ReadFile(pocketFile)
+			if err != nil {
+				fileName, lineNo := general.GetCallerInfo()
+				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+				return
+			}
+		}
 		color.Printf("%s\n", strings.Repeat(general.Separator2st, len(question)))
-	case "n":
-		return
-	default:
-		color.Printf("%s\n", strings.Repeat(general.Separator3st, len(question)))
-		color.Warn.Tips("%s: %s", "Unexpected answer", answer)
-		return
-	}
 
-	// 设置文本参数
-	textLength := 0 // 用于计算最后一行文本的长度，以便输出适当长度的分隔符
+		// 卸载程序
+		for _, pocketLine := range pocketLines {
+			if err := general.Uninstall(pocketLine); err != nil {
+				fileName, lineNo := general.GetCallerInfo()
+				text := color.Sprintf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+				color.Print(text)
+				// 分隔符和延时（延时使输出更加顺畅）
+				textLength = general.RealLength(text) // 分隔符长度
+				general.PrintDelimiter(textLength)    // 分隔符
+				general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
+				return
+			}
+		}
 
-	// 卸载程序
-	for _, pocketLine := range pocketLines {
-		if err := general.Uninstall(pocketLine); err != nil {
+		// 删除记账文件
+		if err := general.DeleteFile(pocketDir); err != nil {
 			fileName, lineNo := general.GetCallerInfo()
 			text := color.Sprintf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			color.Print(text)
@@ -95,44 +91,30 @@ func UninstallSelf(configTree *toml.Tree) {
 			general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
 			return
 		}
-	}
 
-	// 删除记账文件
-	if err := general.DeleteFile(pocketDir); err != nil {
-		fileName, lineNo := general.GetCallerInfo()
-		text := color.Sprintf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+		// 本次卸载结束分隔符
+		text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
 		color.Print(text)
-		// 分隔符和延时（延时使输出更加顺畅）
 		textLength = general.RealLength(text) // 分隔符长度
-		general.PrintDelimiter(textLength)    // 分隔符
-		general.Delay(general.DelayTime)      // 添加一个延时，使输出更加顺畅
+
+		// 分隔符和延时（延时使输出更加顺畅）
+		general.PrintDelimiter(textLength) // 分隔符
+		general.Delay(general.DelayTime)   // 添加一个延时，使输出更加顺畅
+	case "n":
+		return
+	default:
+		color.Printf("%s\n", strings.Repeat(general.Separator3st, len(question)))
+		color.Warn.Tips("%s: %s", "Unexpected answer", answer)
 		return
 	}
-
-	// 本次卸载结束分隔符
-	text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
-	color.Print(text)
-	textLength = general.RealLength(text) // 分隔符长度
-
-	// 分隔符和延时（延时使输出更加顺畅）
-	general.PrintDelimiter(textLength) // 分隔符
-	general.Delay(general.DelayTime)   // 添加一个延时，使输出更加顺畅
 }
 
 // Uninstall 卸载指定程序
 //
 // 参数：
-//   - configTree: 解析 toml 配置文件得到的配置树
+//   - config: 解析 toml 配置文件得到的配置项
 //   - category: 要卸载的类别，支持 uninstall 子命令除 '--all' 和 '--self' 之外的所有 Flags
-func Uninstall(configTree *toml.Tree, category string) {
-	// 获取配置项
-	config, err := general.LoadConfigToStruct(configTree)
-	if err != nil {
-		fileName, lineNo := general.GetCallerInfo()
-		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-		return
-	}
-
+func Uninstall(config *general.Config, category string) {
 	// 从配置读取指定类别的程序名
 	var programNames []string // 程序名切片
 	switch category {
