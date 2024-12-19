@@ -119,7 +119,7 @@ go build -gcflags="-trimpath" -ldflags="-s -w -X github.com/yhyj/manager/general
   - '--git'：配置 git 并生成 SSH 密钥
   - '--go'：配置 golang
   - '--pip'：配置 pip 使用的镜像源
-  - '--system-checkupdates'：配置系统更新检测服务
+  - '--update-checker'：配置系统更新检测服务
 
 - `config`子命令
 

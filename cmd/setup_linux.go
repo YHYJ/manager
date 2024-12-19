@@ -40,7 +40,7 @@ var setupCmd = &cobra.Command{
 			if isRoot {
 				allFlags["dockerFlag"] = true
 				allFlags["frpcFlag"] = true
-				allFlags["systemcheckupdatesFlag"] = true
+				allFlags["updatecheckerFlag"] = true
 				general.Notifier = append(general.Notifier, "Please use non-root permissions to configure other")
 			} else {
 				allFlags["chezmoiFlag"] = true
@@ -59,7 +59,7 @@ var setupCmd = &cobra.Command{
 			allFlags["gitFlag"], _ = cmd.Flags().GetBool("git")
 			allFlags["goFlag"], _ = cmd.Flags().GetBool("go")
 			allFlags["pipFlag"], _ = cmd.Flags().GetBool("pip")
-			allFlags["systemcheckupdatesFlag"], _ = cmd.Flags().GetBool("system-checkupdates")
+			allFlags["updatecheckerFlag"], _ = cmd.Flags().GetBool("update-checker")
 		}
 
 		// 检查 allFlags 中的所有值是否都为 false
@@ -92,7 +92,7 @@ func init() {
 	setupCmd.Flags().Bool("git", false, "Set up git and generate SSH keys")
 	setupCmd.Flags().Bool("go", false, "Set up golang")
 	setupCmd.Flags().Bool("pip", false, "Set up the mirror source used by pip")
-	setupCmd.Flags().Bool("system-checkupdates", false, "Set up system-checkupdates (need to be root)")
+	setupCmd.Flags().Bool("update-checker", false, "Set up update-checker (need to be root)")
 
 	setupCmd.Flags().BoolP("help", "h", false, "help for setup command")
 	rootCmd.AddCommand(setupCmd)

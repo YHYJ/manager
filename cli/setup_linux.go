@@ -53,8 +53,8 @@ func ProgramConfigurator(flags map[string]bool) {
 		general.SetupPip()
 	}
 
-	// 配置 system-checkupdates
-	if flags["systemcheckupdatesFlag"] {
-		general.SetupSystemCheckUpdates()
+	// 配置 update-checker
+	if flags["updatecheckerFlag"] {
+		general.SetupUpdateChecker()
 	}
 }

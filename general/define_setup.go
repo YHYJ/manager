@@ -118,25 +118,25 @@ var (
 
 // SystemCheckUpdates
 var (
-	// system-checkupdates Timer 和 Service 的依赖
-	SystemCheckupdatesDependencies = "system-checkupdates"                             // 主程序，需要版本 >= 3.0.0-20230313.1
-	timerConfigFile                = "/etc/systemd/system/system-checkupdates.timer"   // Timer 配置文件
-	serviceConfigFile              = "/etc/systemd/system/system-checkupdates.service" // Service 配置文件
-	// system-checkupdates 配置 - Timer
+	// update-checker Timer 和 Service 的依赖
+	UpdateCheckerDependencies = "checker"                                    // 主程序，需要版本 >= v0.7.0
+	timerConfigFile           = "/etc/systemd/system/update-checker.timer"   // Timer 配置文件
+	serviceConfigFile         = "/etc/systemd/system/update-checker.service" // Service 配置文件
+	// update-checker 配置 - Timer
 	timerConfigFormat      = "[Unit]\nDescription=%s\n\n[Timer]\nOnBootSec=%s\nOnUnitInactiveSec=%s\nAccuracySec=%s\nPersistent=%v\n\n[Install]\nWantedBy=%s\n"
-	timerDescription       = "Timer for system-checkupdates"
+	timerDescription       = "Timer for update-checker"
 	timerOnBootSec         = "10min"
 	timerOnUnitInactiveSec = "2h"
 	timerAccuracySec       = "30min"
 	timerPersistent        = "true"
 	timerWantedBy          = "timers.target"
-	// system-checkupdates 配置 - Service
+	// update-checker 配置 - Service
 	serviceConfigFormat = "[Unit]\nDescription=%s\nAfter=%s\nWants=%s\n\n[Service]\nType=%s\nExecStart=%s\n"
-	serviceDescription  = "System checkupdates"
+	serviceDescription  = "Package update checker"
 	serviceAfter        = "network.target"
 	serviceWants        = "network.target"
 	serviceType         = "oneshot"
-	serviceExecStart    = "/usr/local/bin/system-checkupdates --check"
+	serviceExecStart    = "/usr/local/bin/checker update --file"
 )
 
 // SetupChezmoi 配置 Chezmoi
@@ -430,14 +430,14 @@ func SetupPip() {
 	}
 }
 
-// SetupSystemCheckUpdates 配置 SystemCheckUpdates
-func SetupSystemCheckUpdates() {
+// SetupUpdateChecker 配置 SystemUpdateChecker
+func SetupUpdateChecker() {
 	// 提示
-	subjectName = "system-checkupdates"
+	subjectName = "update-checker"
 	color.Printf("%s %s\n", SuccessText("==>"), FgBlueText(subjectName))
 
 	// 检测
-	if _, err := exec.LookPath(SystemCheckupdatesDependencies); err != nil {
+	if _, err := exec.LookPath(UpdateCheckerDependencies); err != nil {
 		color.Printf(statusFormat, 2, " ", SuccessText("-"), LightText("Status"), NoticeText(color.Sprintf(InstallTips, subjectName)))
 	} else {
 		// ---------- Timer
