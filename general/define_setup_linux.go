@@ -47,19 +47,26 @@ var (
 //
 // 参数：
 //   - name: 服务名称
+//   - owner: 服务所属用户（system 或 user）
 //   - margin: 对齐时的边距
 //   - coefficient: 边距应乘的系数
-func rebirth(name string, margin, coefficient int) {
+func rebirth(name string, owner string, margin, coefficient int) {
+	manager := "--system"
+	if owner == "user" {
+		manager = "--user"
+	}
+
+	// 打印格式
 	cMargin := margin * coefficient
 
 	// 重新加载 systemd 管理器配置
-	reloadArgs := []string{"daemon-reload"} // 重载服务配置
+	reloadArgs := []string{manager, "daemon-reload"} // 重载服务配置
 	if _, _, err := RunCommandToBuffer("systemctl", reloadArgs); err != nil {
 		color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(err))
 	}
 
 	// 询问是否需要启用/重启服务
-	checkStatusArgs := []string{"is-enabled", name} // 检测服务启用状态
+	checkStatusArgs := []string{manager, "is-enabled", name} // 检测服务启用状态
 	status, _, _ := RunCommandToBuffer("systemctl", checkStatusArgs)
 	switch status {
 	case "enabled":
@@ -73,7 +80,7 @@ func rebirth(name string, margin, coefficient int) {
 		switch restart {
 		case "y":
 			// 重启服务
-			restartArgs := []string{"restart", name}
+			restartArgs := []string{manager, "restart", name}
 			if _, stderr, err := RunCommandToBuffer("systemctl", restartArgs); err != nil {
 				color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(stderr))
 			} else {
@@ -95,7 +102,7 @@ func rebirth(name string, margin, coefficient int) {
 		switch enable {
 		case "y":
 			// 启用服务（并立即运行）
-			enableArgs := []string{"enable", "--now", name}
+			enableArgs := []string{manager, "enable", "--now", name}
 			if _, stderr, err := RunCommandToBuffer("systemctl", enableArgs); err != nil {
 				color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(stderr))
 			} else {
@@ -118,6 +125,7 @@ func rebirth(name string, margin, coefficient int) {
 func SetupUpdateChecker() {
 	// 提示
 	subjectName = "update-checker"
+	owner := "user"
 	color.Printf("%s %s\n", SuccessText("==>"), FgBlueText(subjectName))
 
 	// 检测
@@ -160,7 +168,7 @@ func SetupUpdateChecker() {
 			// 重载服务
 			color.Printf(askItemTitleFormat, 4, " ", SuccessText("-"), LightText("Rebirth"))
 			name := color.Sprintf("%s.%s", subjectName, subjectMinorName)
-			rebirth(name, 2, 3)
+			rebirth(name, owner, 2, 3)
 		}
 
 		// ---------- Service
@@ -197,7 +205,7 @@ func SetupUpdateChecker() {
 			// 重载服务
 			color.Printf(askItemTitleFormat, 4, " ", SuccessText("-"), LightText("Rebirth"))
 			name := color.Sprintf("%s.%s", subjectName, subjectMinorName)
-			rebirth(name, 2, 3)
+			rebirth(name, owner, 2, 3)
 		}
 	}
 }
@@ -206,6 +214,7 @@ func SetupUpdateChecker() {
 func SetupDocker() {
 	// 提示
 	subjectName = "docker"
+	owner := "system"
 	descriptorText = "daemon configuration"
 	color.Printf("%s %s\n", SuccessText("==>"), FgBlueText(subjectName))
 	color.Printf(descriptorFormat, 2, " ", SuccessText("-"), InfoText("INFO:"), LightText("Descriptor"), SecondaryText("Set up"), SecondaryText(subjectName), SecondaryText(descriptorText))
@@ -245,7 +254,7 @@ func SetupDocker() {
 
 			// 重载服务
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Rebirth"))
-			rebirth(subjectName, 2, 2)
+			rebirth(subjectName, owner, 2, 2)
 		}
 	}
 }
@@ -254,6 +263,7 @@ func SetupDocker() {
 func SetupFrpc() {
 	// 提示
 	subjectName = "frpc"
+	owner := "system"
 	descriptorText = "restart timing"
 	color.Printf("%s %s\n", SuccessText("==>"), FgBlueText(subjectName))
 	color.Printf(descriptorFormat, 2, " ", SuccessText("-"), InfoText("INFO:"), LightText("Descriptor"), SecondaryText("Set up"), SecondaryText(subjectName), SecondaryText(descriptorText))
@@ -282,7 +292,7 @@ func SetupFrpc() {
 
 			// 重载服务
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Rebirth"))
-			rebirth(subjectName, 2, 2)
+			rebirth(subjectName, owner, 2, 2)
 		}
 	}
 }

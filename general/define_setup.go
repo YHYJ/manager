@@ -119,9 +119,9 @@ var (
 // SystemCheckUpdates
 var (
 	// update-checker Timer 和 Service 的依赖
-	UpdateCheckerDependencies = "checker"                                    // 主程序，需要版本 >= v0.7.0
-	timerConfigFile           = "/etc/systemd/system/update-checker.timer"   // Timer 配置文件
-	serviceConfigFile         = "/etc/systemd/system/update-checker.service" // Service 配置文件
+	UpdateCheckerDependencies = "checker"                                  // 主程序，需要版本 >= v0.7.0
+	timerConfigFile           = "/etc/systemd/user/update-checker.timer"   // Timer 配置文件
+	serviceConfigFile         = "/etc/systemd/user/update-checker.service" // Service 配置文件
 	// update-checker 配置 - Timer
 	timerConfigFormat      = "[Unit]\nDescription=%s\n\n[Timer]\nOnBootSec=%s\nOnUnitInactiveSec=%s\nAccuracySec=%s\nPersistent=%v\n\n[Install]\nWantedBy=%s\n"
 	timerDescription       = "Timer for update-checker"
