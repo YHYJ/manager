@@ -14,6 +14,7 @@ package cli
 import "github.com/yhyj/manager/general"
 
 // ProgramConfigurator 程序配置器
+//
 // 参数：
 //   - flags: 系统信息各部分的开关
 func ProgramConfigurator(flags map[string]bool) {

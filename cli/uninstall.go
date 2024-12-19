@@ -88,7 +88,7 @@ func UninstallSelf(configTree *toml.Tree) {
 		if err := general.Uninstall(pocketLine); err != nil {
 			fileName, lineNo := general.GetCallerInfo()
 			text := color.Sprintf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-			color.Printf(text)
+			color.Print(text)
 			// 分隔符和延时（延时使输出更加顺畅）
 			textLength = general.RealLength(text) // 分隔符长度
 			general.PrintDelimiter(textLength)    // 分隔符
@@ -101,7 +101,7 @@ func UninstallSelf(configTree *toml.Tree) {
 	if err := general.DeleteFile(pocketDir); err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		text := color.Sprintf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-		color.Printf(text)
+		color.Print(text)
 		// 分隔符和延时（延时使输出更加顺畅）
 		textLength = general.RealLength(text) // 分隔符长度
 		general.PrintDelimiter(textLength)    // 分隔符
@@ -111,7 +111,7 @@ func UninstallSelf(configTree *toml.Tree) {
 
 	// 本次卸载结束分隔符
 	text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
-	color.Printf(text)
+	color.Print(text)
 	textLength = general.RealLength(text) // 分隔符长度
 
 	// 分隔符和延时（延时使输出更加顺畅）
@@ -215,7 +215,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 				if err := general.Uninstall(pocketLine); err != nil {
 					fileName, lineNo := general.GetCallerInfo()
 					text := color.Sprintf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-					color.Printf(text)
+					color.Print(text)
 					// 分隔符和延时（延时使输出更加顺畅）
 					textLength = general.RealLength(text) // 分隔符长度
 					general.PrintDelimiter(textLength)    // 分隔符
@@ -228,7 +228,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 			if err := general.DeleteFile(pocketDir); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
 				text := color.Sprintf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-				color.Printf(text)
+				color.Print(text)
 				// 分隔符和延时（延时使输出更加顺畅）
 				textLength = general.RealLength(text) // 分隔符长度
 				general.PrintDelimiter(textLength)    // 分隔符
@@ -238,7 +238,7 @@ func Uninstall(configTree *toml.Tree, category string) {
 
 			// 本次卸载结束分隔符
 			text := color.Sprintf("%s %s %s\n", general.SuccessFlag, general.FgGreenText(program), general.FgMagentaText("uninstalled"))
-			color.Printf(text)
+			color.Print(text)
 			textLength = general.RealLength(text) // 分隔符长度
 
 			// 分隔符和延时（延时使输出更加顺畅）
