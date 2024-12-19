@@ -12,6 +12,7 @@ Description: 供 'setup' 子命令使用的函数
 package general
 
 import (
+	"os/exec"
 	"path/filepath"
 
 	"github.com/gookit/color"
@@ -110,5 +111,178 @@ func rebirth(name string, margin, coefficient int) {
 	case "not-found":
 		notFound := color.Sprintf(NotFoundServiceTips, name)
 		color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(notFound))
+	}
+}
+
+// SetupUpdateChecker 配置 UpdateChecker
+func SetupUpdateChecker() {
+	// 提示
+	subjectName = "update-checker"
+	color.Printf("%s %s\n", SuccessText("==>"), FgBlueText(subjectName))
+
+	// 检测
+	if _, err := exec.LookPath(UpdateCheckerDependencies); err != nil {
+		color.Printf(statusFormat, 2, " ", SuccessText("-"), LightText("Status"), NoticeText(color.Sprintf(InstallTips, subjectName)))
+	} else {
+		// ---------- Timer
+		subjectMinorName = "timer"
+		descriptorText = "timer"
+		color.Printf(subjectMinorNameFormat, 2, " ", SuccessText("-"), FgBlueText(subjectMinorName))
+		color.Printf(descriptorFormat, 4, " ", SuccessText("-"), InfoText("INFO:"), LightText("Descriptor"), SecondaryText("Set up"), SecondaryText(subjectName), SecondaryText(descriptorText))
+		color.Printf(targetFileFormat, 4, " ", SuccessText("-"), InfoText("INFO:"), LightText("Target file"), CommentText(timerConfigFile))
+		// 创建配置文件
+		if err := CreateFile(timerConfigFile); err != nil {
+			color.Printf(errorFormat, 4, " ", SuccessText("-"), LightText("Error"), DangerText(err))
+		} else {
+			// 交互
+			color.Printf(askItemTitleFormat, 4, " ", SuccessText("-"), LightText("Config"))
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			timerDescription, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Unit].Description")), timerDescription)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			timerOnBootSec, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Timer].OnBootSec")), timerOnBootSec)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			timerOnUnitInactiveSec, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Timer].OnUnitInactiveSec")), timerOnUnitInactiveSec)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			timerAccuracySec, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Timer].AccuracySec")), timerAccuracySec)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			timerPersistent, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Timer].Persistent")), timerPersistent)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			timerWantedBy, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Install].WantedBy")), timerWantedBy)
+
+			// 配置
+			SystemCheckupdatesTimerConfigContent := color.Sprintf(timerConfigFormat, timerDescription, timerOnBootSec, timerOnUnitInactiveSec, timerAccuracySec, timerPersistent, timerWantedBy)
+			if err := WriteFile(timerConfigFile, SystemCheckupdatesTimerConfigContent, writeMode); err != nil {
+				color.Printf(noResultFormat, 6, " ", SuccessText("-"), ErrorFlag, DangerText(err))
+			} else {
+				color.Printf(yesResultFormat, 6, " ", SuccessText("-"), SuccessFlag)
+			}
+
+			// 重载服务
+			color.Printf(askItemTitleFormat, 4, " ", SuccessText("-"), LightText("Rebirth"))
+			name := color.Sprintf("%s.%s", subjectName, subjectMinorName)
+			rebirth(name, 2, 3)
+		}
+
+		// ---------- Service
+		subjectMinorName = "service"
+		descriptorText = "service"
+		color.Printf(subjectMinorNameFormat, 2, " ", SuccessText("-"), FgBlueText(subjectMinorName))
+		color.Printf(descriptorFormat, 4, " ", SuccessText("-"), InfoText("INFO:"), LightText("Descriptor"), SecondaryText("Set up"), SecondaryText(subjectName), SecondaryText(descriptorText))
+		color.Printf(targetFileFormat, 4, " ", SuccessText("-"), InfoText("INFO:"), LightText("Target file"), CommentText(serviceConfigFile))
+		// 创建配置文件
+		if err := CreateFile(serviceConfigFile); err != nil {
+			color.Printf(errorFormat, 4, " ", SuccessText("-"), LightText("Error"), DangerText(err))
+		} else {
+			// 交互
+			color.Printf(askItemTitleFormat, 4, " ", SuccessText("-"), LightText("Config"))
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			serviceDescription, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Unit].Description")), serviceDescription)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			serviceAfter, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Unit].After")), serviceAfter)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			serviceWants, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Unit].Wants")), serviceWants)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			serviceType, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Service].Type")), serviceType)
+			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
+			serviceExecStart, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Service].ExecStart")), serviceExecStart)
+
+			// 配置
+			SystemCheckupdatesServiceConfigContent := color.Sprintf(serviceConfigFormat, serviceDescription, serviceAfter, serviceWants, serviceType, serviceExecStart)
+			if err := WriteFile(serviceConfigFile, SystemCheckupdatesServiceConfigContent, writeMode); err != nil {
+				color.Printf(noResultFormat, 6, " ", SuccessText("-"), ErrorFlag, DangerText(err))
+			} else {
+				color.Printf(yesResultFormat, 6, " ", SuccessText("-"), SuccessFlag)
+			}
+
+			// 重载服务
+			color.Printf(askItemTitleFormat, 4, " ", SuccessText("-"), LightText("Rebirth"))
+			name := color.Sprintf("%s.%s", subjectName, subjectMinorName)
+			rebirth(name, 2, 3)
+		}
+	}
+}
+
+// SetupDocker 配置 Docker
+func SetupDocker() {
+	// 提示
+	subjectName = "docker"
+	descriptorText = "daemon configuration"
+	color.Printf("%s %s\n", SuccessText("==>"), FgBlueText(subjectName))
+	color.Printf(descriptorFormat, 2, " ", SuccessText("-"), InfoText("INFO:"), LightText("Descriptor"), SecondaryText("Set up"), SecondaryText(subjectName), SecondaryText(descriptorText))
+
+	// 检测
+	if dockerdAbsPath, err := exec.LookPath(DockerDependencies); err != nil {
+		color.Printf(statusFormat, 2, " ", SuccessText("-"), LightText("Status"), NoticeText(color.Sprintf(InstallTips, subjectName)))
+	} else {
+		color.Printf(targetFileFormat, 2, " ", SuccessText("-"), InfoText("INFO:"), LightText("Target file"), CommentText(DockerServiceConfigFile))
+		// 创建配置文件
+		if err := CreateFile(DockerServiceConfigFile); err != nil {
+			color.Printf(errorFormat, 2, " ", SuccessText("-"), LightText("Error"), DangerText(err))
+		} else {
+			// 交互
+			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
+			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
+			dockerServiceDataRoot, _ = GetInput(QuestionText(color.Sprintf(InputTips, "--data-root")), dockerServiceDataRoot)
+			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
+			HttpProxy, _ = GetInput(QuestionText(color.Sprintf(InputTips, "HTTP_PROXY")), HttpProxy)
+			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
+			HttpsProxy, _ = GetInput(QuestionText(color.Sprintf(InputTips, "HTTPS_PROXY")), HttpProxy)
+			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
+			noProxy, _ = GetInput(QuestionText(color.Sprintf(InputTips, "NO_PROXY")), noProxy)
+
+			// 需要获取交互结果的配置项
+			dockerHttpProxy := color.Sprintf("HTTP_PROXY=%s", HttpProxy)
+			dockerHttpsProxy := color.Sprintf("HTTPS_PROXY=%s", HttpsProxy)
+			dockerNoProxy := color.Sprintf("NO_PROXY=%s", noProxy)
+
+			// 配置
+			DockerServiceConfigContent := color.Sprintf(dockerServiceConfigFormat, dockerHttpProxy, dockerHttpsProxy, dockerNoProxy, dockerdAbsPath, dockerServiceDataRoot)
+			if err := WriteFile(DockerServiceConfigFile, DockerServiceConfigContent, writeMode); err != nil {
+				color.Printf(noResultFormat, 4, " ", SuccessText("-"), ErrorFlag, DangerText(err))
+			} else {
+				color.Printf(yesResultFormat, 4, " ", SuccessText("-"), SuccessFlag)
+			}
+
+			// 重载服务
+			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Rebirth"))
+			rebirth(subjectName, 2, 2)
+		}
+	}
+}
+
+// SetupFrpc 配置 Frpc
+func SetupFrpc() {
+	// 提示
+	subjectName = "frpc"
+	descriptorText = "restart timing"
+	color.Printf("%s %s\n", SuccessText("==>"), FgBlueText(subjectName))
+	color.Printf(descriptorFormat, 2, " ", SuccessText("-"), InfoText("INFO:"), LightText("Descriptor"), SecondaryText("Set up"), SecondaryText(subjectName), SecondaryText(descriptorText))
+
+	// 检测
+	if _, err := exec.LookPath(FrpcDependencies); err != nil {
+		color.Printf(statusFormat, 2, " ", SuccessText("-"), LightText("Status"), NoticeText(color.Sprintf(InstallTips, subjectName)))
+	} else {
+		color.Printf(targetFileFormat, 2, " ", SuccessText("-"), InfoText("INFO:"), LightText("Target file"), CommentText(FrpcConfigFile))
+		// 创建配置文件
+		if err := CreateFile(FrpcConfigFile); err != nil {
+			color.Printf(errorFormat, 2, " ", SuccessText("-"), LightText("Error"), DangerText(err))
+		} else {
+			// 交互
+			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
+			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
+			frpcRestart, _ = GetInput(QuestionText(color.Sprintf(InputTips, "Restart")), frpcRestart)
+
+			// 配置
+			FrpcConfigContent := color.Sprintf(frpcConfigFormat, frpcRestart)
+			if err := WriteFile(FrpcConfigFile, FrpcConfigContent, writeMode); err != nil {
+				color.Printf(noResultFormat, 4, " ", SuccessText("-"), ErrorFlag, DangerText(err))
+			} else {
+				color.Printf(yesResultFormat, 4, " ", SuccessText("-"), SuccessFlag)
+			}
+
+			// 重载服务
+			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Rebirth"))
+			rebirth(subjectName, 2, 2)
+		}
 	}
 }
