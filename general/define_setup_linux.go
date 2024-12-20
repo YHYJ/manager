@@ -51,22 +51,39 @@ var (
 //   - margin: 对齐时的边距
 //   - coefficient: 边距应乘的系数
 func rebirth(name string, owner string, margin, coefficient int) {
-	manager := "--system"
+	var (
+		manager         string
+		reloadArgs      []string // 重载服务命令的参数
+		checkStatusArgs []string // 检测服务启用状态命令的参数
+		restartArgs     []string // 重启服务命令的参数
+		enableArgs      []string // 启用服务命令的参数
+	)
+
 	if owner == "user" {
+		machine := color.Sprintf("--machine=%s@.host", UserName)
 		manager = "--user"
+		reloadArgs = []string{machine, manager, "daemon-reload"}
+		checkStatusArgs = []string{machine, manager, "is-enabled", name}
+		restartArgs = []string{machine, manager, "restart", name}
+		enableArgs = []string{machine, manager, "enable", "--now", name}
+	} else {
+		manager := "--system"
+		reloadArgs = []string{manager, "daemon-reload"}
+		checkStatusArgs = []string{manager, "is-enabled", name}
+		restartArgs = []string{manager, "restart", name}
+		enableArgs = []string{manager, "enable", "--now", name}
+
 	}
 
 	// 打印格式
 	cMargin := margin * coefficient
 
 	// 重新加载 systemd 管理器配置
-	reloadArgs := []string{manager, "daemon-reload"} // 重载服务配置
 	if _, _, err := RunCommandToBuffer("systemctl", reloadArgs); err != nil {
 		color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(err))
 	}
 
 	// 询问是否需要启用/重启服务
-	checkStatusArgs := []string{manager, "is-enabled", name} // 检测服务启用状态
 	status, _, _ := RunCommandToBuffer("systemctl", checkStatusArgs)
 	switch status {
 	case "enabled":
@@ -80,7 +97,6 @@ func rebirth(name string, owner string, margin, coefficient int) {
 		switch restart {
 		case "y":
 			// 重启服务
-			restartArgs := []string{manager, "restart", name}
 			if _, stderr, err := RunCommandToBuffer("systemctl", restartArgs); err != nil {
 				color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(stderr))
 			} else {
@@ -102,7 +118,6 @@ func rebirth(name string, owner string, margin, coefficient int) {
 		switch enable {
 		case "y":
 			// 启用服务（并立即运行）
-			enableArgs := []string{manager, "enable", "--now", name}
 			if _, stderr, err := RunCommandToBuffer("systemctl", enableArgs); err != nil {
 				color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(stderr))
 			} else {
