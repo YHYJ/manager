@@ -90,19 +90,19 @@ func rebirth(name string, owner string, margin, coefficient int) {
 		color.Printf(askItemsFormat, cMargin, " ", SuccessText("-"))
 
 		question := color.Sprintf(RestartServiceTips, name)
-		restart, err := AskUser(QuestionText(question), []string{"y", "N"})
+		restart, err := AreYouSure(QuestionText(question), false)
 		if err != nil {
 			color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText("Unable to get answers: ", err))
 		}
 		switch restart {
-		case "y":
+		case true:
 			// 重启服务
 			if _, stderr, err := RunCommandToBuffer("systemctl", restartArgs); err != nil {
 				color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(stderr))
 			} else {
 				color.Printf(yesResultFormat, cMargin, " ", SuccessText("-"), SuccessFlag)
 			}
-		case "n":
+		case false:
 			return
 		default:
 			color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), WarningFlag, WarnText("Unexpected answer: ", restart))
@@ -111,19 +111,19 @@ func rebirth(name string, owner string, margin, coefficient int) {
 		color.Printf(askItemsFormat, cMargin, " ", SuccessText("-"))
 
 		question := color.Sprintf(EnableServiceTips, name)
-		enable, err := AskUser(QuestionText(question), []string{"y", "N"})
+		enable, err := AreYouSure(QuestionText(question), false)
 		if err != nil {
 			color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText("Unable to get answers: ", err))
 		}
 		switch enable {
-		case "y":
+		case true:
 			// 启用服务（并立即运行）
 			if _, stderr, err := RunCommandToBuffer("systemctl", enableArgs); err != nil {
 				color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), ErrorFlag, DangerText(stderr))
 			} else {
 				color.Printf(yesResultFormat, cMargin, " ", SuccessText("-"), SuccessFlag)
 			}
-		case "n":
+		case false:
 			return
 		default:
 			color.Printf(noResultFormat, cMargin, " ", SuccessText("-"), WarningFlag, WarnText("Unexpected answer: ", enable))
@@ -160,17 +160,17 @@ func SetupUpdateChecker() {
 			// 交互
 			color.Printf(askItemTitleFormat, 4, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			timerDescription, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Unit].Description")), timerDescription)
+			timerDescription, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Unit].Description")), timerDescription)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			timerOnBootSec, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Timer].OnBootSec")), timerOnBootSec)
+			timerOnBootSec, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Timer].OnBootSec")), timerOnBootSec)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			timerOnUnitInactiveSec, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Timer].OnUnitInactiveSec")), timerOnUnitInactiveSec)
+			timerOnUnitInactiveSec, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Timer].OnUnitInactiveSec")), timerOnUnitInactiveSec)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			timerAccuracySec, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Timer].AccuracySec")), timerAccuracySec)
+			timerAccuracySec, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Timer].AccuracySec")), timerAccuracySec)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			timerPersistent, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Timer].Persistent")), timerPersistent)
+			timerPersistent, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Timer].Persistent")), timerPersistent)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			timerWantedBy, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Install].WantedBy")), timerWantedBy)
+			timerWantedBy, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Install].WantedBy")), timerWantedBy)
 
 			// 配置
 			SystemCheckupdatesTimerConfigContent := color.Sprintf(timerConfigFormat, timerDescription, timerOnBootSec, timerOnUnitInactiveSec, timerAccuracySec, timerPersistent, timerWantedBy)
@@ -199,15 +199,15 @@ func SetupUpdateChecker() {
 			// 交互
 			color.Printf(askItemTitleFormat, 4, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			serviceDescription, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Unit].Description")), serviceDescription)
+			serviceDescription, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Unit].Description")), serviceDescription)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			serviceAfter, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Unit].After")), serviceAfter)
+			serviceAfter, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Unit].After")), serviceAfter)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			serviceWants, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Unit].Wants")), serviceWants)
+			serviceWants, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Unit].Wants")), serviceWants)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			serviceType, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Service].Type")), serviceType)
+			serviceType, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Service].Type")), serviceType)
 			color.Printf(askItemsFormat, 6, " ", SuccessText("-"))
-			serviceExecStart, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[Service].ExecStart")), serviceExecStart)
+			serviceExecStart, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[Service].ExecStart")), serviceExecStart)
 
 			// 配置
 			SystemCheckupdatesServiceConfigContent := color.Sprintf(serviceConfigFormat, serviceDescription, serviceAfter, serviceWants, serviceType, serviceExecStart)
@@ -246,13 +246,13 @@ func SetupDocker() {
 			// 交互
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			dockerServiceDataRoot, _ = GetInput(QuestionText(color.Sprintf(InputTips, "--data-root")), dockerServiceDataRoot)
+			dockerServiceDataRoot, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "--data-root")), dockerServiceDataRoot)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			HttpProxy, _ = GetInput(QuestionText(color.Sprintf(InputTips, "HTTP_PROXY")), HttpProxy)
+			HttpProxy, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "HTTP_PROXY")), HttpProxy)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			HttpsProxy, _ = GetInput(QuestionText(color.Sprintf(InputTips, "HTTPS_PROXY")), HttpProxy)
+			HttpsProxy, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "HTTPS_PROXY")), HttpProxy)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			noProxy, _ = GetInput(QuestionText(color.Sprintf(InputTips, "NO_PROXY")), noProxy)
+			noProxy, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "NO_PROXY")), noProxy)
 
 			// 需要获取交互结果的配置项
 			dockerHttpProxy := color.Sprintf("HTTP_PROXY=%s", HttpProxy)
@@ -295,7 +295,7 @@ func SetupFrpc() {
 			// 交互
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			frpcRestart, _ = GetInput(QuestionText(color.Sprintf(InputTips, "Restart")), frpcRestart)
+			frpcRestart, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "Restart")), frpcRestart)
 
 			// 配置
 			FrpcConfigContent := color.Sprintf(frpcConfigFormat, frpcRestart)

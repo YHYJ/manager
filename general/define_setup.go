@@ -159,11 +159,11 @@ func SetupChezmoi() {
 			// 交互
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			chezmoiSourceDir, _ = GetInput(QuestionText(color.Sprintf(InputTips, "sourceDir")), chezmoiSourceDir)
+			chezmoiSourceDir, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "sourceDir")), chezmoiSourceDir)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			chezmoiAutoCommit, _ = GetInput(QuestionText(color.Sprintf(InputTips, "autoCommit")), chezmoiAutoCommit)
+			chezmoiAutoCommit, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "autoCommit")), chezmoiAutoCommit)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			chezmoiAutoPush, _ = GetInput(QuestionText(color.Sprintf(InputTips, "autoPush")), chezmoiAutoPush)
+			chezmoiAutoPush, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "autoPush")), chezmoiAutoPush)
 
 			// 配置
 			ChezmoiConfigContent := color.Sprintf(chezmoiConfigFormat, chezmoiSourceDir, sep, chezmoiAutoCommit, sep, chezmoiAutoPush)
@@ -196,13 +196,13 @@ func SetupCobra() {
 			// 交互
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			cobraAuthorName, _ = GetInput(QuestionText(color.Sprintf(InputTips, "authorName")), cobraAuthorName)
+			cobraAuthorName, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "authorName")), cobraAuthorName)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			cobraAuthorEmail, _ = GetInput(QuestionText(color.Sprintf(InputTips, "authorEmail")), cobraAuthorEmail)
+			cobraAuthorEmail, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "authorEmail")), cobraAuthorEmail)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			cobraLicense, _ = GetInput(QuestionText(color.Sprintf(InputTips, "license")), cobraLicense)
+			cobraLicense, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "license")), cobraLicense)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			cobraUseViper, _ = GetInput(QuestionText(color.Sprintf(InputTips, "useViper")), cobraUseViper)
+			cobraUseViper, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "useViper")), cobraUseViper)
 
 			// 配置
 			CobraConfigContent := color.Sprintf(cobraConfigFormat, cobraAuthorName, cobraAuthorEmail, cobraLicense, cobraUseViper)
@@ -235,29 +235,29 @@ func SetupGit() {
 			// 交互
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			hostname, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[user].name")), hostname)
+			hostname, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[user].name")), hostname)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitUserEmail, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[user].email")), gitUserEmail)
+			gitUserEmail, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[user].email")), gitUserEmail)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitCoreEditor, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[core].editor")), gitCoreEditor)
+			gitCoreEditor, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[core].editor")), gitCoreEditor)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitCoreAutoCRLF, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[core].autocrlf")), gitCoreAutoCRLF)
+			gitCoreAutoCRLF, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[core].autocrlf")), gitCoreAutoCRLF)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitDiffExternal, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[diff].external")), gitDiffExternal)
+			gitDiffExternal, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[diff].external")), gitDiffExternal)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitMergeTool, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[merge].tool")), gitMergeTool)
+			gitMergeTool, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[merge].tool")), gitMergeTool)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitColorUI, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[color].ui")), gitColorUI)
+			gitColorUI, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[color].ui")), gitColorUI)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitPullRebase, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[pull].rebase")), gitPullRebase)
+			gitPullRebase, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[pull].rebase")), gitPullRebase)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitFilterLfsClean, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[filter \"lfs\"].clean")), gitFilterLfsClean)
+			gitFilterLfsClean, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[filter \"lfs\"].clean")), gitFilterLfsClean)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitFilterLfsSmudge, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[filter \"lfs\"].smudge")), gitFilterLfsSmudge)
+			gitFilterLfsSmudge, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[filter \"lfs\"].smudge")), gitFilterLfsSmudge)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitFilterLfsProcess, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[filter \"lfs\"].process")), gitFilterLfsProcess)
+			gitFilterLfsProcess, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[filter \"lfs\"].process")), gitFilterLfsProcess)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			gitFilterLfsRequired, _ = GetInput(QuestionText(color.Sprintf(InputTips, "[filter \"lfs\"].required")), gitFilterLfsRequired)
+			gitFilterLfsRequired, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "[filter \"lfs\"].required")), gitFilterLfsRequired)
 
 			// 配置
 			GitConfigContent := color.Sprintf(gitConfigFormat, sep, hostname, sep, gitUserEmail, sep, gitCoreEditor, sep, gitCoreAutoCRLF, sep, gitDiffExternal, sep, gitMergeTool, sep, gitColorUI, sep, gitPullRebase, sep, gitFilterLfsClean, sep, gitFilterLfsSmudge, sep, gitFilterLfsProcess, sep, gitFilterLfsRequired)
@@ -290,13 +290,13 @@ func SetupGolang() {
 			// 交互
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			golangGO111MODULE, _ = GetInput(QuestionText(color.Sprintf(InputTips, "GO111MODULE")), golangGO111MODULE)
+			golangGO111MODULE, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "GO111MODULE")), golangGO111MODULE)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			golangGOPATH, _ = GetInput(QuestionText(color.Sprintf(InputTips, "GOPATH")), golangGOPATH)
+			golangGOPATH, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "GOPATH")), golangGOPATH)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			golangGOCACHE, _ = GetInput(QuestionText(color.Sprintf(InputTips, "GOCACHE")), golangGOCACHE)
+			golangGOCACHE, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "GOCACHE")), golangGOCACHE)
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			golangGOMODCACHE, _ = GetInput(QuestionText(color.Sprintf(InputTips, "GOMODCACHE")), golangGOMODCACHE)
+			golangGOMODCACHE, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "GOMODCACHE")), golangGOMODCACHE)
 
 			// 配置
 			GolangConfigContent := color.Sprintf(golangConfigFormat, golangGO111MODULE, goBin, golangGOPATH, golangGOCACHE, golangGOMODCACHE)
@@ -329,7 +329,7 @@ func SetupPip() {
 			// 交互
 			color.Printf(askItemTitleFormat, 2, " ", SuccessText("-"), LightText("Config"))
 			color.Printf(askItemsFormat, 4, " ", SuccessText("-"))
-			pipIndexUrl, _ = GetInput(QuestionText(color.Sprintf(InputTips, "index-url")), pipIndexUrl)
+			pipIndexUrl, _ = GiveYourChoice(QuestionText(color.Sprintf(InputTips, "index-url")), pipIndexUrl)
 
 			// 需要获取交互结果的配置项
 			pipTrustedHost, _ := GetUrlHost(pipIndexUrl)

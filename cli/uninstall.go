@@ -44,14 +44,14 @@ func UninstallSelf(config *general.Config) {
 
 	// 确认是否要卸载
 	question := color.Sprintf(general.UninstallTips, program)
-	answer, err := general.AskUser(general.QuestionText(question), []string{"y", "N"})
+	answer, err := general.AreYouSure(general.QuestionText(question), false)
 	if err != nil {
 		fileName, lineNo := general.GetCallerInfo()
 		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 		return
 	}
 	switch answer {
-	case "y":
+	case true:
 		// 记账文件
 		pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
 		pocketFile := filepath.Join(pocketDir, config.Program.PocketFile) // 记账文件路径
@@ -100,7 +100,7 @@ func UninstallSelf(config *general.Config) {
 		// 分隔符和延时（延时使输出更加顺畅）
 		general.PrintDelimiter(textLength) // 分隔符
 		general.Delay(general.DelayTime)   // 添加一个延时，使输出更加顺畅
-	case "n":
+	case false:
 		return
 	default:
 		color.Printf("%s\n", strings.Repeat(general.Separator3st, len(question)))
@@ -170,14 +170,14 @@ func Uninstall(config *general.Config, category string) {
 	for _, program := range selectedPrograms {
 		// 确认是否要卸载
 		question := color.Sprintf(general.UninstallTips, program)
-		answer, err := general.AskUser(general.QuestionText(question), []string{"y", "N"})
+		answer, err := general.AreYouSure(general.QuestionText(question), false)
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
 			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
 		switch answer {
-		case "y":
+		case true:
 			color.Printf("%s\n", strings.Repeat(general.Separator2st, len(question)))
 			// 记账文件
 			pocketDir := filepath.Join(config.Program.PocketPath, program)    // 记账文件夹路径
@@ -226,7 +226,7 @@ func Uninstall(config *general.Config, category string) {
 			// 分隔符和延时（延时使输出更加顺畅）
 			general.PrintDelimiter(textLength) // 分隔符
 			general.Delay(general.DelayTime)   // 添加一个延时，使输出更加顺畅
-		case "n":
+		case false:
 			continue
 		default:
 			color.Printf("%s\n", strings.Repeat(general.Separator3st, len(general.UninstallTips)))
