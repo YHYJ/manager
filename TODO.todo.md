@@ -1,5 +1,4 @@
 - [ ] 把如 cmd/install.go 35、36 行的报错输出写到一个函数里 (2024-11-01 14:32)
-- [ ] 默认安装方式显示不明显 (2024-07-18 16:55)
 - [X] 优化输出信息 (2023-06-16 13:40)
 - [X] 完成install --script部分 (2023-06-16 16:36)
 - [X] 默认配置项增加'go.fallbacksource'和'shell.fallbacksource' (2023-07-12 16:18)
@@ -26,3 +25,4 @@
 - [X] 'setup' 子命令对适用的项目增加配置完后询问是否重启/使能的功能 (2024-06-14 15:29)
 - [X] RunCommandGetResult 更新为 RunCommandToOS，RunCommand 更新为 RunCommandToBuffer (2024-06-27 13:40)
 - [X] rebirth 函数需要在接收的 owner 参数值为 'user' 时将权限降为对等用户（初始要提权运行），不可行的话使用 '--machine=<user>@.host --user' 参数 (2024-12-19 20:44)
+- [X] 默认安装方式显示不明显：使默认安装方式首字母大写 (2024-07-18 16:55)
