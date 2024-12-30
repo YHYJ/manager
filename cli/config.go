@@ -38,9 +38,9 @@ func CreateConfigFile(configFile string) {
 		switch overWrite {
 		case true:
 			// 与用户交互获取配置信息
-			general.InstallMethod, _ = general.AreYouSure(general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")), general.AllInstallMethod)
-			general.HttpProxy, _ = general.GiveYourChoice(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
-			general.HttpsProxy, _ = general.GiveYourChoice(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
+			general.InstallMethod, _ = general.GiveYourChoice(general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")), general.AllInstallMethod, general.DefaultInstallMethodIndex)
+			general.HttpProxy, _ = general.GetUserInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
+			general.HttpsProxy, _ = general.GetUserInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
 
 			if err := general.DeleteFile(configFile); err != nil {
 				fileName, lineNo := general.GetCallerInfo()
@@ -67,9 +67,9 @@ func CreateConfigFile(configFile string) {
 		}
 	} else {
 		// 与用户交互获取配置信息
-		general.InstallMethod, _ = general.AreYouSure(general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")), general.AllInstallMethod)
-		general.HttpProxy, _ = general.GiveYourChoice(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
-		general.HttpsProxy, _ = general.GiveYourChoice(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
+		general.InstallMethod, _ = general.GiveYourChoice(general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")), general.AllInstallMethod, general.DefaultInstallMethodIndex)
+		general.HttpProxy, _ = general.GetUserInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
+		general.HttpsProxy, _ = general.GetUserInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
 
 		if err := general.CreateFile(configFile); err != nil {
 			fileName, lineNo := general.GetCallerInfo()

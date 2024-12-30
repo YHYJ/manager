@@ -21,8 +21,9 @@ import (
 )
 
 var (
-	AllInstallMethod = []string{"source", "release"} // 所有安装方式，可选 source 或 release
-	InstallMethod    = "release"                     // 默认安装方式
+	AllInstallMethod          = []string{"release", "source"}               // 所有安装方式，可选 source 或 release
+	DefaultInstallMethodIndex = 0                                           // 默认安装方式的下标（从0开始）
+	InstallMethod             = AllInstallMethod[DefaultInstallMethodIndex] // 默认安装方式
 )
 
 var (

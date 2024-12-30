@@ -105,25 +105,25 @@ func AreYouSure(question string, defaultAnswer bool) (bool, error) {
 // 参数：
 //   - tips: 提示信息
 //   - options: 可选项
-//   - defaultOptionIndex: 默认选项的下标（从0开始）
+//   - defaultOption: 默认选项的下标（从0开始）
 //
 // 返回：
 //   - 用户的选择（去掉了首尾空格和最后的换行符）
 //   - 错误信息
-func GiveYourChoice(tips string, options []string, defaultOptionIndex int) (string, error) {
+func GiveYourChoice(tips string, options []string, defaultOption int) (string, error) {
 	var (
 		viewOptions = make([]string, len(options)) // 显示用可选项
 	)
 	copy(viewOptions, options)
 
 	// defaultOptionIndex 所指定的默认选项在 options 中，将显示用的可选项中的默认选项转换为首字母大写
-	if defaultOptionIndex >= 0 && defaultOptionIndex <= len(viewOptions)-1 {
+	if defaultOption >= 0 && defaultOption <= len(viewOptions)-1 {
 		titleCase := cases.Title(language.English) // 创建一个 Title 风格的转换器，基于英语规则
 
 		// 将第一个单词的首字母大写
-		words := strings.Fields(viewOptions[defaultOptionIndex])
+		words := strings.Fields(viewOptions[defaultOption])
 		if len(words) > 0 {
-			viewOptions[defaultOptionIndex] = titleCase.String(words[0])
+			viewOptions[defaultOption] = titleCase.String(words[0])
 		}
 	} else {
 		return "", errors.New("The 'defaultOptionIndex' out of range")
@@ -149,8 +149,37 @@ func GiveYourChoice(tips string, options []string, defaultOptionIndex int) (stri
 			if strings.EqualFold(userChoice, answer) {
 				return answer, nil
 			} else if userChoice == "" { // 如果用户未选择，返回默认选项
-				return options[defaultOptionIndex], nil
+				return options[defaultOption], nil
 			}
 		}
 	}
+}
+
+// GetInput 获取用户输入
+//
+// 参数：
+//   - tips: 提示信息
+//   - defaultValue: 用户未输入时的默认值
+//
+// 返回：
+//   - 用户输入（去掉了最后的换行符）
+//   - 错误信息
+func GetUserInput(tips string, defaultValue string) (string, error) {
+	color.Printf("%s %s: ", tips, SecondaryText("(", defaultValue, ")"))
+
+	// 从标准输入中读取用户的回答
+	reader := bufio.NewReader(os.Stdin)
+	originalValue, err := reader.ReadString('\n')
+	if err != nil {
+		return "", err
+	}
+
+	value := func() string {
+		if len(originalValue) <= 1 {
+			return defaultValue
+		}
+		return strings.TrimSuffix(originalValue, "\n")
+	}()
+
+	return value, nil
 }
