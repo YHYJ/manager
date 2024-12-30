@@ -155,7 +155,7 @@ func GiveYourChoice(tips string, options []string, defaultOption int) (string, e
 	}
 }
 
-// GetInput 获取用户输入
+// GetUserInput 获取用户输入
 //
 // 参数：
 //   - tips: 提示信息
