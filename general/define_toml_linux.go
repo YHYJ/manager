@@ -197,13 +197,13 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		"usb-manager",
 	}
 
-	// 定义一个 map[string]interface{} 类型的变量并赋值
-	exampleConf := map[string]interface{}{
-		"variable": map[string]interface{}{ // 环境变量设置
+	// 定义一个 map[string]any 类型的变量并赋值
+	exampleConf := map[string]any{
+		"variable": map[string]any{ // 环境变量设置
 			"http_proxy":  HttpProxy,  // HTTP 代理
 			"https_proxy": HttpsProxy, // HTTPS 代理
 		},
-		"program": map[string]interface{}{
+		"program": map[string]any{
 			"method":         InstallMethod, // 安装方法，release 或 source 代表安装预编译的二进制文件或自行从源码编译
 			"program_path":   ProgramPath,   // 程序安装路径
 			"resources_path": ResourcesPath, // 资源安装路径
@@ -211,7 +211,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 			"source_temp":    SourceTemp,    // Source 安装方式的基础存储目录
 			"pocket_path":    PocketPath,    // 记账文件路径
 			"pocket_file":    "files",       // 记账文件名
-			"self": map[string]interface{}{ // 管理程序本身的配置
+			"self": map[string]any{ // 管理程序本身的配置
 				"name":            strings.ToLower(Name),           // 管理程序名
 				"release_api":     "https://api.github.com",        // Release 安装源 API 地址
 				"release_accept":  "application/vnd.github+json",   // Release 安装源请求头参数
@@ -224,7 +224,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"gitea_username":  "YJ",                            // Source 安装 - Gitea 安装源用户名
 				"completion_dir":  goCompletionDir,                 // 自动补全文件夹
 			},
-			"go": map[string]interface{}{ // 基于 go 编写的程序的管理配置
+			"go": map[string]any{ // 基于 go 编写的程序的管理配置
 				"names":           goNames,                         // 可用的程序列表
 				"release_api":     "https://api.github.com",        // Release 安装源 API 地址
 				"release_accept":  "application/vnd.github+json",   // Release 安装源请求头参数
@@ -237,7 +237,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 				"gitea_username":  "YJ",                            // Source 安装 - Gitea 安装源用户名
 				"completion_dir":  goCompletionDir,                 // 自动补全文件夹
 			},
-			"shell": map[string]interface{}{ // 基于 shell 编写的脚本的管理配置
+			"shell": map[string]any{ // 基于 shell 编写的脚本的管理配置
 				"github_api":      "https://api.github.com",              // GitHub 安装源 API 地址
 				"github_raw":      "https://raw.githubusercontent.com",   // GitHub 安装源文件下载地址
 				"github_username": "YHYJ",                                // GitHub 安装源用户名

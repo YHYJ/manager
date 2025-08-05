@@ -73,7 +73,7 @@ func RequestApi(url string) ([]byte, error) {
 //   - 错误信息
 func GetLatestSourceTag(body []byte) (string, error) {
 	// 解码 JSON 格式的返回值
-	var datas interface{}
+	var datas any
 	if err := json.Unmarshal(body, &datas); err != nil {
 		return "", err
 	}
@@ -83,12 +83,12 @@ func GetLatestSourceTag(body []byte) (string, error) {
 
 	if kind == reflect.Slice { // '[{}]' 结构
 		// 判断响应体长度
-		length := len(datas.([]interface{}))
+		length := len(datas.([]any))
 		if length == 0 {
 			return "", fmt.Errorf("Response body is empty")
 		}
 		// 获取最新版本 Tag ，适用于版本信息和 Tag 信息同步的
-		latestTag := datas.([]interface{})[0].(map[string]interface{})["name"].(string)
+		latestTag := datas.([]any)[0].(map[string]any)["name"].(string)
 		return latestTag, nil
 	} else {
 		return "", fmt.Errorf("Response body has unknown structure")
@@ -108,7 +108,7 @@ func GetLatestSourceTag(body []byte) (string, error) {
 //   - 错误信息
 func GetLatestSourceHash(body []byte) (string, error) {
 	// 解码 JSON 格式的返回值
-	var datas interface{}
+	var datas any
 	if err := json.Unmarshal(body, &datas); err != nil {
 		return "", err
 	}
@@ -118,12 +118,12 @@ func GetLatestSourceHash(body []byte) (string, error) {
 
 	if kind == reflect.Map { // '{}' 结构
 		// 判断响应体长度
-		length := len(datas.(map[string]interface{}))
+		length := len(datas.(map[string]any))
 		if length == 0 {
 			return "", fmt.Errorf("Response body is empty")
 		}
 		// 获取文件 Hash ，适用于不带外部版本信息的
-		LatestHash := datas.(map[string]interface{})["sha"].(string)
+		LatestHash := datas.(map[string]any)["sha"].(string)
 		return LatestHash, nil
 	} else {
 		return "", fmt.Errorf("Response body has unknown structure")
@@ -143,7 +143,7 @@ func GetLatestSourceHash(body []byte) (string, error) {
 //   - 错误信息
 func GetLatestReleaseTag(body []byte) (string, error) {
 	// 解码 JSON 格式的返回值
-	var datas interface{}
+	var datas any
 	if err := json.Unmarshal(body, &datas); err != nil {
 		return "", err
 	}
@@ -153,12 +153,12 @@ func GetLatestReleaseTag(body []byte) (string, error) {
 
 	if kind == reflect.Map { // '{}' 结构
 		// 判断响应体长度
-		length := len(datas.(map[string]interface{}))
+		length := len(datas.(map[string]any))
 		if length == 0 {
 			return "", fmt.Errorf("Response body is empty")
 		}
 		// 获取最新 Release 对应的 Tag
-		latestTag := datas.(map[string]interface{})["tag_name"].(string)
+		latestTag := datas.(map[string]any)["tag_name"].(string)
 		return latestTag, nil
 	} else {
 		return "", fmt.Errorf("Response body has unknown structure")
@@ -204,7 +204,7 @@ func GetReleaseFileInfo(body []byte, fileName FileName) (multipleFilesInfo, erro
 	archiveFileInfo := singleFileInfo{}   // 存储压缩包信息
 
 	// 解码 JSON 格式的返回值
-	var datas interface{}
+	var datas any
 	if err := json.Unmarshal(body, &datas); err != nil {
 		return filesInfo, err
 	}
@@ -214,26 +214,26 @@ func GetReleaseFileInfo(body []byte, fileName FileName) (multipleFilesInfo, erro
 
 	if kind == reflect.Map { // '{}' 结构
 		// 判断响应体长度
-		length := len(datas.(map[string]interface{}))
+		length := len(datas.(map[string]any))
 		if length == 0 {
 			return filesInfo, fmt.Errorf("Response body is empty")
 		}
 		// 获取最新 Release 的 Assets 信息，下载链接等包含在里面
-		assets := datas.(map[string]interface{})["assets"].([]interface{})
+		assets := datas.(map[string]any)["assets"].([]any)
 		for _, asset := range assets {
-			if asset.(map[string]interface{})["name"] == fileName.ChecksumsFile {
-				checksumsFileInfo.Name = asset.(map[string]interface{})["name"].(string)
-				checksumsFileInfo.Size = asset.(map[string]interface{})["size"].(float64)
-				checksumsFileInfo.ContentType = asset.(map[string]interface{})["content_type"].(string)
-				checksumsFileInfo.DownloadUrl = asset.(map[string]interface{})["browser_download_url"].(string)
-				checksumsFileInfo.DownloadCount = asset.(map[string]interface{})["download_count"].(float64)
+			if asset.(map[string]any)["name"] == fileName.ChecksumsFile {
+				checksumsFileInfo.Name = asset.(map[string]any)["name"].(string)
+				checksumsFileInfo.Size = asset.(map[string]any)["size"].(float64)
+				checksumsFileInfo.ContentType = asset.(map[string]any)["content_type"].(string)
+				checksumsFileInfo.DownloadUrl = asset.(map[string]any)["browser_download_url"].(string)
+				checksumsFileInfo.DownloadCount = asset.(map[string]any)["download_count"].(float64)
 			}
-			if asset.(map[string]interface{})["name"] == fileName.ArchiveFile {
-				archiveFileInfo.Name = asset.(map[string]interface{})["name"].(string)
-				archiveFileInfo.Size = asset.(map[string]interface{})["size"].(float64)
-				archiveFileInfo.ContentType = asset.(map[string]interface{})["content_type"].(string)
-				archiveFileInfo.DownloadUrl = asset.(map[string]interface{})["browser_download_url"].(string)
-				archiveFileInfo.DownloadCount = asset.(map[string]interface{})["download_count"].(float64)
+			if asset.(map[string]any)["name"] == fileName.ArchiveFile {
+				archiveFileInfo.Name = asset.(map[string]any)["name"].(string)
+				archiveFileInfo.Size = asset.(map[string]any)["size"].(float64)
+				archiveFileInfo.ContentType = asset.(map[string]any)["content_type"].(string)
+				archiveFileInfo.DownloadUrl = asset.(map[string]any)["browser_download_url"].(string)
+				archiveFileInfo.DownloadCount = asset.(map[string]any)["download_count"].(float64)
 			}
 		}
 		filesInfo.ChecksumsFileInfo = checksumsFileInfo

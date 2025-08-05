@@ -116,7 +116,7 @@ var (
 	gitFilterLfsRequired = "true"
 )
 
-// SystemCheckUpdates
+// UpdateChecker
 var (
 	// update-checker Timer 和 Service 的依赖
 	UpdateCheckerDependencies = "checker"                                  // 主程序，需要版本 >= v0.7.0
