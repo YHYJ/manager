@@ -787,7 +787,7 @@ func InstallGolangBasedProgram(config *general.Config) {
 
 	// 开始安装提示
 	negatives := strings.Builder{}
-	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("golang-based"), len(installedProgram), totalNum))
+	negatives.WriteString(color.Sprintf("%s Installed %d/%d \x1b[3m%s\x1b[0m programs\n", general.InfoText("INFO:"), len(installedProgram), totalNum, general.FgCyanText("golang-based")))
 	negatives.WriteString(color.Sprintf("%s Installation path: %s\n", general.InfoText("INFO:"), general.PrimaryText(config.Program.ProgramPath)))
 
 	// 让用户选择需要安装/更新的程序
@@ -1549,7 +1549,7 @@ func InstallShellBasedProgram(config *general.Config) {
 
 	// 开始安装提示
 	negatives := strings.Builder{}
-	negatives.WriteString(color.Sprintf("%s Install \x1b[3m%s\x1b[0m programs, %d/%d installed\n", general.InfoText("INFO:"), general.FgCyanText("shell-based"), len(installedProgram), totalNum))
+	negatives.WriteString(color.Sprintf("%s Installed %d/%d \x1b[3m%s\x1b[0m programs\n", general.InfoText("INFO:"), len(installedProgram), totalNum, general.FgCyanText("shell-based")))
 	negatives.WriteString(color.Sprintf("%s Installation path: %s\n", general.InfoText("INFO:"), general.PrimaryText(config.Program.ProgramPath)))
 
 	// 创建临时目录
