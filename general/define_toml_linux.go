@@ -194,6 +194,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 		"py-virtualenv-tool",
 		"spacevim-update",
 		"spider",
+		"syncer",
 		"usb-manager",
 	}
 
