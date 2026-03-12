@@ -111,7 +111,7 @@ var (
 )
 
 // 配置
-var config = Config{
+var appConfig = Config{
 	Program: ProgramConfig{
 		Method:        InstallMethod,
 		ProgramPath:   programPath,
@@ -245,7 +245,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	encoder := toml.NewEncoder(file)
 	encoder.Order(toml.OrderPreserve)
 
-	if err := encoder.Encode(config); err != nil {
+	if err := encoder.Encode(appConfig); err != nil {
 		return int64(n), err
 	}
 
