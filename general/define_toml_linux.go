@@ -11,7 +11,10 @@ Description: 操作 TOML 配置文件
 
 package general
 
-import "path/filepath"
+import (
+	"path/filepath"
+	"strings"
+)
 
 // 配置项
 var (
@@ -56,3 +59,88 @@ var (
 		"usb-manager",
 	}
 )
+
+// 配置项
+var (
+	// 允许用户修改的配置项
+	AllInstallMethod          = []string{"release", "source"}               // 所有安装方式，可选 source 或 release
+	DefaultInstallMethodIndex = 0                                           // 默认安装方式的下标（从0开始）
+	InstallMethod             = AllInstallMethod[DefaultInstallMethodIndex] // 默认安装方式
+	HttpProxy                 = "http://127.0.0.1:8080"                     // 默认 HTTP 代理
+	HttpsProxy                = HttpProxy                                   // 默认 HTTPS 代理，与 HTTP 代理一致
+	// 使用默认值的配置项
+	name           = strings.ToLower(Name)
+	pocketFile     = "files"
+	releaseApi     = "https://api.github.com"
+	releaseAccept  = "application/vnd.github+json"
+	generatePath   = "build"
+	githubUrl      = "https://github.com"
+	githubApi      = "https://api.github.com"
+	githubUsername = "YHYJ"
+	githubRaw      = "https://raw.githubusercontent.com"
+	githubBranch   = "ArchLinux"
+	giteaUrl       = "https://git.yj1516.top"
+	giteaApi       = "https://git.yj1516.top/api/v1"
+	giteaUsername  = "YJ"
+	giteaRaw       = "https://git.yj1516.top"
+	giteaBranch    = "ArchLinux"
+	repo           = "Program"
+	localF         = "System-Script"
+	localC         = "app"
+)
+
+// 配置
+var appConfig = Config{
+	Program: ProgramConfig{
+		Method:        InstallMethod,
+		ProgramPath:   programPath,
+		ResourcesPath: resourcesPath,
+		ReleaseTemp:   releaseTemp,
+		SourceTemp:    sourceTemp,
+		PocketPath:    pocketPath,
+		PocketFile:    pocketFile,
+		Self: SelfConfig{
+			Name:           name,
+			ReleaseApi:     releaseApi,
+			ReleaseAccept:  releaseAccept,
+			GeneratePath:   generatePath,
+			GithubUrl:      githubUrl,
+			GithubApi:      githubApi,
+			GithubUsername: githubUsername,
+			GiteaUrl:       giteaUrl,
+			GiteaApi:       giteaApi,
+			GiteaUsername:  giteaUsername,
+			CompletionDir:  goCompletionDir,
+		},
+		Go: GoConfig{
+			Names:          goNames,
+			ReleaseApi:     releaseApi,
+			ReleaseAccept:  releaseAccept,
+			GeneratePath:   generatePath,
+			GithubUrl:      githubUrl,
+			GithubApi:      githubApi,
+			GithubUsername: githubUsername,
+			GiteaUrl:       giteaUrl,
+			GiteaApi:       giteaApi,
+			GiteaUsername:  giteaUsername,
+			CompletionDir:  goCompletionDir,
+		},
+		Shell: ShellConfig{
+			Names:          shellNames,
+			Repo:           repo,
+			Dir:            filepath.Join(localF, localC),
+			GithubApi:      githubApi,
+			GithubRaw:      githubRaw,
+			GithubUsername: githubUsername,
+			GithubBranch:   githubBranch,
+			GiteaApi:       giteaApi,
+			GiteaRaw:       giteaRaw,
+			GiteaUsername:  giteaUsername,
+			GiteaBranch:    giteaBranch,
+		},
+	},
+	Variable: VariableConfig{
+		HTTPProxy:  HttpProxy,
+		HTTPSProxy: HttpsProxy,
+	},
+}
