@@ -110,7 +110,7 @@ var (
 	localC         = "app"
 )
 
-// 用于转换 Toml 配置树的结构体
+// 配置
 var config = Config{
 	Program: ProgramConfig{
 		Method:        InstallMethod,
