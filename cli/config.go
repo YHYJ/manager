@@ -10,8 +10,6 @@ Description: 子命令 'config' 的实现
 package cli
 
 import (
-	"strings"
-
 	"github.com/gookit/color"
 	"github.com/yhyj/manager/general"
 )
@@ -21,68 +19,72 @@ import (
 // 参数：
 //   - configFile: 配置文件路径
 func CreateConfigFile(configFile string) {
-	// 检查配置文件是否存在
 	fileExist := general.FileExist(configFile)
 
-	// 检测并创建配置文件
+	// 统一交互：获取安装方式、代理设置（无论文件是否存在，都需要先获取）
+	installMethod, _ := general.GiveYourChoice(
+		general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")),
+		general.AllInstallMethod,
+		general.DefaultInstallMethodIndex,
+	)
+	httpProxy, _ := general.GetUserInput(
+		general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")),
+		general.HttpProxy,
+	)
+	httpsProxy, _ := general.GetUserInput(
+		general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")),
+		general.HttpsProxy,
+	)
+
+	// 将用户输入保存到 general 包的全局变量中（供其他模块使用，可选）
+	general.InstallMethod = installMethod
+	general.HttpProxy = httpProxy
+	general.HttpsProxy = httpsProxy
+
+	// 根据最新值构建配置对象
+	cfg := general.BuildConfigFromGlobals()
+
+	// 处理文件写入（覆盖或新建）
 	if fileExist {
-		// 询问是否覆写已存在的配置文件
 		question := color.Sprintf(general.OverWriteTips, "Configuration")
 		overWrite, err := general.AreYouSure(general.QuestionText(question), false)
 		if err != nil {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag),
+				general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
-
-		switch overWrite {
-		case true:
-			// 与用户交互获取配置信息
-			general.InstallMethod, _ = general.GiveYourChoice(general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")), general.AllInstallMethod, general.DefaultInstallMethodIndex)
-			general.HttpProxy, _ = general.GetUserInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
-			general.HttpsProxy, _ = general.GetUserInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
-
-			if err := general.DeleteFile(configFile); err != nil {
-				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-				return
-			}
-			if err := general.CreateFile(configFile); err != nil {
-				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-				return
-			}
-			if _, err := general.WriteTomlConfig(configFile); err != nil {
-				fileName, lineNo := general.GetCallerInfo()
-				color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-				return
-			}
-			color.Printf("Create %s: %s\n", general.PrimaryText(configFile), general.SuccessText("file overwritten"))
-		case false:
-			return
-		default:
-			color.Printf("%s\n", strings.Repeat(general.Separator3st, len(question)))
-			color.Warn.Tips("%s: %s", "Unexpected answer", overWrite)
+		if !overWrite {
 			return
 		}
-	} else {
-		// 与用户交互获取配置信息
-		general.InstallMethod, _ = general.GiveYourChoice(general.QuestionText(color.Sprintf(general.SelectOneTips, "the installation method")), general.AllInstallMethod, general.DefaultInstallMethodIndex)
-		general.HttpProxy, _ = general.GetUserInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTP_PROXY")), general.HttpProxy)
-		general.HttpsProxy, _ = general.GetUserInput(general.QuestionText(color.Sprintf(general.InputTips, "HTTPS_PROXY")), general.HttpProxy)
-
-		if err := general.CreateFile(configFile); err != nil {
+		// 删除原文件（或者你也可以直接 truncate 然后写入，这里保持原有逻辑）
+		if err := general.DeleteFile(configFile); err != nil {
 			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag),
+				general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
 			return
 		}
-		if _, err := general.WriteTomlConfig(configFile); err != nil {
-			fileName, lineNo := general.GetCallerInfo()
-			color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag), general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
-			return
-		}
-		color.Printf("Create %s: %s\n", general.PrimaryText(configFile), general.SuccessText("file created"))
 	}
+
+	// 创建文件并写入配置
+	if err := general.CreateFile(configFile); err != nil {
+		fileName, lineNo := general.GetCallerInfo()
+		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag),
+			general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+		return
+	}
+	if _, err := general.WriteTomlConfig(configFile, cfg); err != nil {
+		fileName, lineNo := general.GetCallerInfo()
+		color.Printf("%s %s %s\n", general.DangerText(general.ErrorInfoFlag),
+			general.SecondaryText("[", fileName, ":", lineNo+1, "]"), err)
+		return
+	}
+
+	action := "file created"
+	if fileExist {
+		action = "file overwritten"
+	}
+	color.Printf("Create %s: %s\n", general.PrimaryText(configFile), general.SuccessText(action))
 }
 
 // OpenConfigFile 打开配置文件

@@ -132,15 +132,29 @@ func LoadConfigToStruct(configTree *toml.Tree) (*Config, error) {
 	return &config, nil
 }
 
+// BuildConfigFromGlobals 使用用户修改后的全局变量构建 Config 结构体
+func BuildConfigFromGlobals() *Config {
+	// 复制默认的 appConfig 作为模板（避免修改原始默认值）
+	config := appConfig
+
+	// 覆盖用户可能修改的字段
+	config.Program.Method = InstallMethod
+	config.Variable.HTTPProxy = HttpProxy
+	config.Variable.HTTPSProxy = HttpsProxy
+
+	return &config
+}
+
 // WriteTomlConfig 写入 toml 配置文件
 //
 // 参数：
 //   - filePath: toml 配置文件路径
+//   - config
 //
 // 返回：
 //   - 写入的字节数
 //   - 错误信息
-func WriteTomlConfig(filePath string) (int64, error) {
+func WriteTomlConfig(filePath string, config *Config) (int64, error) {
 	// 打开配置文件
 	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
@@ -159,7 +173,7 @@ func WriteTomlConfig(filePath string) (int64, error) {
 	encoder := toml.NewEncoder(file)
 	encoder.Order(toml.OrderPreserve)
 
-	if err := encoder.Encode(appConfig); err != nil {
+	if err := encoder.Encode(config); err != nil {
 		return int64(n), err
 	}
 
